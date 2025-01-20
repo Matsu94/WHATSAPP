@@ -1,7 +1,7 @@
 import pymysql.cursors
 import sqlalchemy as db
 
-class Chat(object):
+class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
             host="192.168.193.133:3306",
