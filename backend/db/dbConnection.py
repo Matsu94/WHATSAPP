@@ -1,5 +1,4 @@
 import pymysql.cursors
-import sqlalchemy as db
 
 class Matias(object):
     def conecta(self):
@@ -16,3 +15,13 @@ class Matias(object):
 
     def desconecta(self):
         self.db.close()
+        
+    
+
+def get_db():
+    db = Matias()
+    try:
+        db.conecta()
+        yield db
+    finally:
+        db.desconecta()

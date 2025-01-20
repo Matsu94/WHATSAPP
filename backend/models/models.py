@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 
 class User(BaseModel):
@@ -24,6 +24,12 @@ class Message(BaseModel):
     Status: int = 1  # Foreign key, required
     Sender: str # Foreign key, required
     Receiver: str # Foreign key, required
+
+    @field_validator("Content")
+    def validate_content(cls, value):
+        if not value.strip():
+            raise ValueError("Message content cannot be empty.")
+        return value
     
     # Modelo de grupo
 class Group(BaseModel):
