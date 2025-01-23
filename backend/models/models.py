@@ -24,6 +24,7 @@ class Message(BaseModel):
     Status: int = 1  # Foreign key, required
     Sender: str # Foreign key, required
     Receiver: str # Foreign key, required
+    isGroup: bool = False # Si es un mensaje de grupo o no
 
     @field_validator("Content")
     def validate_content(cls, value):
