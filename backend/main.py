@@ -1,17 +1,21 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
-from db.dbConnection import Matias
+from controllers.controllers import Matias, get_db
 from models.models import Matias, Message, Group
-from db.dbConnection import get_db
 from datetime import timedelta
 from models.models import User, Token
+import controllers as db
 
 app = FastAPI()
 
-@app.get("/")
+@app.get("/") # ESTE LO CAMBIAMOS A log_in [[EN REALIDAD ES /TOKEN ABAJO DEL TODO]]
 def read_root():
     return {"message": "Welcome to the home page!"}
+
+@app.get("/users")
+def read_users(db: Matias = Depends(get_db)):
+    return db.getUsers()
 
 @app.post("/sendMessage")
 def send_message(message: Message, db: Matias = Depends(get_db)):
@@ -20,19 +24,19 @@ def send_message(message: Message, db: Matias = Depends(get_db)):
 # Endpoint to check the number of messages the user has received and not read
 @app.get("/check_messages")
 def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
-    db.checkMessages(receiver)
-    return RedirectResponse(url="/change_state/{2}", status_code=303)
+    messages_ids = db.checkMessages(receiver) # A ESTO LE TIRAMOS UN .LENGTH Y TENEMOS EL Nº DE MSJS
+    return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
 
 # Endpoint to change the state of a message after the user has received it
 @app.put("/change_state/{2}")#o change_state_recieved, no se
-def change_state_recieved(db: Matias = Depends(get_db)):
-    return db.changeMessageState(2)
+def change_state_recieved(db: Matias = Depends(get_db), messages_ids: list = []):
+    return db.changeMessageState(2, messages_ids)
 
 # Endpoint to get all messages
-@app.get("/recieve_messages") # ESTE TIENE QUE SER UN ONCLICK EN EL CHAT ESPECIFICO Y HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES)
-def recieve_messages(limit: int = 10, offset: int = i, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user), sender: str = user_ID): #ARREGLAR
+@app.get("/receive_messages/") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
+def receive_messages(limit: int = 10, offset: int = i, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user), sender: str = user_ID): #ARREGLAR
     i = cargarMensajesAnteriores()
-    db.getMessages(limit=limit, offset=offset, sender=sender, receiver=receiver)
+    db.getMessages(limit=limit, offset=offset, sender=sender, receiver=receiver) # RECIEVER.USER_ID
     return RedirectResponse(url="/change_state/{3}", status_code=303)
 
 def cargarMensajesAnteriores():
