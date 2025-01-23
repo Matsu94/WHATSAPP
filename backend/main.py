@@ -1,13 +1,19 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
-from controllers.controllers import Matias, get_db
-from models.models import Matias, Message, Group
+from controllers.controllers import Matias
+from models.models import Message, Group, User, Token
 from datetime import timedelta
-from models.models import User, Token
-import controllers as db
 
 app = FastAPI()
+
+def get_db():
+        db = Matias()
+        try:
+            db.conecta()
+            yield db
+        finally:
+            db.desconecta()
 
 @app.get("/") # ESTE LO CAMBIAMOS A log_in [[EN REALIDAD ES /TOKEN ABAJO DEL TODO]]
 def read_root():

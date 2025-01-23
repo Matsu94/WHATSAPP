@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt 
 from typing import Optional
 from datetime import datetime, timedelta
-from db.dbConnection import Matias
+from controllers.controllers import Matias
 
 # Clave secreta para firmar los tokens (debería ser una variable de entorno en producción)
 SECRET_KEY = "dafc45fae71b61692ccd8c1c55dc7f1696943d93ce9e648b7c5252a9fd8bcbb3"
