@@ -3,9 +3,8 @@ import pymysql.cursors
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="192.168.193.133:3306",
-            user="matiasianbastero",
-            password="49864854A",
+            host="localhost",
+            user="root",
             db="matias",
             charset="utf8mb4",
             autocommit=True,
@@ -15,6 +14,47 @@ class Matias(object):
 
     def desconecta(self):
         self.db.close()
+    
+    
+    def getAllMessages(self, user_id):
+        # Fetch direct messages
+        sql_direct = """ 
+        SELECT * 
+        FROM messages 
+        WHERE sender_id = %s OR receiver_id = %s 
+        ORDER BY date DESC 
+        """
+        self.cursor.execute(sql_direct, (user_id,))
+        direct_messages = self.cursor.fetchall()
+
+        # Fetch group messages
+        sql_group = """ 
+        SELECT messages.* 
+        FROM messages 
+        INNER JOIN groups ON messages.receiver_id = groups.group_id
+        INNER JOIN group_members ON groups.group_id = group_members.group_id 
+        WHERE group_members.user_id = %s AND messages.is_group = TRUE 
+        ORDER BY date DESC 
+        """
+        self.cursor.execute(sql_group, (user_id,))
+        group_messages = self.cursor.fetchall()
+
+        # Combine both results
+        all_messages = direct_messages + group_messages
+
+        # Sort messages by date (new to old)
+        sorted_messages = sorted(all_messages, key=lambda x: x['date'], reverse=True)
+
+        return sorted_messages
+        
+            
+    def getUsers(self):
+        sql = """
+        SELECT *
+        FROM users
+        """
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
             
     # Query to send a message
     # Se asume que 'message' es un objeto que contiene:
@@ -51,16 +91,27 @@ class Matias(object):
 
     # Query to check the number of unread (o sin leer) messages para un usuario
     # Se asume status = 1 (enviado) como "pendiente de leer"
-    # is_group = false para mensajes de usuario a usuario.
     def checkMessages(self, receiver_id):
         sql = """
-        SELECT message_id
+        SELECT count(*)
         FROM messages
         WHERE status = 1
         AND receiver_id = %s
+        AND is_group = false
         """
         self.cursor.execute(sql, (receiver_id,))
-        result = self.cursor.fetchall()
+        result1 = self.cursor.fetchall()
+        sql = """
+        SELECT count(*)
+        FROM messages
+        INNER JOIN group_message_status ON messages.message_id = group_message_status.message_id
+        INNER JOIN group_members ON groups.group_id = group_members.group_id
+        WHERE status = 1
+        AND user_id = %s
+        """
+        self.cursor.execute(sql, (receiver_id,))
+        result2 = self.cursor.fetchall()
+        result = result1 + result2
         # Devuelve un dict o tuple según tu configuración de cursor,
         # ajusta en consecuencia
         return result
@@ -96,18 +147,18 @@ class Matias(object):
     # Query to get all messages (o mensajes de un remitente a un destinatario)
     # Ajustado el orden de la cláusula WHERE vs LIMIT/OFFSET.
     # He añadido receiver como parámetro para respetar la sintaxis de la SQL original.
-    def getMessages(self, limit, offset, sender_id, receiver_id):
+    def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
         sql = """
         SELECT *
         FROM messages
         WHERE sender_id = %s
         AND receiver_id = %s
-        AND is_group = FALSE
+        AND is_group = %s
         ORDER BY date DESC
         LIMIT %s
         OFFSET %s
         """
-        self.cursor.execute(sql, (sender_id, receiver_id, limit, offset))
+        self.cursor.execute(sql, (sender_id, receiver_id, isGroup, limit, offset))
         return self.cursor.fetchall()
 
     # Query to change the content of a message

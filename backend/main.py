@@ -19,7 +19,7 @@ def get_db():
 def read_root():
     return {"message": "Welcome to the home page!"}
 
-@app.get("/users")
+@app.get("/users") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN PERO PODRÍA SER DIRECTAMENTE getChats
 def read_users(db: Matias = Depends(get_db)):
     return db.getUsers()
 
@@ -38,15 +38,13 @@ def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_cur
 def change_state_recieved(db: Matias = Depends(get_db), messages_ids: list = []):
     return db.changeMessageState(2, messages_ids)
 
-# Endpoint to get all messages
-@app.get("/receive_messages/") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
-def receive_messages(limit: int = 10, offset: int = i, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user), sender: str = user_ID): #ARREGLAR
-    i = cargarMensajesAnteriores()
-    db.getMessages(limit=limit, offset=offset, sender=sender, receiver=receiver) # RECIEVER.USER_ID
+# Endpoint to get all messages from a chat
+@app.get("/receive_messages/{sender}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
+def receive_messages(isGroup = bool, sender = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
+    db.getMessagesChat(limit=limit, offset=offset, sender=sender, receiver=receiver, isGroup=isGroup) # RECIEVER.USER_ID
     return RedirectResponse(url="/change_state/{3}", status_code=303)
 
-def cargarMensajesAnteriores():
-    return i + 10
+
 
 # Endpoint to change the state of a message after the user has read it
 @app.put("/change_state/{3}")#o change_state_seen, no se
