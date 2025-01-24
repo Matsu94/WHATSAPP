@@ -4,12 +4,12 @@ from jose import JWTError, jwt
 from typing import Optional
 from datetime import datetime, timedelta
 from controllers.controllers import Matias
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Clave secreta para firmar los tokens (debería ser una variable de entorno en producción)
 SECRET_KEY = "dafc45fae71b61692ccd8c1c55dc7f1696943d93ce9e648b7c5252a9fd8bcbb3"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 300131400 #3 meses
-
 # Configuración para el esquema de autenticación
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -17,7 +17,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def authenticate_user(db: Matias, username: str, password: str):
     try:
         user_data = db.checkUser(username)
-        if user_data and user_data['password'] == password:  # Replace with password hashing if used
+        if user_data and check_password_hash(user_data['password'], password):  # Replace with password hashing if used
             return {
                 "user_id": user_data['user_id'],
                 "username": user_data['username'],
