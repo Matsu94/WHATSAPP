@@ -18,6 +18,7 @@ export async function fetchToken(username, password) {
         const data = await response.json();
         console.log('Token:', data.access_token);
         localStorage.setItem('token', data.access_token);
+        localStorage.setItem('username', username);
         window.location.href = '../index.html';
     } catch (error) {
         console.error('Error:', error);
