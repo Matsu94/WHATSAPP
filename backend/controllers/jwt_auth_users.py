@@ -8,7 +8,7 @@ from controllers.controllers import Matias
 # Clave secreta para firmar los tokens (debería ser una variable de entorno en producción)
 SECRET_KEY = "dafc45fae71b61692ccd8c1c55dc7f1696943d93ce9e648b7c5252a9fd8bcbb3"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 300
+ACCESS_TOKEN_EXPIRE_MINUTES = 300131400 #3 meses
 
 # Configuración para el esquema de autenticación
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
