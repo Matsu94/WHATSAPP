@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import Body, FastAPI, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
@@ -33,10 +33,20 @@ def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_cur
     messages_ids = db.checkMessages(receiver) # A ESTO LE TIRAMOS UN .LENGTH Y TENEMOS EL Nº DE MSJS
     return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
 
-# Endpoint to change the state of a message after the user has received it
-@app.put("/change_state/{2}")#o change_state_recieved, no se
-def change_state_recieved(db: Matias = Depends(get_db), messages_ids: list = []):
-    return db.changeMessageState(2, messages_ids)
+@app.put("/change_state/{state_id}")
+def change_state_received(
+    state_id: int,  # ID del estado que se quiere cambiar
+    messages_ids: list[int] = Body(...),  # Lista de IDs de mensajes recibida en el cuerpo de la solicitud
+    db: Matias = Depends(get_db),  # Dependencia de la base de datos
+):
+    """
+    Cambia el estado de los mensajes con los IDs especificados al estado proporcionado.
+    """
+    if not messages_ids:  # Verifica si la lista está vacía
+        return {"error": "messages_ids no puede estar vacío."}
+    
+    result = db.changeMessageState(state_id, messages_ids)
+    return {"message": "Estado actualizado correctamente.", "result": result}
 
 # Endpoint to get all messages from a chat
 @app.get("/receive_messages/{sender}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
