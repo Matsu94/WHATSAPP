@@ -16,8 +16,9 @@ export async function fetchToken(username, password) {
         }
 
         const data = await response.json();
-        console.log('Token:', data.token);
-        // Aquí puedes redirigir al usuario o guardar el token según sea necesario
+        console.log('Token:', data.access_token);
+        localStorage.setItem('token', data.access_token);
+        window.location.href = '../index.html';
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('passwordError').textContent = 'Error en el inicio de sesión.';

@@ -19,8 +19,8 @@ def authenticate_user(db: Matias, username: str, password: str):
         user_data = db.checkUser(username)
         if user_data and user_data['password'] == password:  # Replace with password hashing if used
             return {
+                "user_id": user_data['user_id'],
                 "username": user_data['username'],
-                "permits": user_data['permits']
             }
         return None
     except Exception as e:
@@ -41,8 +41,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        permits: str = payload.get("permits")
+        user_id: int = payload.get("user_id")
+        username: str = payload.get("username")
         if username is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -52,7 +52,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         # Fetch user details from the database
         user_data = {
             "username": username,
-            "permits": permits
+            "user_id": user_id
         }
         return user_data
     except JWTError:

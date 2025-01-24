@@ -55,6 +55,11 @@ class Matias(object):
         """
         self.cursor.execute(sql)
         return self.cursor.fetchall()
+    
+    def checkUser(self, username):
+        sql = "SELECT * FROM users WHERE username = %s"
+        self.cursor.execute(sql, (username,))
+        return self.cursor.fetchone()
             
     # Query to send a message
     # Se asume que 'message' es un objeto que contiene:
