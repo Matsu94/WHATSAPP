@@ -1,3 +1,5 @@
+import { fetchToken } from "../../assets/fetching.js";
+
 function validarUsername(username) {
     const errores = [];
     const regex = /^[a-z]{3,}[0-9]*$/;
@@ -20,7 +22,7 @@ function validarPassword(password) {
 }
 
 function mostrarErrores(idCampo, errores) {
-    const errorElemento = document.getElementById(`${idCampo}Error`);
+    const errorElemento = document.getElementById(idCampo + "Error");
     if (errores.length > 0) {
         errorElemento.textContent = errores[0]; // Mostrar el primer error
         errorElemento.style.display = "block";
@@ -30,7 +32,7 @@ function mostrarErrores(idCampo, errores) {
     }
 }
 
-function validarLogin(event) {
+async function validarLogin(event) {
     event.preventDefault(); // Prevenir el envío del formulario
 
     const username = document.getElementById("username").value;
@@ -45,9 +47,16 @@ function validarLogin(event) {
     mostrarErrores("username", errores.username);
     mostrarErrores("password", errores.password);
 
-    // Si no hay errores, puedes proceder con el envío o lógica adicional
+    // Si no hay errores, llamar a fetchToken
     if (errores.username.length === 0 && errores.password.length === 0) {
-        alert("Inicio de sesión exitoso");
-        // Aquí puedes añadir lógica para enviar los datos al servidor
+        try {
+            await fetchToken(username, password);
+        } catch (error) {
+            console.error("Error en fetchToken:", error);
+            document.getElementById('passwordError').textContent = 'Error al intentar iniciar sesión.';
+        }
     }
 }
+
+// Asociamos el evento de validación al formulario
+document.getElementById("loginForm").addEventListener("submit", validarLogin);

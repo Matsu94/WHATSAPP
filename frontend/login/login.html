@@ -42,7 +42,7 @@
         </div>
 
         <!-- Formulario de login -->
-        <form class="space-y-5" onsubmit="validarLogin(event)">
+        <form id="loginForm" class="space-y-5">
             <!-- Campo de usuario -->
             <div>
                 <label for="username" class="block font-semibold mb-2">
@@ -78,14 +78,14 @@
             </div>
 
             <!-- Botón de envío -->
-            <button onclick="validarLogin()" type="submit" class="w-full bg-[var(--color-dark)] text-white py-2 rounded font-semibold
+            <button type="submit" class="w-full bg-[var(--color-dark)] text-white py-2 rounded font-semibold
                    hover:bg-opacity-90 transition duration-200">
                 Entrar
             </button>
         </form>
     </div>
     <script src="darkmode&icons.js"></script>
-    <script src="validations/loginValidations.js"></script>
+    <script src="validations/loginValidations.js" type="module" defer></script>
 </body>
 
 </html>

@@ -4,8 +4,16 @@ from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate
 from controllers.controllers import Matias
 from models.models import Message, Group, User, Token
 from datetime import timedelta
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],  # Aquí especifica los orígenes permitidos
+    allow_credentials=True,
+    allow_methods=["*"],  # Métodos permitidos (GET, POST, etc.)
+    allow_headers=["*"],  # Headers permitidos
+)
 
 def get_db():
         db = Matias()
@@ -121,6 +129,6 @@ async def login(user: User, db: Matias = Depends(get_db)):
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": authenticated_user["username"], "permits": authenticated_user["permits"]}, expires_delta=access_token_expires
+        data={"username": authenticated_user["username"], "user_id": authenticated_user["user_id"]}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
