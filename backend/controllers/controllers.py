@@ -46,8 +46,10 @@ class Matias(object):
         sorted_messages = sorted(all_messages, key=lambda x: x['date'], reverse=True)
 
         return sorted_messages
-        
-            
+    
+    # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
+    
+    # Query to get all users (1a)
     def getUsers(self):
         sql = """
         SELECT *
@@ -60,8 +62,22 @@ class Matias(object):
         sql = "SELECT * FROM users WHERE username = %s"
         self.cursor.execute(sql, (username,))
         return self.cursor.fetchone()
+    
+    
+    
+
+    # /missatgesAmics: permet enviar missatges a un amic (1m) o rebre els missatges d’aquest amic. (2m)
+    # Inicialment rebrà els 10 missatges més recents, tant els que hem enviat com els que hem rebut, cronològicament. (2m)
+    # Després el sistema ha de permetre anar rebent els missatges més antics de 10 en 10. (FRONTEND)
+    # Els missatges enviats ha d’indicar l’estat del missatge (enviat, rebut, llegit) (FRONTEND)
+    # /check : ha de modificar l'estat d’un missatge a rebut o llegit. (3m)
+    # /missatgesgrup: El mateix que a missatgesAmics, però amb grups . (1-2m)
+    # Els missatges rebuts s’ha d’indicar de quin usuari són. (FRONTEND)
+    # Els missatges a grup tenen estat (enviat, rebut, llegit). Enviat és únic per qui envia el missatge, 
+    # pero rebut i llegit poden ser diferents pels membres del grup. (3m)
+    
             
-    # Query to send a message
+    # Query to send a message (1m)
     # Se asume que 'message' es un objeto que contiene:
     # message.Content, message.Date (opcional), message.Status, message.Sender, message.Receiver, message.IsGroup
     def sendMessage(self, message):
@@ -94,7 +110,7 @@ class Matias(object):
                 self.cursor.execute(sql, (res1['message_id'], user['user_id'], 1))
             return self.cursor.lastrowid
 
-    # Query to check the number of unread (o sin leer) messages para un usuario
+    # Query to check the number of unread (o sin leer) messages para un usuario (3m)
     # Se asume status = 1 (enviado) como "pendiente de leer"
     def checkMessages(self, receiver_id):
         sql = """
@@ -121,7 +137,7 @@ class Matias(object):
         # ajusta en consecuencia
         return result
 
-    # Query to change the state (status) of a message
+    # Query to change the state (status) of a message (3m)
     # He añadido message_id para no actualizar todos los mensajes de la tabla
     # (la versión anterior no tenía WHERE).
     def changeMessageState(self, messages_ids, new_status):
@@ -149,21 +165,23 @@ class Matias(object):
                 self.cursor.execute(sql, (new_status, message_id))
                 return self.cursor.rowcount
 
-    # Query to get all messages (o mensajes de un remitente a un destinatario)
+    # Query to get all messages (o mensajes de un remitente a un destinatario) (2m)
     # Ajustado el orden de la cláusula WHERE vs LIMIT/OFFSET.
     # He añadido receiver como parámetro para respetar la sintaxis de la SQL original.
     def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
         sql = """
         SELECT *
         FROM messages
-        WHERE sender_id = %s
-        AND receiver_id = %s
+        WHERE ((sender_id = %s
+        AND receiver_id = %s) OR
+        (sender_id = %s
+        AND receiver_id = %s))
         AND is_group = %s
         ORDER BY date DESC
         LIMIT %s
         OFFSET %s
         """
-        self.cursor.execute(sql, (sender_id, receiver_id, isGroup, limit, offset))
+        self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
         return self.cursor.fetchall()
 
     # Query to change the content of a message
@@ -208,6 +226,8 @@ class Matias(object):
     
     # /grups: ha de permetre visualitzar els meus grups (1g) i afegir un grup nou (2g). 
     # L’usuari que crei el grup en serà l’administrador(2g). Podrà modificar també els usuaris que formen part (3g) i canviar el nom.(4g) 
+    # L’administrador del grup pot afegir altres administradors. (3g)
+    # Els usuaris que no son administradors (els administradors també) han de poder abandonar el grup. (5g)
     
     #Query to get user groups (1g)
     def getGroups(self, user_id):
@@ -248,7 +268,7 @@ class Matias(object):
     # POR AHORA TODOS TIENEN LA OPCION DE INTENTAR METER A ALGUIEN EN EL GRP Y SI NO SON ADMIN TIRA ERROR 
     # PERO EVENTUALMENTE NO TENDRIAMOS QUE MOSTRAR LA OPCIÓN EN FRONT-END A LOS QUE NO SEAN ADMIN
     # Y PODRIAMOS QUITAR LA COMPROBACIÓN DE PERMISOS
-    def addUserToGroup(self, group_id, target_id, perpetrator_id): 
+    def addUserToGroup(self, group_id, member_id, admin_id): 
         # Comprobamos si el user es admin
         sql = """
         SELECT is_admin
@@ -256,7 +276,7 @@ class Matias(object):
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, perpetrator_id))
+        self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
         if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
             return "User has no permissions"
@@ -268,7 +288,7 @@ class Matias(object):
             WHERE group_id = %s
             AND user_id = %s
             """
-            self.cursor.execute(sql, (group_id, target_id))
+            self.cursor.execute(sql, (group_id, member_id))
             result = self.cursor.fetchone()
 
             if result:
@@ -279,12 +299,12 @@ class Matias(object):
                 INSERT INTO group_members (group_id, user_id)
                 VALUES (%s, %s)
                 """
-                self.cursor.execute(sql, (group_id, target_id))
+                self.cursor.execute(sql, (group_id, member_id))
                 return self.cursor.rowcount
 
 
     # Query to delete a user from a group (3g)
-    def deleteUserFromGroup(self, group_id, target_id, perpetrator_id):
+    def deleteUserFromGroup(self, group_id, member_id, admin_id):
         # Comprobamos si el user es admin
         sql = """
         SELECT is_admin
@@ -292,7 +312,7 @@ class Matias(object):
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, perpetrator_id))
+        self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
         if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
             return "User has no permissions"
@@ -304,10 +324,9 @@ class Matias(object):
             WHERE group_id = %s
             AND user_id = %s
             """
-            self.cursor.execute(sql, (group_id, target_id))
+            self.cursor.execute(sql, (group_id, member_id))
             result = self.cursor.fetchone()
-
-            # Si NO existe, "User not in group"
+            # Si NO existe, "User not in group" ESTO EVENTUALMENTE TENDRIAMOS QUE EXPRESARLO EN FRONT END (LISTA DE USERS DE GRP Y BOTON DE BORRAR)
             if not result:
                 return "User not in group"
             else:
@@ -317,20 +336,20 @@ class Matias(object):
                 WHERE group_id = %s
                 AND user_id = %s
                 """
-                self.cursor.execute(sql, (group_id, target_id))
+                self.cursor.execute(sql, (group_id, member_id))
                 return self.cursor.rowcount
 
     # Query to change group admin (3g)
     # En la nueva tabla se guarda el 'creator_id' como "dueño" del grupo.
     # Si necesitaras un sistema multi-admin, deberías actualizar group_members (is_admin).
-    def changeAdmin(self, group_id, target_id, perpetrator_id):
+    def changeAdmin(self, group_id, member_id, admin_id):
         sql = """
         SELECT is_admin
         FROM group_members
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, perpetrator_id))
+        self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
         if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
             return "User has no permissions"
@@ -340,18 +359,18 @@ class Matias(object):
                 SET creator_id = %s
                 WHERE group_id = %s
                 """
-            self.cursor.execute(sql, ( target_id, group_id))
+            self.cursor.execute(sql, (member_id, group_id))
             return self.cursor.rowcount
 
     # Query to change group name (4g)
-    def changeName(self, group_id, new_name, perpetrator_id):
+    def changeName(self, group_id, new_name, admin_id):
         sql = """
         SELECT is_admin
         FROM group_members
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, perpetrator_id))
+        self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
         if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
             return "User has no permissions"
@@ -364,14 +383,14 @@ class Matias(object):
             self.cursor.execute(sql, (new_name, group_id))
             return self.cursor.rowcount
     
-    # Query to leave a group
-    def leaveGroup(self, group_id, user_id): # ESTA PUEDE QUE VALGA PARA SACAR GENTE TMB
+    # Query to leave a group (5g)
+    def leaveGroup(self, group_id, admin_id): 
         sql = """
         DELETE FROM group_members
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, user_id))
+        self.cursor.execute(sql, (group_id, admin_id))
         return self.cursor.rowcount
 
     # Query to delete a group

@@ -27,26 +27,42 @@ def get_db():
 def read_root():
     return {"message": "Welcome to the home page!"}
 
-@app.get("/users") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN PERO PODRÍA SER DIRECTAMENTE getChats
+# /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
+
+# Endpoint to list all users (1a)
+@app.get("/users") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN PERO PODRÍA SER DIRECTAMENTE getChats 
 def read_users(db: Matias = Depends(get_db)):
     return db.getUsers()
 
-@app.post("/sendMessage")
+# /missatgesAmics: permet enviar missatges a un amic (1m) o rebre els missatges d’aquest amic. (2m)
+# Inicialment rebrà els 10 missatges més recents, tant els que hem enviat com els que hem rebut, cronològicament. (2m)
+# Després el sistema ha de permetre anar rebent els missatges més antics de 10 en 10. (FRONTEND)
+# Els missatges enviats ha d’indicar l’estat del missatge (enviat, rebut, llegit) (FRONTEND)
+# /check : ha de modificar l'estat d’un missatge a rebut o llegit. (3m)
+# /missatgesgrup: El mateix que a missatgesAmics, però amb grups . (1-2m)
+# Els missatges rebuts s’ha d’indicar de quin usuari són. (FRONTEND)
+# Els missatges a grup tenen estat (enviat, rebut, llegit). Enviat és únic per qui envia el missatge, 
+# pero rebut i llegit poden ser diferents pels membres del grup. (3m)
+
+
+# Endpoint to send a message (1m)
+@app.post("/sendMessage") 
 def send_message(message: Message, db: Matias = Depends(get_db)):
     return db.sendMessage(message)
 
-# Endpoint to check the number of messages the user has received and not read
+# Endpoint to check the number of messages the user has received and not read (3m)
 @app.get("/check_messages") # PERIODICO
 def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
     messages_ids = db.checkMessages(receiver) # A ESTO LE TIRAMOS UN .LENGTH Y TENEMOS EL Nº DE MSJS
     return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
 
-# Endpoint to get all messages from a chat
+# Endpoint to get all messages from a chat (2m) (3m)
 @app.get("/receive_messages/{sender}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
 def receive_messages(isGroup = bool, sender = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
     messages_ids = db.getMessagesChat(limit=limit, offset=offset, sender=sender, receiver=receiver, isGroup=isGroup) # RECIEVER.USER_ID
     return RedirectResponse(url="/change_state/{3}", messages_ids = messages_ids, status_code=303)
 
+# Endpoint to change the state of a message (3m)
 @app.put("/change_state/{state_id}")
 def change_state(
     state_id: int,  # ID del estado que se quiere cambiar
@@ -71,40 +87,45 @@ def delete_message(message_id: int, db: Matias = Depends(get_db)):
 
 #Acá todo lo de crear grupos y maybe administrar usuarios
 
-# Endpoint to list user groups
+# /grups: ha de permetre visualitzar els meus grups (1g) i afegir un grup nou (2g). 
+# L’usuari que crei el grup en serà l’administrador(2g). Podrà modificar també els usuaris que formen part (3g) i canviar el nom.(4g) 
+# L’administrador del grup pot afegir altres administradors. (3g)
+# Els usuaris que no son administradors (els administradors també) han de poder abandonar el grup. (5g)
+
+# Endpoint to list user groups (1g)
 @app.get("/groups")
 def get_groups(user_id: int, db: Matias = Depends(get_db)):
     return db.getGroups(user_id)
 
-# Endpoint to create a group
+# Endpoint to create a group (2g)
 @app.post("/create_group")
 def create_group(group: Group, db: Matias = Depends(get_db)):
     return db.createGroup(group)
 
-# Endpoint to add a user to a group
-@app.put("/add_user/{group_id}/{target_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
-def add_user_to_group(group_id: int, target_id: int, db: Matias = Depends(get_db), perpetrator_id: str = Depends(get_current_user)):
-    return db.addUserToGroup(group_id, target_id, perpetrator_id)
+# Endpoint to add a user to a group (3g)
+@app.put("/add_user/{group_id}/{member_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
+def add_user_to_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+    return db.addUserToGroup(group_id, member_id, admin_id)
 
-# Endpoint to delete a user from a group
-@app.delete("/delete_user/{group_id}/{target_id}")
-def delete_user_from_group(group_id: int, target_id: int, db: Matias = Depends(get_db), perpetrator_id: str = Depends(get_current_user)):
-    return db.deleteUserFromGroup(group_id, target_id, perpetrator_id)
+# Endpoint to delete a user from a group (3g)
+@app.delete("/delete_user/{group_id}/{member_id}")
+def delete_user_from_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+    return db.deleteUserFromGroup(group_id, member_id, admin_id)
 
-# Endpoint to change group admin
-@app.put("/change_admin/{group_id}/{target_id}")
-def change_admin(group_id: int, target_id: int, db: Matias = Depends(get_db), perpetrator_id: str = Depends(get_current_user)):
-    return db.changeAdmin(group_id, target_id, perpetrator_id)
+# Endpoint to change group admin (3g)
+@app.put("/change_admin/{group_id}/{member_id}")
+def change_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+    return db.changeAdmin(group_id, member_id, admin_id)
 
-# Endpoint to change group name
+# Endpoint to change group name (4g)
 @app.put("/change_name/{group_id}/{name}")
-def change_name(group_id: int, name: str, db: Matias = Depends(get_db), perpetrator_id: str = Depends(get_current_user)):
-    return db.changeName(group_id, name, perpetrator_id)
+def change_name(group_id: int, name: str, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+    return db.changeName(group_id, name, admin_id)
 
-# Endpoint to leave a group
+# Endpoint to leave a group (5g)
 @app.delete("/leave_group/{group_id}/{user_id}")
-def leave_group(group_id: int, user_id: int, db: Matias = Depends(get_db)):
-    return db.leaveGroup(group_id, user_id)
+def leave_group(group_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+    return db.leaveGroup(group_id, admin_id)
 
 # Endpoint to delete a group
 @app.delete("/delete_group/{group_id}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
