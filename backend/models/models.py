@@ -37,5 +37,5 @@ class Group(BaseModel):
     Group_ID: Optional[int] = None
     Name: str
     Description: Optional[str] = None
-    Admin: str #No se si serán str para el uname o los users tendrán id, jose nos va a dar la bd, igual en principio el creador es admin
-    Members: list[str]
+    Creator_ID: int  #No se si serán str para el uname o los users tendrán id, jose nos va a dar la bd, igual en principio el creador es admin
+    Members: list[int] = []  # Lista de miembros del grupo
