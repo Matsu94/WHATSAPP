@@ -65,12 +65,12 @@ class Matias(object):
     # Se asume que 'message' es un objeto que contiene:
     # message.Content, message.Date (opcional), message.Status, message.Sender, message.Receiver, message.IsGroup
     def sendMessage(self, message):
-        # La columna 'date' puede ser DEFAULT CURRENT_TIMESTAMP,
+        # La columna 'date' puede es DEFAULT CURRENT_TIMESTAMP,
         # pero si quieres pasar tu propia fecha/hora, inclúyela.
         sql = """
         INSERT INTO messages (content, date, sender_id, receiver_id, is_group, status)
-        VALUES (%s, %s, %s, %s, %s, %s) RETURNING message_id
-        """
+        VALUES (%s, %s, %s, %s, %s, %s) RETURNING message_id  
+        """ # TODAS LAS QUERIES DE UN ELEMENTO CON FECHA DE CREACIÓN PUEDEN IR SIN ESA VARIABLE PQ ESTÁ PUESTA EN LA BD, MANDAR NONE TMB VALE
         self.cursor.execute(sql, (
             message.Content,
             message.Date,         # o bien podrías omitir la columna y usar la default
@@ -98,7 +98,7 @@ class Matias(object):
     # Se asume status = 1 (enviado) como "pendiente de leer"
     def checkMessages(self, receiver_id):
         sql = """
-        SELECT count(*)
+        SELECT *
         FROM messages
         WHERE status = 1
         AND receiver_id = %s
@@ -107,7 +107,7 @@ class Matias(object):
         self.cursor.execute(sql, (receiver_id,))
         result1 = self.cursor.fetchall()
         sql = """
-        SELECT count(*)
+        SELECT *
         FROM messages
         INNER JOIN group_message_status ON messages.message_id = group_message_status.message_id
         INNER JOIN group_members ON groups.group_id = group_members.group_id
@@ -167,7 +167,7 @@ class Matias(object):
         return self.cursor.fetchall()
 
     # Query to change the content of a message
-    def changeContent(self, message_id, new_content):
+    def changeContent(self, message_id, new_content):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
         # La columna en el nuevo esquema se llama "content"
         sql = """
         UPDATE messages
@@ -180,7 +180,7 @@ class Matias(object):
     # Query to delete a message
     # Se comprueba si el status = 3 (Leído) en lugar de 4, ya que
     # en el esquema nuevo: 1=Enviado, 2=Recibido, 3=Leído.
-    def deleteMessage(self, message_id):
+    def deleteMessage(self, message_id):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
         sql = """
         SELECT status
         FROM messages
@@ -205,68 +205,177 @@ class Matias(object):
     # ------------------------------------------------
     #   Operaciones sobre Grupos
     # ------------------------------------------------
+    
+    # /grups: ha de permetre visualitzar els meus grups (1g) i afegir un grup nou (2g). 
+    # L’usuari que crei el grup en serà l’administrador(2g). Podrà modificar també els usuaris que formen part (3g) i canviar el nom.(4g) 
+    
+    #Query to get user groups (1g)
+    def getGroups(self, user_id):
+        sql = """
+        SELECT groups.group_id, groups.name, groups.description
+        FROM groups
+        INNER JOIN group_members ON groups.group_id = group_members.group_id
+        WHERE group_members.user_id = %s
+        """
+        self.cursor.execute(sql, (user_id,))
+        return self.cursor.fetchall()
 
-    # Query to create a group
+    # Query to create a group (2g)
     # La columna 'members' ya no existe. Ahora se maneja en la tabla group_members
     def createGroup(self, group):
         sql = """
         INSERT INTO groups (name, description, creator_id)
-        VALUES (%s, %s, %s)
+        VALUES (%s, %s, %s) returning group_id
         """
-        self.cursor.execute(sql, (group.Name, group.Description, group.CreatorID))
-        return self.cursor.lastrowid
-
-    # Query to add a user to a group
-    # Se hace INSERT en group_members, no UPDATE.
-    def addUserToGroup(self, group_id, user_id):
-        # Comprobamos si ya existe ese user en ese group
+        self.cursor.execute(sql, (group.Name, group.Description, group.Creator_ID))
+        group_id = self.cursor.fetchone()['group_id']
         sql = """
-        SELECT user_id
-        FROM group_members
-        WHERE group_id = %s
-        AND user_id = %s
-        """
-        self.cursor.execute(sql, (group_id, user_id))
-        result = self.cursor.fetchone()
-
-        if result:
-            return "User already in group"
-        else:
-            # Insertamos el registro
+        INSERT INTO group_members (group_id, user_id, is_admin)
+        VALUES (%s, %s, 1) 
+        """ # POR AHORA DEJO 1 COMO TRUE, PERO DEBERÍA SER UN BOOLEANO (SI LA BD ME QUIERE HACER CASO)
+        self.cursor.execute(sql, (group_id, group.Creator_ID))
+        # if group.Members: GPT DIJO QUE SI LA LISTA ESTÁ VACÍA NO SE EJECUTA EL FOR ASÍ QUE PUEDE QUE NO SEA NECESARIO EL IF
+        for member in group.Members:
             sql = """
-            INSERT INTO group_members (group_id, user_id)
-            VALUES (%s, %s)
+            INSERT INTO group_members (group_id, user_id, is_admin)
+            VALUES (%s, %s, 0)
             """
-            self.cursor.execute(sql, (group_id, user_id))
-            return self.cursor.rowcount
+            self.cursor.execute(sql, (group_id, member))
+        return self.cursor.lastrowid # ACÁ CREO QUE FUNCIONA PARA EL SEGUNDO O TERCER RETURN POR SI SE EJECTUA EL 3º O NO
 
-    # Query to delete a user from a group
-    def deleteUserFromGroup(self, group_id, user_id):
-        # Comprobamos si el usuario está en el grupo
+    # Query to add a user to a group (3g)
+    # Se hace INSERT en group_members, no UPDATE.
+    # POR AHORA TODOS TIENEN LA OPCION DE INTENTAR METER A ALGUIEN EN EL GRP Y SI NO SON ADMIN TIRA ERROR 
+    # PERO EVENTUALMENTE NO TENDRIAMOS QUE MOSTRAR LA OPCIÓN EN FRONT-END A LOS QUE NO SEAN ADMIN
+    # Y PODRIAMOS QUITAR LA COMPROBACIÓN DE PERMISOS
+    def addUserToGroup(self, group_id, target_id, perpetrator_id): 
+        # Comprobamos si el user es admin
         sql = """
-        SELECT user_id
+        SELECT is_admin
         FROM group_members
         WHERE group_id = %s
         AND user_id = %s
         """
-        self.cursor.execute(sql, (group_id, user_id))
+        self.cursor.execute(sql, (group_id, perpetrator_id))
         result = self.cursor.fetchone()
-
-        # Si NO existe, "User not in group"
-        if not result:
-            return "User not in group"
+        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+            return "User has no permissions"
         else:
-            # Lo eliminamos
+            # Comprobamos si ya existe ese user en ese group
             sql = """
-            DELETE FROM group_members
+            SELECT user_id
+            FROM group_members
             WHERE group_id = %s
             AND user_id = %s
             """
-            self.cursor.execute(sql, (group_id, user_id))
+            self.cursor.execute(sql, (group_id, target_id))
+            result = self.cursor.fetchone()
+
+            if result:
+                return "User already in group"
+            else:
+                # Insertamos el registro
+                sql = """
+                INSERT INTO group_members (group_id, user_id)
+                VALUES (%s, %s)
+                """
+                self.cursor.execute(sql, (group_id, target_id))
+                return self.cursor.rowcount
+
+
+    # Query to delete a user from a group (3g)
+    def deleteUserFromGroup(self, group_id, target_id, perpetrator_id):
+        # Comprobamos si el user es admin
+        sql = """
+        SELECT is_admin
+        FROM group_members
+        WHERE group_id = %s
+        AND user_id = %s
+        """
+        self.cursor.execute(sql, (group_id, perpetrator_id))
+        result = self.cursor.fetchone()
+        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+            return "User has no permissions"
+        else:
+            # Comprobamos si el usuario está en el grupo
+            sql = """
+            SELECT user_id
+            FROM group_members
+            WHERE group_id = %s
+            AND user_id = %s
+            """
+            self.cursor.execute(sql, (group_id, target_id))
+            result = self.cursor.fetchone()
+
+            # Si NO existe, "User not in group"
+            if not result:
+                return "User not in group"
+            else:
+                # Lo eliminamos
+                sql = """
+                DELETE FROM group_members
+                WHERE group_id = %s
+                AND user_id = %s
+                """
+                self.cursor.execute(sql, (group_id, target_id))
+                return self.cursor.rowcount
+
+    # Query to change group admin (3g)
+    # En la nueva tabla se guarda el 'creator_id' como "dueño" del grupo.
+    # Si necesitaras un sistema multi-admin, deberías actualizar group_members (is_admin).
+    def changeAdmin(self, group_id, target_id, perpetrator_id):
+        sql = """
+        SELECT is_admin
+        FROM group_members
+        WHERE group_id = %s
+        AND user_id = %s
+        """
+        self.cursor.execute(sql, (group_id, perpetrator_id))
+        result = self.cursor.fetchone()
+        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+            return "User has no permissions"
+        else:
+            sql = """
+                UPDATE groups
+                SET creator_id = %s
+                WHERE group_id = %s
+                """
+            self.cursor.execute(sql, ( target_id, group_id))
             return self.cursor.rowcount
 
+    # Query to change group name (4g)
+    def changeName(self, group_id, new_name, perpetrator_id):
+        sql = """
+        SELECT is_admin
+        FROM group_members
+        WHERE group_id = %s
+        AND user_id = %s
+        """
+        self.cursor.execute(sql, (group_id, perpetrator_id))
+        result = self.cursor.fetchone()
+        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+            return "User has no permissions"
+        else:
+            sql = """
+            UPDATE groups
+            SET name = %s
+            WHERE group_id = %s
+            """
+            self.cursor.execute(sql, (new_name, group_id))
+            return self.cursor.rowcount
+    
+    # Query to leave a group
+    def leaveGroup(self, group_id, user_id): # ESTA PUEDE QUE VALGA PARA SACAR GENTE TMB
+        sql = """
+        DELETE FROM group_members
+        WHERE group_id = %s
+        AND user_id = %s
+        """
+        self.cursor.execute(sql, (group_id, user_id))
+        return self.cursor.rowcount
+
     # Query to delete a group
-    def deleteGroup(self, group_id):
+    def deleteGroup(self, group_id):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
         sql = """
         DELETE FROM groups
         WHERE group_id = %s
@@ -274,30 +383,8 @@ class Matias(object):
         self.cursor.execute(sql, (group_id,))
         return self.cursor.rowcount
 
-    # Query to change group name
-    def changeName(self, group_id, new_name):
-        sql = """
-        UPDATE groups
-        SET name = %s
-        WHERE group_id = %s
-        """
-        self.cursor.execute(sql, (new_name, group_id))
-        return self.cursor.rowcount
-
-    # Query to change group admin
-    # En la nueva tabla se guarda el 'creator_id' como "dueño" del grupo.
-    # Si necesitaras un sistema multi-admin, deberías actualizar group_members (is_admin).
-    def changeAdmin(self, group_id, new_admin_user_id):
-        sql = """
-        UPDATE groups
-        SET creator_id = %s
-        WHERE group_id = %s
-        """
-        self.cursor.execute(sql, (new_admin_user_id, group_id))
-        return self.cursor.rowcount
-
     # Query to change group description
-    def changeDescription(self, group_id, new_description):
+    def changeDescription(self, group_id, new_description):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
         sql = """
         UPDATE groups
         SET description = %s
