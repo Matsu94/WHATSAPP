@@ -26,7 +26,7 @@ export async function fetchToken(username, password) {
     }
 }
 
-
+//CARGAR USUARIOS PARA EL LISTADO
 export async function fetchUsers() {
     try {
         const response = await fetch(`${URL}/users`, {
@@ -43,5 +43,32 @@ export async function fetchUsers() {
         // Esto será un array de objetos: [{ user_id, username, password }, ...]
     } catch (error) {
         throw error; // Relanzamos el error para manejarlo fuera
+    }
+}
+
+//Para cargar los mensajes
+export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
+    try {
+        const isGroupParam = isGroup ? 'true' : 'false';
+
+        // Aquí obtienes el token del localStorage
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?limit=${limit}&offset=${offset}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Si tu endpoint requiere Bearer token:
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener mensajes: ${response.status}`);
+        }
+        return await response.json();
+
+    } catch (error) {
+        throw error;
     }
 }

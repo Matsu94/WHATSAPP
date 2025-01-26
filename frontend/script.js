@@ -1,104 +1,42 @@
-/******************************************************
- * Datos de prueba
- ******************************************************/
-/*
-const mockChats = [
-  {
-    id: 1,
-    name: "Juan Pérez",
-    isGroup: false,
-    messages: [
-      { sender: "Juan", content: "Hola, ¿cómo estás?", date: "10:30 AM" },
-      { sender: "Yo", content: "Todo bien, ¿y tú?", date: "10:31 AM" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Familia",
-    isGroup: true,
-    messages: [
-      { sender: "Mamá", content: "No olvides la cena a las 20h", date: "09:00 AM" },
-      { sender: "Yo", content: "Claro, estaré puntual", date: "09:15 AM" },
-    ],
-  },
-  {
-    id: 3,
-    name: "María Delgado",
-    isGroup: false,
-    messages: [
-      { sender: "María", content: "¿Viste la peli nueva?", date: "11:00 AM" },
-      { sender: "Yo", content: "Todavía no, ¿la recomiendas?", date: "11:02 AM" },
-    ],
-  },
-];
-*/
-/******************************************************
- * Renderizar la lista de chats en el panel izquierdo
- ******************************************************/
-import { fetchUsers } from './assets/fetching.js'; // Ajusta la ruta si está en otra carpeta
+import { fetchUsers, fetchMessages } from './assets/fetching.js';
 
-// Función para renderizar en el DOM la lista de usuarios
+// 1) Renderizar la lista de usuarios (panel izquierdo)
 function renderUserList(users) {
   const userListEl = document.getElementById('chatList');
-  // Asumiendo que tienes <div id="userList"> en tu HTML
   if (!userListEl) return;
 
-  // Limpia contenido previo
   userListEl.innerHTML = '';
 
-  // Itera cada usuario y crea un elemento en la UI
   users.forEach(user => {
-    // Por ejemplo, mostrará "ID: 0 - Username: user1"
     const userItem = document.createElement('div');
-    userItem.className =  "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)]";
-    userItem.innerText =`${user.username}`;
+    userItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)]";
+    userItem.innerText = user.username;
+
+    // Al hacer clic => abrimos chat con user_id (isGroup=false)
+    userItem.addEventListener("click", () => {
+      openChat(user.user_id, false, user.username);
+    });
+
     userListEl.appendChild(userItem);
   });
 }
 
-/*
-function renderChatList(chats) {
-  const chatListEl = document.getElementById("chatList");
-  chatListEl.innerHTML = "";
-
-  chats.forEach((chat) => {
-    const chatItem = document.createElement("div");
-    chatItem.className =
-      "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)]";
-    chatItem.innerText = chat.name;
-
-    // Al hacer clic, abrimos la ventana de chat
-    chatItem.addEventListener("click", () => {
-      openChat(chat.id);
-    });
-
-    chatListEl.appendChild(chatItem);
-  });
-}*/
-/******************************************************
- * Abrir una conversación
- ******************************************************/
-function openChat(chatId) {
-  const chat = mockChats.find((c) => c.id === chatId);
-  if (!chat) return;
-
+// 2) Abrir chat en la sección derecha
+function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
+  if (!chatWindow) return;
 
-  // Generamos el contenido de la ventana de chat
   chatWindow.innerHTML = `
     <div class="flex flex-col w-full h-full">
-      <!-- Encabezado con nombre del chat -->
       <div class="p-4 border-b border-[var(--color-border)] flex items-center bg-[var(--color-user)]">
         <h2 class="text-lg font-bold flex-1 text-[var(--color-headers)]">
-          ${chat.name}${chat.isGroup ? " (Grupo)" : ""}
+          ${senderName} ${isGroup ? "(Grupo)" : ""}
         </h2>
       </div>
 
-      <!-- Contenedor de mensajes -->
       <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-[var(--color-base)] flex flex-col">
       </div>
 
-      <!-- Zona de enviar mensaje -->
       <div class="p-3 border-t border-[var(--color-border)] flex items-center bg-[var(--color-user)]">
         <input
           type="text"
@@ -120,75 +58,76 @@ function openChat(chatId) {
     </div>
   `;
 
-  // Renderizamos los mensajes del chat
-  renderChatMessages(chat);
+  // Cargar y mostrar los mensajes
+  loadMessages(senderId, isGroup);
 
   // Listeners
   const sendBtn = document.getElementById("sendMessageBtn");
   const input = document.getElementById("newMessageInput");
 
-  // Al pulsar el botón "Enviar"
   sendBtn.addEventListener("click", () => {
-    sendMessage(chatId);
+    sendMessage(senderId, isGroup);
   });
 
-  // Al pulsar Enter en el input
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      sendMessage(chatId);
+      sendMessage(senderId, isGroup);
     } else if (e.key === "Escape") {
       closeChatWindow();
     }
   });
 
-  // Foco en el input inmediatamente
   input.focus();
 }
 
-/******************************************************
- * Renderizar los mensajes en el contenedor
- ******************************************************/
-function renderChatMessages(chat) {
+// 3) loadMessages llama a fetchMessages y luego renderChatMessages
+async function loadMessages(senderId, isGroup) {
+  try {
+    const messages = await fetchMessages(senderId, isGroup);
+    console.log("Mensajes recibidos:", messages);
+
+    // Leer currentUserId del localStorage:
+    // Ajusta si guardaste un string, conviértelo a número:
+    const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
+
+    renderChatMessages(messages, currentUserId);
+  } catch (error) {
+    console.error("Error al cargar mensajes:", error);
+  }
+}
+
+// 4) renderChatMessages: pinta las burbujas. 
+function renderChatMessages(messages, currentUserId) {
   const container = document.getElementById("messagesContainer");
+  if (!container) return;
+
   container.innerHTML = "";
 
-  chat.messages.forEach((msg) => {
-    const isMine = msg.sender === "Yo";
+  messages.forEach((msg) => {
+    const currentUsername = localStorage.getItem('username') || "";
+    const isMine = (msg.sender_name === currentUsername);
+    console.log("Comparando msg.sender_id:", msg.sender_id, "con currentUserId:", currentUserId);
 
-    // Contenedor para alinear a izq o der
     const msgWrapper = document.createElement("div");
-    msgWrapper.classList.add("mb-2", "flex");
+    msgWrapper.classList.add("mb-2", "flex", isMine ? "justify-end" : "justify-start");
 
-    // Si es mío -> justify-end (burbujas a la derecha)
-    // Si es del otro -> justify-start
-    if (isMine) {
-      msgWrapper.classList.add("justify-end");
-    } else {
-      msgWrapper.classList.add("justify-start");
-    }
-
-    // Burbujas
     const msgBubble = document.createElement("div");
     msgBubble.classList.add(
       "p-2",
       "rounded",
-      "max-w-xs", // ancho máximo
-      "min-w-[10rem]", // ancho mínimo (~160px)
+      "max-w-xs",
+      "min-w-[10rem]",
       "shadow-sm",
       "break-words",
-      "text-[var(--color-text)]" // para que el texto adopte el color de var(--color-text)
+      "text-[var(--color-text)]",
+      isMine ? "bg-[var(--color-other)]" : "bg-[var(--color-user)]"
     );
 
-    // Color del fondo según sea mío u otro
-    if (isMine) {
-      msgBubble.classList.add("bg-[var(--color-other)]");
-    } else {
-      msgBubble.classList.add("bg-[var(--color-user)]");
-    }
+    // Si es mi mensaje => "Yo", si no => msg.sender_name
+    const senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
 
-    // Contenido
     msgBubble.innerHTML = `
-      <div class="font-semibold mb-1">${msg.sender}</div>
+      <div class="font-semibold mb-1">${senderDisplay}</div>
       <div>${msg.content}</div>
       <div class="text-xs text-gray-700 mt-1">${msg.date}</div>
     `;
@@ -197,41 +136,31 @@ function renderChatMessages(chat) {
     container.appendChild(msgWrapper);
   });
 
-  // Opcional: Scroll al final de los mensajes
   container.scrollTop = container.scrollHeight;
 }
 
-/******************************************************
- * Enviar un nuevo mensaje
- ******************************************************/
-function sendMessage(chatId) {
-  const chat = mockChats.find((c) => c.id === chatId);
-  if (!chat) return;
-
+// 5) sendMessage simulado
+function sendMessage(senderId, isGroup) {
   const input = document.getElementById("newMessageInput");
+  if (!input) return;
+
   const text = input.value.trim();
   if (!text) return;
 
-  // Añadimos un nuevo mensaje al array (asumiendo que el usuario logueado es "Yo")
-  const newMsg = {
-    sender: "Yo",
-    content: text,
-    date: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-  };
-  chat.messages.push(newMsg);
+  // Tomar tu user_id del localStorage
+  const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
 
-  // Volvemos a mostrar los mensajes
-  renderChatMessages(chat);
+  // Aquí harías el fetch POST a /sendMessage con {Sender: currentUserId, content, etc.}
+  console.log("POST a /sendMessage. Mensaje:", text, " Emisor:", currentUserId, " Receptor:", senderId, " isGroup:", isGroup);
 
-  // Limpiar el input
+  // Limpia el campo
   input.value = "";
 }
 
-/******************************************************
- * Cerrar la ventana de chat (ESC)
- ******************************************************/
+// 6) Cerrar chat
 function closeChatWindow() {
   const chatWindow = document.getElementById("chatWindow");
+  if (!chatWindow) return;
   chatWindow.innerHTML = `
     <p class="text-xl text-center px-4">
       Pulsa en una conversación para ver los mensajes
@@ -239,44 +168,42 @@ function closeChatWindow() {
   `;
 }
 
-/******************************************************
- * Función para buscar chats
- ******************************************************/
-function searchChats(query) {
+// 7) Búsqueda en local (si tuvieras un array de users en memoria)
+function searchUsers(users, query) {
   const lowerQuery = query.toLowerCase();
-  return mockChats.filter((chat) =>
-    chat.name.toLowerCase().includes(lowerQuery)
+  return users.filter(u => 
+    u.username.toLowerCase().includes(lowerQuery)
   );
 }
 
-/******************************************************
- * Inicialización
- ******************************************************/
+// 8) Inicialización
 window.addEventListener("DOMContentLoaded", () => {
-  // Pintamos la lista de chats
   async function init() {
     try {
-      const users = await fetchUsers(); 
+      const users = await fetchUsers();
       console.log('Usuarios recibidos:', users);
-      // Por ejemplo: [ {user_id:0, username:"user1", ...}, { ... }, ... ]
-  
       renderUserList(users);
+
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          const filtered = searchUsers(users, e.target.value);
+          renderUserList(filtered);
+        });
+      }
+
+      const createGroupBtn = document.getElementById("createGroupBtn");
+      if (createGroupBtn) {
+        createGroupBtn.addEventListener("click", () => {
+          alert("Aquí abrirías un formulario para crear un nuevo grupo.");
+        });
+      }
+
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
-      // Podrías mostrar un mensaje de error en la interfaz
+      // Manejo de error si deseas
     }
   }
-  init();
-  // Búsqueda en la barra
-  const searchInput = document.getElementById("searchInput");
-  searchInput.addEventListener("input", (e) => {
-    const filtered = searchChats(e.target.value);
-    renderUserList(filtered);
-  });
 
-  // Botón "Crear grupo" (sólo muestra un alert, a modo de ejemplo)
-  const createGroupBtn = document.getElementById("createGroupBtn");
-  createGroupBtn.addEventListener("click", () => {
-    alert("Aquí abrirías un formulario para crear un nuevo grupo.");
-  });
+  init(); 
 });
