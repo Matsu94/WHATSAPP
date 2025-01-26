@@ -57,10 +57,17 @@ def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_cur
     return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
 
 # Endpoint to get all messages from a chat (2m) (3m)
+@app.get("/receive_messages/{sender_id}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
+def receive_messages(isGroup = bool, sender_id = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
+    receiver_id =  receiver['user_id'];
+    messages_ids = db.getMessagesChat(limit=limit, offset=offset, sender_id=sender_id, receiver_id=receiver_id, isGroup=isGroup) # RECIEVER.USER_ID
+    return messages_ids;
+""" 
 @app.get("/receive_messages/{sender}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
 def receive_messages(isGroup = bool, sender = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
     messages_ids = db.getMessagesChat(limit=limit, offset=offset, sender=sender, receiver=receiver, isGroup=isGroup) # RECIEVER.USER_ID
     return RedirectResponse(url="/change_state/{3}", messages_ids = messages_ids, status_code=303)
+"""
 
 # Endpoint to change the state of a message (3m)
 @app.put("/change_state/{state_id}")
@@ -151,4 +158,5 @@ async def login(user: User, db: Matias = Depends(get_db)):
     access_token = create_access_token(
         data={"username": authenticated_user["username"], "user_id": authenticated_user["user_id"]}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": authenticated_user["user_id"]}
+

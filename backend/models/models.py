@@ -11,20 +11,21 @@ class User(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_id: int 
     
 # Modelo de mensaje
 # ERAN 5 PROPIEDADES, NO RECUERDO LAS ULTIMAS 2
 class Message(BaseModel):
     Message_ID: Optional[int] = None # ESTA NO SE SI ES NECESARIO
     Content: str
-    Date: datetime = datetime.now() # Fecha de envío
+    Date: Optional[datetime] = None # Fecha de envío
     # EL ESTADO DE LOS MSJS LO PODEMOS PONER EN PLAN BOOLEANDO/ENUM DEL 0 AL 4, SIN ENVIAR, ENVIADO, RECIBIDO Y LEIDO 
     # SI TENEMOS "SIN ENVIAR" TENDRÍAMOS QUE TENER UN ALMACENAMIENTO LOCAL O LA OPCION ES QUE NO HAYA SIN ENVIAR Y 
     # EL MSJ DESAPAREZCA SI EL QUE LO ENVIA NO TIENE CONX
     Status: int = 1  # Foreign key, required
     Sender: str # Foreign key, required
     Receiver: str # Foreign key, required
-    isGroup: bool = False # Si es un mensaje de grupo o no
+    isGroup: bool # Si es un mensaje de grupo o no
 
     @field_validator("Content")
     def validate_content(cls, value):

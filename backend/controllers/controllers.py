@@ -81,24 +81,31 @@ class Matias(object):
     # Se asume que 'message' es un objeto que contiene:
     # message.Content, message.Date (opcional), message.Status, message.Sender, message.Receiver, message.IsGroup
     def sendMessage(self, message):
-        # La columna 'date' puede es DEFAULT CURRENT_TIMESTAMP,
-        # pero si quieres pasar tu propia fecha/hora, inclúyela.
         sql = """
-        INSERT INTO messages (content, date, sender_id, receiver_id, is_group, status)
-        VALUES (%s, %s, %s, %s, %s, %s) RETURNING message_id  
-        """ # TODAS LAS QUERIES DE UN ELEMENTO CON FECHA DE CREACIÓN PUEDEN IR SIN ESA VARIABLE PQ ESTÁ PUESTA EN LA BD, MANDAR NONE TMB VALE
+            INSERT INTO messages (content, date, sender_id, receiver_id, is_group, status)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """  
+        # Omitimos el RETURNING message_id porque MySQL/MariaDB no lo soporta.
+    
         self.cursor.execute(sql, (
             message.Content,
-            message.Date,         # o bien podrías omitir la columna y usar la default
-            message.Sender,       # sender_id
-            message.Receiver,     # receiver_id (usuario o grupo)
-            message.IsGroup,      # boolean: indica si receiver_id corresponde a un grupo
-            message.Status        # estado inicial (1=Enviado, 2=Recibido, 3=Leído)
+            message.Date,         
+            message.Sender,       
+            message.Receiver,     
+            message.isGroup,     
+            message.Status        
         ))
-        res1 = self.cursor.fetchone()
-        if message.IsGroup:
+    
+        # Tomar el id autoincrement recién insertado
+        last_id = self.cursor.lastrowid
+
+        # Si es un mensaje de grupo, insertamos en group_message_status
+        if message.isGroup:
+            # Ejemplo de tu lógica
             sql = """
-            SELECT user_id FROM group_members WHERE group_id = %s
+            SELECT user_id 
+            FROM group_members 
+            WHERE group_id = %s
             """
             self.cursor.execute(sql, (message.Receiver,))
             res2 = self.cursor.fetchall()
@@ -107,8 +114,10 @@ class Matias(object):
                 INSERT INTO group_message_status (message_id, user_id, status)
                 VALUES (%s, %s, %s)
                 """
-                self.cursor.execute(sql, (res1['message_id'], user['user_id'], 1))
-            return self.cursor.lastrowid
+                self.cursor.execute(sql, (last_id, user['user_id'], 1))
+    
+        # Devuelve el último ID insertado
+        return last_id
 
     # Query to check the number of unread (o sin leer) messages para un usuario (3m)
     # Se asume status = 1 (enviado) como "pendiente de leer"
@@ -170,14 +179,21 @@ class Matias(object):
     # He añadido receiver como parámetro para respetar la sintaxis de la SQL original.
     def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
         sql = """
-        SELECT *
-        FROM messages
-        WHERE ((sender_id = %s
-        AND receiver_id = %s) OR
-        (sender_id = %s
-        AND receiver_id = %s))
-        AND is_group = %s
-        ORDER BY date DESC
+        SELECT 
+            m.*, 
+            u.username AS sender_name
+        FROM 
+            messages m
+        LEFT JOIN 
+            users u
+        ON 
+            m.sender_id = u.user_id
+        WHERE 
+            ((m.sender_id = %s AND m.receiver_id = %s) OR
+            (m.sender_id = %s AND m.receiver_id = %s))
+            AND m.is_group = %s
+        ORDER BY 
+            m.date DESC
         LIMIT %s
         OFFSET %s
         """
