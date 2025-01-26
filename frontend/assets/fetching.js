@@ -25,3 +25,23 @@ export async function fetchToken(username, password) {
         document.getElementById('passwordError').textContent = 'Error en el inicio de sesión.';
     }
 }
+
+
+export async function fetchUsers() {
+    try {
+        const response = await fetch(`${URL}/users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+                // Si no hay token requerido, no hace falta 'Authorization'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Error al obtener usuarios: ${response.status}`);
+        }
+        return await response.json(); 
+        // Esto será un array de objetos: [{ user_id, username, password }, ...]
+    } catch (error) {
+        throw error; // Relanzamos el error para manejarlo fuera
+    }
+}
