@@ -19,6 +19,7 @@ export async function fetchToken(username, password) {
         console.log('Token:', data.access_token);
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('username', username);
+        localStorage.setItem('user_id', data.user_id);
         window.location.href = '../index.html';
     } catch (error) {
         console.error('Error:', error);
@@ -68,6 +69,37 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         }
         return await response.json();
 
+    } catch (error) {
+        throw error;
+    }
+}
+// mandar mensajes
+/**
+ * Envía un mensaje usando el endpoint /sendMessage (POST).
+ * @param {Object} messageObj - Debe tener { Content, Date, Sender, Receiver, IsGroup, Status }
+ * @returns Devuelve el ID del mensaje (lastrowid) según tu backend
+ */
+export async function postMessage(messageObj) {
+    try {
+        // Si requieres token, obténlo:
+        // const token = localStorage.getItem('token');
+
+        const response = await fetch(`${URL}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(messageObj)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error al enviar mensaje: ${response.status}`);
+        }
+
+        // Tu backend ahora devuelve un JSON con el ID del mensaje insertado, p. ej. { "message_id": 12 }
+        const data = await response.json();
+        return data; // p. ej. { "message_id": 12 }
     } catch (error) {
         throw error;
     }

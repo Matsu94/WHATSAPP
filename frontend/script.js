@@ -1,4 +1,4 @@
-import { fetchUsers, fetchMessages } from './assets/fetching.js';
+import { fetchUsers, fetchMessages, postMessage, fetchToken } from './assets/fetching.js';
 
 // 1) Renderizar la lista de usuarios (panel izquierdo)
 function renderUserList(users) {
@@ -87,7 +87,6 @@ async function loadMessages(senderId, isGroup) {
     console.log("Mensajes recibidos:", messages);
 
     // Leer currentUserId del localStorage:
-    // Ajusta si guardaste un string, conviértelo a número:
     const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
 
     renderChatMessages(messages, currentUserId);
@@ -96,16 +95,22 @@ async function loadMessages(senderId, isGroup) {
   }
 }
 
-// 4) renderChatMessages: pinta las burbujas. 
+// 4) renderChatMessages: pinta las burbujas con los más antiguos arriba
 function renderChatMessages(messages, currentUserId) {
   const container = document.getElementById("messagesContainer");
   if (!container) return;
 
   container.innerHTML = "";
 
+  // --- Ordenar de más antiguo a más nuevo según msg.date ---
+  // Asume que msg.date es un string parseable (ej. "2023-05-20T10:00:00")
+  messages.sort((a, b) => new Date(a.date) - new Date(b.date));
+
   messages.forEach((msg) => {
+    // Comparamos con el username (o ID), dependiendo de tu lógica
     const currentUsername = localStorage.getItem('username') || "";
     const isMine = (msg.sender_name === currentUsername);
+
     console.log("Comparando msg.sender_id:", msg.sender_id, "con currentUserId:", currentUserId);
 
     const msgWrapper = document.createElement("div");
@@ -136,25 +141,41 @@ function renderChatMessages(messages, currentUserId) {
     container.appendChild(msgWrapper);
   });
 
+  // Al final, movemos el scroll al fondo para ver el último mensaje
   container.scrollTop = container.scrollHeight;
 }
 
-// 5) sendMessage simulado
-function sendMessage(senderId, isGroup) {
+// 5) sendMessage con POST real a /sendMessage y luego refrescamos
+async function sendMessage(senderId, isGroup) {
+  console.log("IsGroup: ", isGroup);
+  console.log("SenderID: ", senderId);
   const input = document.getElementById("newMessageInput");
   if (!input) return;
 
   const text = input.value.trim();
   if (!text) return;
 
-  // Tomar tu user_id del localStorage
+  console.log("Enviando mensaje:", text);
   const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
+  console.log("CurrentUserID:", currentUserId);
+  const messageObj = {
+    Content: text, 
+    Date: null,
+    Status: 1,
+    Sender: currentUserId.toString(),
+    Receiver: senderId.toString(),
+    isGroup: isGroup
+  };
 
-  // Aquí harías el fetch POST a /sendMessage con {Sender: currentUserId, content, etc.}
-  console.log("POST a /sendMessage. Mensaje:", text, " Emisor:", currentUserId, " Receptor:", senderId, " isGroup:", isGroup);
+  try {
+    const responseData = await postMessage(messageObj);  // <-- fetch POST
+    console.log("Mensaje enviado. Respuesta:", responseData);
 
-  // Limpia el campo
-  input.value = "";
+    input.value = "";
+    loadMessages(senderId, isGroup);
+  } catch (error) {
+    console.error("Error al enviar mensaje:", error);
+  }
 }
 
 // 6) Cerrar chat
