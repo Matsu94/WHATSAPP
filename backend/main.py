@@ -122,7 +122,7 @@ def delete_user_from_group(group_id: int, member_id: int, db: Matias = Depends(g
 # Endpoint to change group admin (3g)
 @app.put("/change_admin/{group_id}/{member_id}")
 def change_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
-    return db.changeAdmin(group_id, member_id, admin_id)
+    return db.addAdmin(group_id, member_id, admin_id)
 
 # Endpoint to change group name (4g)
 @app.put("/change_name/{group_id}/{name}")
