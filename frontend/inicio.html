@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Archivo CSS con estilos propios -->
-    <!-- Ajusta la ruta si tu 'styles.css' está realmente en ../login/styles.css -->
     <link rel="stylesheet" href="login/styles.css" />
   </head>
 
@@ -48,6 +47,7 @@
         <!-- Cabecera con "Chats" y botón "Crear grupo" -->
         <div class="p-4 border-b border-[var(--color-border)] flex items-center justify-between bg-[var(--color-user)]">
           <h2 class="text-lg font-bold text-[var(--color-headers)]">Chats</h2>
+          <button id="logOut">Cerrar Sesión</button>
           <button
             id="createGroupBtn"
             class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm"
@@ -82,23 +82,10 @@
     </div>
 
     <!-- Cargar la lógica principal con type="module" -->
-    <script type="module" src="script.js" defer></script>
+    <script type="module" src="utils/chatFunctions.js" defer></script>
+    <script src="assets/logout.js" type="module" defer></script>
 
     <!-- Modo oscuro y/o iconos-->
     <script src="login/darkmode&icons.js" type="module" defer></script>
-
-    <!-- Script para togglear entre modo claro y oscuro (opcional si no lo tienes en el "darkmode&icons.js") -->
-<!--     <script>
-      const htmlEl = document.documentElement;
-      const themeCheckbox = document.getElementById("themeCheckbox");
-
-      themeCheckbox.addEventListener("change", () => {
-        if (themeCheckbox.checked) {
-          htmlEl.setAttribute("data-theme", "dark");
-        } else {
-          htmlEl.setAttribute("data-theme", "light");
-        }
-      });
-    </script> -->
   </body>
 </html>

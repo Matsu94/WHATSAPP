@@ -20,7 +20,7 @@ export async function fetchToken(username, password) {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('username', username);
         localStorage.setItem('user_id', data.user_id);
-        window.location.href = '../index.html';
+        window.location.href = '../inicio.html';
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('passwordError').textContent = 'Error en el inicio de sesión.';

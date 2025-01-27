@@ -1,4 +1,4 @@
-import { fetchUsers, fetchMessages, postMessage, fetchToken } from './assets/fetching.js';
+import { fetchUsers, fetchMessages, postMessage, fetchToken } from '../assets/fetching.js';
 
 // 1) Renderizar la lista de usuarios (panel izquierdo)
 function renderUserList(users) {
