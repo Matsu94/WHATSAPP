@@ -1,5 +1,6 @@
-import { fetchUsers, fetchMessages, postMessage, fetchToken } from '../assets/fetching.js';
-
+import { fetchUsers, fetchMessages, postMessage, createGroup } from '../assets/fetching.js';
+import { currentUserId } from '../constants/const.js';
+import { handleCreateGroupFormSubmit } from '../login/validations/groupValidations.js';
 // 1) Renderizar la lista de usuarios (panel izquierdo)
 function renderUserList(users) {
   const userListEl = document.getElementById('chatList');
@@ -20,7 +21,6 @@ function renderUserList(users) {
     userListEl.appendChild(userItem);
   });
 }
-
 // 2) Abrir chat en la sección derecha
 function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
@@ -85,8 +85,6 @@ async function loadMessages(senderId, isGroup) {
   try {
     const messages = await fetchMessages(senderId, isGroup);
 
-    // Leer currentUserId del localStorage:
-    const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
 
     renderChatMessages(messages, currentUserId);
   } catch (error) {
@@ -150,7 +148,6 @@ async function sendMessage(senderId, isGroup) {
   const text = input.value.trim();
   if (!text) return;
 
-  const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
   const messageObj = {
     Content: text, 
     Date: null,
@@ -189,6 +186,116 @@ function searchUsers(users, query) {
   );
 }
 
+/**
+ * Renderiza el formulario para crear un nuevo grupo en el chatWindow.
+ */
+function openCreateGroupForm() {
+  const chatWindow = document.getElementById("chatWindow");
+  if (!chatWindow) return;
+
+  // Obtener la lista completa de usuarios para seleccionar miembros
+  fetchUsers()
+    .then(users => {
+      // Excluir al usuario actual de la lista de miembros (asumiendo que no quieres que se autoagregue)
+      
+      console.log(currentUserId);
+      const availableMembers = users.filter(user => user.user_id !== currentUserId);
+
+      // Crear el HTML del formulario
+      chatWindow.innerHTML = `
+       <div class="flex flex-col w-full h-full p-6 bg-[var(--color-background)] shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)]">Crear Nuevo Grupo</h2>
+      <form id="createGroupForm" class="flex flex-col space-y-6">
+        <!-- Input para el nombre del grupo -->
+        <div>
+      <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Nombre del Grupo</label>
+      <input
+        type="text"
+        id="groupNameInput"
+        class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+        placeholder="Escribe el nombre del grupo"
+        required
+      />
+        </div>
+        <!-- Textarea para la descripción del grupo -->
+        <div>
+      <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Descripción del Grupo</label>
+      <textarea
+        id="groupDescriptionInput"
+        class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+        placeholder="Agrega una breve descripción del grupo"
+        rows="4"
+      ></textarea>
+        </div>
+        <!-- Checkbox para seleccionar usuarios -->
+        <div>
+      <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
+      <div class="grid grid-cols-2 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg">
+        ${availableMembers
+          .map(
+        (user) => `
+          <div class="flex items-center space-x-2">
+            <input 
+          type="checkbox" 
+          id="user-${user.user_id}" 
+          value="${user.user_id}" 
+          class="form-checkbox text-[var(--color-primary)] focus:ring-[var(--color-primary)] rounded">
+            <label for="user-${user.user_id}" class="text-[var(--color-text)]">${user.username}</label>
+          </div>
+        `
+          )
+          .join('')}
+      </div>
+        </div>
+        <!-- Botones de acción -->
+        <div class="flex justify-between space-x-4">
+      <button
+        type="submit"
+        id="submitCreateGroup"
+        class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm">
+        Crear Grupo
+      </button>
+      <button
+        type="button"
+        id="cancelCreateGroupBtn"
+        class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm"
+      >
+        Cancelar
+      </button>
+        </div>
+        <!-- Mensaje de error -->
+        <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
+      </form>
+    </div>
+      `;
+
+      // Agregar listeners al formulario y al botón de cancelar
+      const createGroupForm = document.getElementById("createGroupForm");
+      const cancelCreateGroupBtn = document.getElementById("cancelCreateGroupBtn");
+
+      cancelCreateGroupBtn.addEventListener("click", () => {
+        closeChatWindow();
+      });
+
+      createGroupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await handleCreateGroupFormSubmit();
+      });
+    })
+    .catch(error => {
+      console.error("Error al obtener usuarios para crear grupo:", error);
+      chatWindow.innerHTML = `
+        <p class="text-red-500">Error al cargar usuarios para crear el grupo.</p>
+      `;
+    });
+}
+
+/**
+ * Maneja el envío del formulario de creación de grupo.
+ */
+
+
+
 // 8) Inicialización
 window.addEventListener("DOMContentLoaded", () => {
   async function init() {
@@ -205,11 +312,11 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       const createGroupBtn = document.getElementById("createGroupBtn");
-      if (createGroupBtn) {
-        createGroupBtn.addEventListener("click", () => {
-          alert("Aquí abrirías un formulario para crear un nuevo grupo.");
-        });
-      }
+if (createGroupBtn) {
+  createGroupBtn.addEventListener("click", () => {
+    openCreateGroupForm();
+  });
+}
 
     } catch (error) {
       console.error(getUsersError, error);
@@ -219,3 +326,4 @@ window.addEventListener("DOMContentLoaded", () => {
 
   init(); 
 });
+

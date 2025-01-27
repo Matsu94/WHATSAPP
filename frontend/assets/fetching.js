@@ -73,11 +73,6 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
     }
 }
 // mandar mensajes
-/**
- * Envía un mensaje usando el endpoint /sendMessage (POST).
- * @param {Object} messageObj - Debe tener { Content, Date, Sender, Receiver, IsGroup, Status }
- * @returns Devuelve el ID del mensaje (lastrowid) según tu backend
- */
 export async function postMessage(messageObj) {
     try {
         // Si requieres token, obténlo:
@@ -99,6 +94,31 @@ export async function postMessage(messageObj) {
         // Tu backend ahora devuelve un JSON con el ID del mensaje insertado, p. ej. { "message_id": 12 }
         const data = await response.json();
         return data; // p. ej. { "message_id": 12 }
+    } catch (error) {
+        throw error;
+    }
+}
+// crear grupo
+export async function createGroup(groupObj) {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/create_group`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            },
+            body: JSON.stringify(groupObj)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error al crear grupo: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        return data; // { "group_id": 5 }
     } catch (error) {
         throw error;
     }
