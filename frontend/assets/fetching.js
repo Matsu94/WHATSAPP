@@ -12,18 +12,17 @@ export async function fetchToken(username, password) {
         });
 
         if (!response.ok) {
-            throw new Error('Error en la solicitud');
+            throw new Error(requestError);
         }
 
         const data = await response.json();
-        console.log('Token:', data.access_token);
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('username', username);
         localStorage.setItem('user_id', data.user_id);
         window.location.href = '../inicio.html';
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('passwordError').textContent = 'Error en el inicio de sesión.';
+        document.getElementById('passwordError').textContent = `${errorStartSession}`;
     }
 }
 
@@ -38,7 +37,7 @@ export async function fetchUsers() {
             }
         });
         if (!response.ok) {
-            throw new Error(`Error al obtener usuarios: ${response.status}`);
+            throw new Error(`${getUsersError}, ${response.status}`);
         }
         return await response.json(); 
         // Esto será un array de objetos: [{ user_id, username, password }, ...]
@@ -65,7 +64,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         });
 
         if (!response.ok) {
-            throw new Error(`Error al obtener mensajes: ${response.status}`);
+            throw new Error(`${getMessagesError}, ${response.status}`);
         }
         return await response.json();
 
@@ -94,7 +93,7 @@ export async function postMessage(messageObj) {
         });
 
         if (!response.ok) {
-            throw new Error(`Error al enviar mensaje: ${response.status}`);
+            throw new Error(`${sendMessagesError}, ${response.status}`);
         }
 
         // Tu backend ahora devuelve un JSON con el ID del mensaje insertado, p. ej. { "message_id": 12 }

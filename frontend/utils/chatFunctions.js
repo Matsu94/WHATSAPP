@@ -84,14 +84,13 @@ function openChat(senderId, isGroup, senderName) {
 async function loadMessages(senderId, isGroup) {
   try {
     const messages = await fetchMessages(senderId, isGroup);
-    console.log("Mensajes recibidos:", messages);
 
     // Leer currentUserId del localStorage:
     const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
 
     renderChatMessages(messages, currentUserId);
   } catch (error) {
-    console.error("Error al cargar mensajes:", error);
+    console.error(getMessagesError, error);
   }
 }
 
@@ -110,8 +109,6 @@ function renderChatMessages(messages, currentUserId) {
     // Comparamos con el username (o ID), dependiendo de tu lógica
     const currentUsername = localStorage.getItem('username') || "";
     const isMine = (msg.sender_name === currentUsername);
-
-    console.log("Comparando msg.sender_id:", msg.sender_id, "con currentUserId:", currentUserId);
 
     const msgWrapper = document.createElement("div");
     msgWrapper.classList.add("mb-2", "flex", isMine ? "justify-end" : "justify-start");
@@ -147,17 +144,13 @@ function renderChatMessages(messages, currentUserId) {
 
 // 5) sendMessage con POST real a /sendMessage y luego refrescamos
 async function sendMessage(senderId, isGroup) {
-  console.log("IsGroup: ", isGroup);
-  console.log("SenderID: ", senderId);
   const input = document.getElementById("newMessageInput");
   if (!input) return;
 
   const text = input.value.trim();
   if (!text) return;
 
-  console.log("Enviando mensaje:", text);
   const currentUserId = parseInt(localStorage.getItem('user_id'), 10) || 0;
-  console.log("CurrentUserID:", currentUserId);
   const messageObj = {
     Content: text, 
     Date: null,
@@ -169,12 +162,11 @@ async function sendMessage(senderId, isGroup) {
 
   try {
     const responseData = await postMessage(messageObj);  // <-- fetch POST
-    console.log("Mensaje enviado. Respuesta:", responseData);
 
     input.value = "";
     loadMessages(senderId, isGroup);
   } catch (error) {
-    console.error("Error al enviar mensaje:", error);
+    console.error(sendMessagesError, error);
   }
 }
 
@@ -202,7 +194,6 @@ window.addEventListener("DOMContentLoaded", () => {
   async function init() {
     try {
       const users = await fetchUsers();
-      console.log('Usuarios recibidos:', users);
       renderUserList(users);
 
       const searchInput = document.getElementById("searchInput");
@@ -221,7 +212,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
+      console.error(getUsersError, error);
       // Manejo de error si deseas
     }
   }

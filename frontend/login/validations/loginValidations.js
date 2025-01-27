@@ -5,7 +5,7 @@ function validarUsername(username) {
     const regex = /^[a-z]{3,}[0-9]*$/;
 
     if (!regex.test(username)) {
-        errores.push("El nombre de usuario debe tener al menos 3 letras, sin mayúsculas ni caracteres especiales, y los números deben estar al final.");
+        errores.push(`${validateUsernameError}`);
     }
 
     return errores;
@@ -15,7 +15,7 @@ function validarPassword(password) {
     const errores = [];
     
     if (password.length < 6) {
-        errores.push("La contraseña debe tener al menos 6 caracteres.");
+        errores.push(`${validatePasswordError}`);
     }
 
     return errores;
@@ -52,8 +52,7 @@ async function validarLogin(event) {
         try {
             await fetchToken(username, password);
         } catch (error) {
-            console.error("Error en fetchToken:", error);
-            document.getElementById('passwordError').textContent = 'Error al intentar iniciar sesión.';
+            document.getElementById('passwordError').textContent = `${loginError}`;
         }
     }
 }
