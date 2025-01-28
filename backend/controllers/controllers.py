@@ -8,7 +8,7 @@ class Matias(object):
             #host="192.168.193.133:3306",
             user="root",
             #user="matiasianbastero",
-            #password="49864854a",
+            #password="49864854A",
             db="matias",
             #db="damahe",
             charset="utf8mb4",
