@@ -1,0 +1,48 @@
+
+// renderChatMessages: pinta las burbujas con los más antiguos arriba
+export function renderChatMessages(messages) {
+  const container = document.getElementById("messagesContainer");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  // --- Ordenar de más antiguo a más nuevo según msg.date ---
+  // Asume que msg.date es un string parseable (ej. "2023-05-20T10:00:00")
+  messages.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  messages.forEach((msg) => {
+    // Comparamos con el username (o ID), dependiendo de tu lógica
+    const currentUsername = localStorage.getItem('username') || "";
+    const isMine = (msg.sender_name === currentUsername);
+
+    const msgWrapper = document.createElement("div");
+    msgWrapper.classList.add("mb-2", "flex", isMine ? "justify-end" : "justify-start");
+
+    const msgBubble = document.createElement("div");
+    msgBubble.classList.add(
+      "p-2",
+      "rounded",
+      "max-w-xs",
+      "min-w-[10rem]",
+      "shadow-sm",
+      "break-words",
+      "text-[var(--color-text)]",
+      isMine ? "bg-[var(--color-other)]" : "bg-[var(--color-user)]"
+    );
+
+    // Si es mi mensaje => "Yo", si no => msg.sender_name
+    const senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
+
+    msgBubble.innerHTML = `
+      <div class="font-semibold mb-1">${senderDisplay}</div>
+      <div>${msg.content}</div>
+      <div class="text-xs text-gray-700 mt-1">${msg.date}</div>
+    `;
+
+    msgWrapper.appendChild(msgBubble);
+    container.appendChild(msgWrapper);
+  });
+
+  // Al final, movemos el scroll al fondo para ver el último mensaje
+  container.scrollTop = container.scrollHeight;
+}
