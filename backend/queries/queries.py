@@ -200,5 +200,15 @@ changeGroupDescription = """
         SET description = %s
         WHERE group_id = %s
         """
-        
-        
+checkOtherGroupAdmin = """
+                SELECT is_admin
+                FROM group_members
+                WHERE group_id = %s
+                AND user_id != %s
+                """            
+checkOtherGroupMembers = """
+                SELECT user_id
+                FROM group_members
+                WHERE group_id = %s
+                AND user_id != %s
+                """
