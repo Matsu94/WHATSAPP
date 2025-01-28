@@ -21,17 +21,24 @@ class Matias(object):
         self.db.close()
     
     
-    def getAllMessages(self, user_id):
+    def getChats(self, user_id):
         # Fetch direct messages
-        sql_direct = messagesUsers
-        self.cursor.execute(sql_direct, (user_id,))
+        sql_direct = lastMessagesUsers
+        self.cursor.execute(sql_direct, (user_id,user_id))
         direct_messages = self.cursor.fetchall()
 
         # Fetch group messages
-        sql_group = messagesGroups
+        sql_group = lastMessagesGroups
         self.cursor.execute(sql_group, (user_id,))
         group_messages = self.cursor.fetchall()
 
+        if not direct_messages and not group_messages:
+            sql = getAllUsers
+            self.cursor.execute(sql)
+            return self.cursor.fetchall()
+
+        if not group_messages:
+            group_messages = []
         # Combine both results
         all_messages = direct_messages + group_messages
 
@@ -43,9 +50,9 @@ class Matias(object):
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
     
     # Query to get all users (1a)
-    def getUsers(self): # , user_id
+    def getUsers(self):
         sql = getAllUsers
-        self.cursor.execute(sql) # , (user_id,)
+        self.cursor.execute(sql)
         return self.cursor.fetchall()
     
     def checkUser(self, username):
@@ -269,9 +276,21 @@ class Matias(object):
             return self.cursor.rowcount
     
     # Query to leave a group (5g)
-    def leaveGroup(self, group_id, admin_id): 
-        sql = leaveGroup
+    def leaveGroup(self, group_id, admin_id):
+        sql = checkOtherGroupAdmin 
         self.cursor.execute(sql, (group_id, admin_id))
+        other_admins = self.cursor.rowcount
+        sql = checkOtherGroupMembers 
+        self.cursor.execute(sql, (group_id, admin_id))
+        other_users = self.cursor.rowcount
+        if other_users == 0:
+            sql = leaveGroup
+            self.cursor.execute(sql, (group_id, admin_id))
+            sql = deleteGroup
+            self.cursor.execute(sql, (group_id,))
+            return self.cursor.lastrowid  
+        elif other_admins == 0 & other_users > 0:
+            return "You are the only admin"
         return self.cursor.rowcount
 
     # Query to delete a group

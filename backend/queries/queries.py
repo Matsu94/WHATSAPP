@@ -1,18 +1,52 @@
-getAllUsers = """ SELECT * FROM users """ #  WHERE user_id != %s 
-messagesUsers = """ SELECT * 
-FROM messages 
-WHERE sender_id = %s 
-OR receiver_id = %s 
-ORDER BY date 
-DESC """
-messagesGroups = """ 
-        SELECT messages.* 
-        FROM messages 
-        INNER JOIN groups ON messages.receiver_id = groups.group_id
-        INNER JOIN group_members ON groups.group_id = group_members.group_id 
-        WHERE group_members.user_id = %s AND messages.is_group = TRUE 
-        ORDER BY date DESC 
+getAllUsers = """ SELECT * FROM users """
+
+lastMessagesUsers = """
+        SELECT 
+                m.*, 
+                CASE 
+                WHEN m.sender_id = %s THEN u_receiver.username 
+                ELSE u_sender.username 
+                END AS chat_name
+        FROM messages m
+        INNER JOIN (
+                SELECT 
+                LEAST(sender_id, receiver_id) AS user1, 
+                GREATEST(sender_id, receiver_id) AS user2, 
+                MAX(date) AS max_date
+                FROM messages
+                WHERE is_group = FALSE
+                GROUP BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id)
+        ) latest ON 
+                LEAST(m.sender_id, m.receiver_id) = latest.user1 AND 
+                GREATEST(m.sender_id, m.receiver_id) = latest.user2 AND 
+                m.date = latest.max_date
+        LEFT JOIN users u_sender ON m.sender_id = u_sender.user_id
+        LEFT JOIN users u_receiver ON m.receiver_id = u_receiver.user_id
+        WHERE %s IN (m.sender_id, m.receiver_id)
+        ORDER BY m.date DESC;
         """
+
+lastMessagesGroups = """
+        SELECT 
+                m.*, 
+                g.name AS chat_name
+        FROM messages m
+        INNER JOIN (
+                SELECT 
+                receiver_id AS group_id, 
+                MAX(date) AS max_date
+                FROM messages
+                WHERE is_group = TRUE
+                GROUP BY receiver_id
+        ) latest ON 
+                m.receiver_id = latest.group_id AND 
+                m.date = latest.max_date
+        INNER JOIN groups g ON m.receiver_id = g.group_id
+        INNER JOIN group_members gm ON gm.group_id = m.receiver_id
+        WHERE gm.user_id = %s
+        ORDER BY m.date DESC;
+        """
+
 checkUser = "SELECT * FROM users WHERE username = %s"
 sendMessage = """
             INSERT INTO messages (content, date, sender_id, receiver_id, is_group, status)
@@ -140,6 +174,18 @@ changeGroupName = """
             SET name = %s
             WHERE group_id = %s
             """
+checkOtherGroupAdmin = """
+                SELECT is_admin
+                FROM group_members
+                WHERE group_id = %s
+                AND user_id != %s
+                """            
+checkOtherGroupMembers = """
+                SELECT user_id
+                FROM group_members
+                WHERE group_id = %s
+                AND user_id != %s
+                """
 leaveGroup = """
         DELETE FROM group_members
         WHERE group_id = %s
@@ -154,3 +200,5 @@ changeGroupDescription = """
         SET description = %s
         WHERE group_id = %s
         """
+        
+        
