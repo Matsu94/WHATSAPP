@@ -1,7 +1,7 @@
 import { fetchMessages } from "../assets/fetching.js";
 import { renderChatMessages } from "./renderChatMessages.js";
 import { currentUserId } from "../constants/const.js";
-import { getMessagesError } from "../errors/errors.js";
+import { getMessagesError, reloadMessagesError } from "../errors/errors.js";
 
 // loadMessages llama a fetchMessages y luego renderChatMessages
 export async function loadMessages(senderId, isGroup) {
@@ -15,7 +15,7 @@ export async function loadMessages(senderId, isGroup) {
                 const updatedMessages = await fetchMessages(senderId, isGroup);
                 renderChatMessages(updatedMessages, currentUserId);
             } catch (intervalError) {
-                console.error("Error al actualizar mensajes:", intervalError);
+                console.error(`${reloadMessagesError}`, intervalError);
             }
         }, 3000);
     } catch (error) {
