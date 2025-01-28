@@ -4,13 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="localhost",
-            #host="192.168.193.133:3306",
-            user="root",
-            #user="matiasianbastero",
-            #password="49864854A",
-            db="matias",
-            #db="damahe",
+            #host="localhost",
+            host="192.168.193.133",
+            port=3306,
+            #user="root",
+            user="matiasianbastero",
+            password="49864854A",
+            #db="matias",
+            db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -268,10 +269,22 @@ class Matias(object):
             self.cursor.execute(sql, (new_name, group_id))
             return self.cursor.rowcount
     
-    # Query to leave a group (5g)
-    def leaveGroup(self, group_id, admin_id): 
-        sql = leaveGroup
+# Query to leave a group (5g)
+    def leaveGroup(self, group_id, admin_id):
+        sql = checkOtherGroupAdmin 
         self.cursor.execute(sql, (group_id, admin_id))
+        other_admins = self.cursor.rowcount
+        sql = checkOtherGroupMembers 
+        self.cursor.execute(sql, (group_id, admin_id))
+        other_users = self.cursor.rowcount
+        if other_users == 0:
+            sql = leaveGroup
+            self.cursor.execute(sql, (group_id, admin_id))
+            sql = deleteGroup
+            self.cursor.execute(sql, (group_id,))
+            return self.cursor.lastrowid  
+        elif other_admins == 0 & other_users > 0:
+            return "You are the only admin"
         return self.cursor.rowcount
 
     # Query to delete a group
