@@ -1,4 +1,4 @@
-getAllUsers = """ SELECT * FROM users """
+getAllUsers = """ SELECT * FROM users """ #  WHERE user_id != %s 
 messagesUsers = """ SELECT * 
 FROM messages 
 WHERE sender_id = %s 
@@ -45,6 +45,7 @@ notReceivedMessages = """
 checkMessageWithId = """
             SELECT * from messages
             WHERE message_id = %s
+            AND sender_id != %s
             """
 updateMEssageGroupStatus = """
                 UPDATE group_message_status

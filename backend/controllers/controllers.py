@@ -43,9 +43,9 @@ class Matias(object):
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
     
     # Query to get all users (1a)
-    def getUsers(self):
+    def getUsers(self): # , user_id
         sql = getAllUsers
-        self.cursor.execute(sql)
+        self.cursor.execute(sql) # , (user_id,)
         return self.cursor.fetchall()
     
     def checkUser(self, username):
@@ -116,19 +116,20 @@ class Matias(object):
     # Query to change the state (status) of a message (3m)
     # He añadido message_id para no actualizar todos los mensajes de la tabla
     # (la versión anterior no tenía WHERE).
-    def changeMessageState(self, messages_ids, new_status):
+    def changeMessageState(self, messages_ids, new_status, receiver_id):
         for message_id in messages_ids:
             sql = checkMessageWithId
-            self.cursor.execute(sql, (message_id,))
+            self.cursor.execute(sql, (message_id, receiver_id))
             result = self.cursor.fetchone()
-            if result['isGroup']:
+            if not result:
+                return 0
+            if result['is_group']:
                 sql = updateMEssageGroupStatus
                 self.cursor.execute(sql, (new_status, message_id))
-                return self.cursor.rowcount
             else:
                 sql = updateMessageStatus
                 self.cursor.execute(sql, (new_status, message_id))
-                return self.cursor.rowcount
+        return self.cursor.rowcount  # Return the total number of rows updated
 
     # Query to get all messages (o mensajes de un remitente a un destinatario) (2m)
     # Ajustado el orden de la cláusula WHERE vs LIMIT/OFFSET.

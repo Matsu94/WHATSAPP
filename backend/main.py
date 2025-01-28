@@ -31,8 +31,9 @@ def read_root():
 
 # Endpoint to list all users (1a)
 @app.get("/users") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN PERO PODRÍA SER DIRECTAMENTE getChats 
-def read_users(db: Matias = Depends(get_db)):
-    return db.getUsers()
+def read_users(db: Matias = Depends(get_db)): # , user: str = Depends(get_current_user)
+    #user_id = user['user_id']
+    return db.getUsers() # user_id
 
 # /missatgesAmics: permet enviar missatges a un amic (1m) o rebre els missatges d’aquest amic. (2m)
 # Inicialment rebrà els 10 missatges més recents, tant els que hem enviat com els que hem rebut, cronològicament. (2m)
@@ -57,28 +58,31 @@ def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_cur
     return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
 
 # Endpoint to get all messages from a chat (2m) (3m)
-@app.get("/receive_messages/{sender_id}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
-def receive_messages(isGroup = bool, sender_id = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
-    receiver_id =  receiver['user_id'];
-    messages_ids = db.getMessagesChat(limit=limit, offset=offset, sender_id=sender_id, receiver_id=receiver_id, isGroup=isGroup) # RECIEVER.USER_ID
-    return messages_ids;
-""" 
-@app.get("/receive_messages/{sender}/{isGroup}") # HAY QUE VER CÓMO CAMBIAR EL OFFSET AL HACER SCROLL (O PONERMOS BOTONES) Y AGREGAR {SENDER} AL ENDPOINT
-def receive_messages(isGroup = bool, sender = str, limit: int = 10, offset: int = 0, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)): #ARREGLAR
-    messages_ids = db.getMessagesChat(limit=limit, offset=offset, sender=sender, receiver=receiver, isGroup=isGroup) # RECIEVER.USER_ID
-    return RedirectResponse(url="/change_state/{3}", messages_ids = messages_ids, status_code=303)
-"""
+@app.get("/receive_messages/{sender_id}/{isGroup}")
+def receive_messages(
+    sender_id: str,
+    isGroup: bool,
+    limit: int = 10,
+    offset: int = 0,
+    db: Matias = Depends(get_db),
+    receiver: str = Depends(get_current_user)
+):
+    receiver_id = receiver['user_id']
+    messages = db.getMessagesChat(limit=limit, offset=offset, sender_id=sender_id, receiver_id=receiver_id, isGroup=isGroup)
+    return messages
 
 # Endpoint to change the state of a message (3m)
 @app.put("/change_state/{state_id}")
 def change_state(
     state_id: int,  # ID del estado que se quiere cambiar
     messages_ids: list[int] = Body(...),  # Lista de IDs de mensajes recibida en el cuerpo de la solicitud
-    db: Matias = Depends(get_db),  # Dependencia de la base de datos
+    db: Matias = Depends(get_db), # Dependencia de la base de datos
+    receiver: str = Depends(get_current_user) # Dependencia del usuario actual
 ):
-    result = None
+    receiver_id = receiver['user_id']
+    result = 0  # Initialize result to 0
     for message_id in messages_ids:    
-        result += db.changeMessageState(state_id, message_id['message_id']) 
+        result += db.changeMessageState([message_id], state_id, receiver_id)  # Pass message_id directly
     return {"message": "Estado actualizado correctamente.", "result": result}
 
 # Endpoint to change the content of a message [ACÁ TENDRÍAMOS QUE PONER UN LIMITE DE TIEMPO O ASÍ]

@@ -51,27 +51,49 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
     try {
         const isGroupParam = isGroup ? 'true' : 'false';
 
-        // Aquí obtienes el token del localStorage
+        // Retrieve the token from localStorage
         const token = localStorage.getItem('token');
 
+        // Fetch messages from the backend
         const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?limit=${limit}&offset=${offset}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // Si tu endpoint requiere Bearer token:
                 'Authorization': `Bearer ${token}`
             }
         });
 
         if (!response.ok) {
-            throw new Error(`${getMessagesError}, ${response.status}`);
+            throw new Error(`Error fetching messages: ${response.status}`);
         }
-        return await response.json();
 
+        // Parse the JSON response (this contains all the messages)
+        const messages = await response.json();
+
+        // Extract message IDs from the messages array
+        const messageIds = messages.map(message => message.message_id);
+
+        // Send the IDs to the change_state endpoint
+        const changeStateResponse = await fetch(`${URL}/change_state/${3}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(messageIds) // Send the IDs as the body
+        });
+
+        if (!changeStateResponse.ok) {
+            throw new Error(`Error changing message state: ${changeStateResponse.status}`);
+        }
+
+        return messages; // Return the messages for rendering in the frontend
     } catch (error) {
+        console.error(error);
         throw error;
     }
 }
+
 // mandar mensajes
 export async function postMessage(messageObj) {
     try {
