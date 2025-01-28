@@ -1,5 +1,6 @@
 import { currentUserId } from "../../constants/const.js";
 import { createGroup, fetchUsers } from "../../assets/fetching.js";
+import { nameGroupError } from "../../errors/errors.js";
 
 export async function handleCreateGroupFormSubmit() {
     const groupNameInput = document.getElementById("groupNameInput");
@@ -14,7 +15,7 @@ export async function handleCreateGroupFormSubmit() {
       ).map((checkbox) => checkbox.value);
     const members = selectedMembers.map(member => parseInt(member, 10));
     if (!name) {
-        createGroupError.textContent = "El nombre del grupo es obligatorio.";
+        createGroupError.textContent = `${nameGroupError}`;
         return;
     }
 
@@ -27,7 +28,6 @@ export async function handleCreateGroupFormSubmit() {
 
     try {
         const responseData = await createGroup(groupObj);
-        console.log("Grupo creado con ID:", responseData.group_id);
 
         // Opcional: Mostrar un mensaje de éxito
         alert(`Grupo "${name}" creado exitosamente.`);
@@ -40,7 +40,7 @@ export async function handleCreateGroupFormSubmit() {
         openChat(responseData.group_id, true, name);
 
     } catch (error) {
-        console.error("Error al crear grupo:", error);
-        createGroupError.textContent = "Error al crear el grupo. Intenta de nuevo.";
+        console.error(`${createGroupError}`, error);
+        createGroupError.textContent = `${createGroupError}`;
     }
 }

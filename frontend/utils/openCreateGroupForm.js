@@ -2,6 +2,7 @@ import { fetchUsers } from "../assets/fetching.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { handleCreateGroupFormSubmit } from "../login/validations/groupValidations.js";
 import { currentUserId } from "../constants/const.js";
+import { loadingGroupForm, getUsersForGroupsError } from "../errors/errors.js";
 
 //Renderiza el formulario para crear un nuevo grupo en el chatWindow.
 export function openCreateGroupForm() {
@@ -52,16 +53,16 @@ export function openCreateGroupForm() {
             });
           })
           .catch(error => {
-            console.error("Error al cargar el formulario de creación de grupo:", error);
+            console.error(`${loadingGroupForm}`, error);
             chatWindow.innerHTML = `
-              <p class="text-red-500">Error al cargar el formulario de creación de grupo.</p>
+              <p class="text-red-500">${loadingGroupForm}.</p>
             `;
           });
       })
       .catch(error => {
-        console.error("Error al obtener usuarios para crear grupo:", error);
+        console.error(`${getUsersForGroupsError}`, error);
         chatWindow.innerHTML = `
-          <p class="text-red-500">Error al cargar usuarios para crear el grupo.</p>
+          <p class="text-red-500">${getUsersForGroupsError}</p>
         `;
       });
   }

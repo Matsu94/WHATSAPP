@@ -1,4 +1,5 @@
 import { fetchToken } from "../../assets/fetching.js";
+import { validateUsernameError, validatePasswordError, loginError } from "../../errors/errors.js";
 
 function validarUsername(username) {
     const errores = [];

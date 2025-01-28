@@ -1,4 +1,5 @@
 import { URL } from '../constants/const.js';
+import { getUsersError, sendMessagesError, requestError, errorStartSession, errorFetchingMessages, errorChangingMessageState, createGroupError } from '../errors/errors.js';
 
 export async function fetchToken(username, password) {
     // Realizar la solicitud fetch al endpoint /token
@@ -64,7 +65,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         });
 
         if (!response.ok) {
-            throw new Error(`Error fetching messages: ${response.status}`);
+            throw new Error(`${errorFetchingMessages}, ${response.status}`);
         }
 
         // Parse the JSON response (this contains all the messages)
@@ -84,7 +85,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         });
 
         if (!changeStateResponse.ok) {
-            throw new Error(`Error changing message state: ${changeStateResponse.status}`);
+            throw new Error(`${errorChangingMessageState} ${changeStateResponse.status}`);
         }
 
         return messages; // Return the messages for rendering in the frontend
@@ -136,7 +137,7 @@ export async function createGroup(groupObj) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`Error al crear grupo: ${response.status} - ${JSON.stringify(errorData)}`);
+            throw new Error(`${createGroupError} ${response.status} - ${JSON.stringify(errorData)}`);
         }
 
         const data = await response.json();
