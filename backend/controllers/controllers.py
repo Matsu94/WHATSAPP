@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            #host="localhost",
-            host="192.168.193.133",
-            port=3306,
-            #user="root",
-            user="matiasianbastero",
-            password="49864854A",
-            #db="matias",
-            db="damahe",
+            host="localhost",
+            #host="192.168.193.133",
+            #port=3306,
+            user="root",
+            #user="matiasianbastero",
+            #password="49864854A",
+            db="matias",
+            #db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -116,10 +116,13 @@ class Matias(object):
         sql = checkMessagesGroups
         self.cursor.execute(sql, (receiver_id,))
         result2 = self.cursor.fetchall()
-        result = result1 + result2
+        if not result2:
+            return result1
         # Devuelve un dict o tuple según tu configuración de cursor,
         # ajusta en consecuencia
-        return result
+        else:
+            result = result1 + result2
+            return result
 
     # Query to change the state (status) of a message (3m)
     # He añadido message_id para no actualizar todos los mensajes de la tabla

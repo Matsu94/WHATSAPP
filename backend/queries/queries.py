@@ -62,20 +62,32 @@ changeStatusGroupMessage = """
                 VALUES (%s, %s, %s)
                 """
 checkMessagesUsers = """
-        SELECT *
-        FROM messages
-        WHERE status = 1
-        AND receiver_id = %s
-        AND is_group = false
-        """
+    SELECT 
+        m.sender_id,
+        u.username AS sender_name,
+        COUNT(*) AS unread_messages
+    FROM messages m
+    INNER JOIN users u ON m.sender_id = u.user_id
+    WHERE m.status = 1
+        AND m.receiver_id = %s
+        AND m.is_group = FALSE
+    GROUP BY m.sender_id, u.username
+    ORDER BY unread_messages DESC;
+"""
 checkMessagesGroups = """
-        SELECT *
-        FROM messages
-        INNER JOIN group_message_status ON messages.message_id = group_message_status.message_id
-        INNER JOIN group_members ON groups.group_id = group_members.group_id
-        WHERE status = 1
-        AND user_id = %s
-        """
+    SELECT 
+        m.receiver_id AS group_id,
+        g.name AS group_name,
+        COUNT(*) AS unread_messages
+    FROM messages m
+    INNER JOIN groups g ON m.receiver_id = g.group_id
+    INNER JOIN group_message_status gms ON m.message_id = gms.message_id
+    WHERE gms.status = 1
+        AND gms.user_id = %s
+        AND m.is_group = TRUE
+    GROUP BY m.receiver_id, g.name
+    ORDER BY unread_messages DESC;
+"""
 checkMessageWithId = """
             SELECT * from messages
             WHERE message_id = %s
