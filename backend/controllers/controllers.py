@@ -110,10 +110,10 @@ class Matias(object):
     # Query to check the number of unread (o sin leer) messages para un usuario (3m)
     # Se asume status = 1 (enviado) como "pendiente de leer"
     def checkMessages(self, receiver_id):
-        sql = checkMessages
+        sql = checkMessagesUsers
         self.cursor.execute(sql, (receiver_id,))
         result1 = self.cursor.fetchall()
-        sql = notReceivedMessages
+        sql = checkMessagesGroups
         self.cursor.execute(sql, (receiver_id,))
         result2 = self.cursor.fetchall()
         result = result1 + result2

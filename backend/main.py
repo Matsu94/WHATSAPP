@@ -55,10 +55,10 @@ def send_message(message: Message, db: Matias = Depends(get_db)):
     return db.sendMessage(message)
 
 # Endpoint to check the number of messages the user has received and not read (3m)
-@app.get("/check_messages") # PERIODICO
+@app.get("/check_messages") 
 def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
-    messages_ids = db.checkMessages(receiver) # A ESTO LE TIRAMOS UN .LENGTH Y TENEMOS EL Nº DE MSJS
-    return RedirectResponse(url="/change_state/{2}", messages_ids = messages_ids, status_code=303)
+    receiver_id = receiver['user_id']
+    return db.checkMessages(receiver_id)
 
 # Endpoint to get all messages from a chat (2m) (3m)
 @app.get("/receive_messages/{sender_id}/{isGroup}")
