@@ -61,14 +61,14 @@ changeStatusGroupMessage = """
                 INSERT INTO group_message_status (message_id, user_id, status)
                 VALUES (%s, %s, %s)
                 """
-checkMessages = """
+checkMessagesUsers = """
         SELECT *
         FROM messages
         WHERE status = 1
         AND receiver_id = %s
         AND is_group = false
         """
-notReceivedMessages = """
+checkMessagesGroups = """
         SELECT *
         FROM messages
         INNER JOIN group_message_status ON messages.message_id = group_message_status.message_id
