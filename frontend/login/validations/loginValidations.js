@@ -1,12 +1,12 @@
 import { fetchToken } from "../../assets/fetching.js";
-import { validateUsernameError, validatePasswordError, loginError } from "../../errors/errors.js";
+import * as errors from "../../errors/errors.js";
 
 function validarUsername(username) {
     const errores = [];
     const regex = /^[a-z]{3,}[0-9]*$/;
 
     if (!regex.test(username)) {
-        errores.push(`${validateUsernameError}`);
+        errores.push(`${errors.validateUsernameError}`);
     }
 
     return errores;
@@ -16,7 +16,7 @@ function validarPassword(password) {
     const errores = [];
     
     if (password.length < 6) {
-        errores.push(`${validatePasswordError}`);
+        errores.push(`${errors.validatePasswordError}`);
     }
 
     return errores;
@@ -53,7 +53,7 @@ async function validarLogin(event) {
         try {
             await fetchToken(username, password);
         } catch (error) {
-            document.getElementById('passwordError').textContent = `${loginError}`;
+            document.getElementById('passwordError').textContent = `${errors.loginError}`;
         }
     }
 }

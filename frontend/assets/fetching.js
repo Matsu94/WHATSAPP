@@ -1,5 +1,5 @@
 import { URL } from '../constants/const.js';
-import { getUsersError, sendMessagesError, requestError, errorStartSession, errorFetchingMessages, errorChangingMessageState, createGroupError } from '../errors/errors.js';
+import * as errors from '../errors/errors.js';
 
 export async function fetchToken(username, password) {
     // Realizar la solicitud fetch al endpoint /token
@@ -13,7 +13,7 @@ export async function fetchToken(username, password) {
         });
 
         if (!response.ok) {
-            throw new Error(requestError);
+            throw new Error(errors.requestError);
         }
 
         const data = await response.json();
@@ -23,7 +23,7 @@ export async function fetchToken(username, password) {
         window.location.href = '../inicio.html';
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('passwordError').textContent = `${errorStartSession}`;
+        document.getElementById('passwordError').textContent = `${errors.errorStartSession}`;
     }
 }
 
@@ -38,7 +38,7 @@ export async function fetchUsers() {
             }
         });
         if (!response.ok) {
-            throw new Error(`${getUsersError}, ${response.status}`);
+            throw new Error(`${errors.getUsersError}, ${response.status}`);
         }
         return await response.json(); 
         // Esto será un array de objetos: [{ user_id, username, password }, ...]
@@ -65,7 +65,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         });
 
         if (!response.ok) {
-            throw new Error(`${errorFetchingMessages}, ${response.status}`);
+            throw new Error(`${errors.errorFetchingMessages}, ${response.status}`);
         }
 
         // Parse the JSON response (this contains all the messages)
@@ -85,7 +85,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         });
 
         if (!changeStateResponse.ok) {
-            throw new Error(`${errorChangingMessageState} ${changeStateResponse.status}`);
+            throw new Error(`${errors.errorChangingMessageState} ${changeStateResponse.status}`);
         }
 
         return messages; // Return the messages for rendering in the frontend
@@ -111,7 +111,7 @@ export async function postMessage(messageObj) {
         });
 
         if (!response.ok) {
-            throw new Error(`${sendMessagesError}, ${response.status}`);
+            throw new Error(`${errors.sendMessagesError}, ${response.status}`);
         }
 
         // Tu backend ahora devuelve un JSON con el ID del mensaje insertado, p. ej. { "message_id": 12 }
@@ -137,7 +137,7 @@ export async function createGroup(groupObj) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`${createGroupError} ${response.status} - ${JSON.stringify(errorData)}`);
+            throw new Error(`${errors.createGroupError} ${response.status} - ${JSON.stringify(errorData)}`);
         }
 
         const data = await response.json();
