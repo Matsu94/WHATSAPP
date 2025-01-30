@@ -2,6 +2,6 @@
 export function searchUsers(users, query) {
     const lowerQuery = query.toLowerCase();
     return users.filter(u => 
-      u.username.toLowerCase().includes(lowerQuery)
+      u.chat_name.toLowerCase().includes(lowerQuery)
     );
   }

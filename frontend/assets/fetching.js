@@ -146,3 +146,27 @@ export async function createGroup(groupObj) {
         throw error;
     }
 }
+
+export async function fetchChats() {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/chats`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error al obtener chats: ${response.status} - ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        return data; // Esperamos un array de objetos con usuarios/grupos y el último mensaje
+    } catch (error) {
+        throw error;
+    }
+}
