@@ -3,18 +3,19 @@ import { renderUserList } from "./utils/renderUserList.js";
 import { searchUsers } from "./utils/searchUsers.js";
 import { openCreateGroupForm } from "./utils/openCreateGroupForm.js";
 import { getUsersError } from "./errors/errors.js";
+import { fetchChats } from "./assets/fetching.js";
 
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
     async function init() {
       try {
-        const users = await fetchUsers();
-        renderUserList(users);
-  
+        const chats = await fetchChats();
+            console.log(chats);
+            renderUserList(chats);
         const searchInput = document.getElementById("searchInput");
         if (searchInput) {
           searchInput.addEventListener("input", (e) => {
-            const filtered = searchUsers(users, e.target.value);
+            const filtered = searchUsers(chats, e.target.value);
             renderUserList(filtered);
           });
         }

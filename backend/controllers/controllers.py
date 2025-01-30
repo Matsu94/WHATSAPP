@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="localhost",
-            #host="192.168.193.133",
-            #port=3306,
-            user="root",
-            #user="matiasianbastero",
-            #password="49864854A",
-            db="matias",
-            #db="damahe",
+            #host="localhost",
+            host="192.168.193.133",
+            port=3306,
+            #user="root",
+            user="matiasianbastero",
+            password="49864854A",
+            #db="matias",
+            db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -45,7 +45,6 @@ class Matias(object):
 
         # Sort messages by date (new to old)
         sorted_messages = sorted(all_messages, key=lambda x: x['date'], reverse=True)
-
         return sorted_messages
     
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
@@ -146,8 +145,12 @@ class Matias(object):
     # Ajustado el orden de la cláusula WHERE vs LIMIT/OFFSET.
     # He añadido receiver como parámetro para respetar la sintaxis de la SQL original.
     def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
-        sql = getMessagesChat
-        self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
+        if isGroup:
+            sql = getMessagesChatGroup
+            self.cursor.execute(sql, (sender_id, isGroup, limit, offset))
+        else:
+            sql = getMessagesChat
+            self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
         return self.cursor.fetchall()
 
     # Query to change the content of a message
