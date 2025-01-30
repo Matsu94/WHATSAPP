@@ -29,9 +29,15 @@ export function renderChatMessages(messages) {
       "text-[var(--color-text)]",
       isMine ? "bg-[var(--color-other)]" : "bg-[var(--color-user)]"
     );
-
+    console.log(messages)
     // Si es mi mensaje => "Yo", si no => msg.sender_name
-    const senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
+    let senderDisplay = "";
+    if (!msg.is_group){
+      senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
+    } else{
+      senderDisplay = isMine ? "Yo" : (msg.user_name|| `User ${msg.user_name}`);
+    }
+    
 
     msgBubble.innerHTML = `
       <div class="font-semibold mb-1">${senderDisplay}</div>
