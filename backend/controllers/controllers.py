@@ -45,7 +45,6 @@ class Matias(object):
 
         # Sort messages by date (new to old)
         sorted_messages = sorted(all_messages, key=lambda x: x['date'], reverse=True)
-
         return sorted_messages
     
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)

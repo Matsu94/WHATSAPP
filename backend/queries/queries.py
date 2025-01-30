@@ -1,42 +1,24 @@
 getAllUsers = """ SELECT * FROM users """
 
 lastMessagesUsers = """
-        SELECT 
-                m.*, 
+        WITH RankedMessages AS (
+                SELECT m.*, 
+                        ROW_NUMBER() OVER (PARTITION BY LEAST(sender_id, receiver_id), GREATEST(sender_id, receiver_id) 
+                                ORDER BY date DESC) AS rn
+                FROM messages m
+                WHERE is_group = FALSE
+                AND (%s IN (m.sender_id, m.receiver_id)) 
+        )
+                SELECT r.*, 
                 CASE 
-                        WHEN m.sender_id = %s THEN u_receiver.username 
+                        WHEN r.sender_id = %s THEN u_receiver.username 
                         ELSE u_sender.username 
                 END AS chat_name
-        FROM 
-                messages m
-        INNER JOIN (
-                SELECT 
-                        LEAST(sender_id, receiver_id) AS user1, 
-                        GREATEST(sender_id, receiver_id) AS user2, 
-                        MAX(date) AS max_date,
-                        MAX(message_id) AS max_message_id
-                FROM 
-                        messages
-                WHERE 
-                        is_group = FALSE
-                GROUP BY 
-                        LEAST(sender_id, receiver_id), 
-                        GREATEST(sender_id, receiver_id)
-        ) latest 
-                ON LEAST(m.sender_id, m.receiver_id) = latest.user1 
-                AND GREATEST(m.sender_id, m.receiver_id) = latest.user2 
-                AND m.date = latest.max_date
-                AND m.message_id = latest.max_message_id
-        LEFT JOIN 
-                users u_sender ON m.sender_id = u_sender.user_id
-        LEFT JOIN 
-                users u_receiver ON m.receiver_id = u_receiver.user_id
-        WHERE 
-                %s IN (m.sender_id, m.receiver_id)
-        ORDER BY 
-                m.date DESC;
-
-        """
+        FROM RankedMessages r
+        LEFT JOIN users u_sender ON r.sender_id = u_sender.user_id
+        LEFT JOIN users u_receiver ON r.receiver_id = u_receiver.user_id
+        WHERE rn = 1;
+"""
 
 lastMessagesGroups = """
         SELECT 

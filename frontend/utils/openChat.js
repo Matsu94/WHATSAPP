@@ -17,7 +17,7 @@ export function openChat(senderId, isGroup, senderName) {
       // Actualizar dinámicamente el encabezado
       const chatHeader = document.getElementById("chatHeader");
       if (chatHeader) {
-        chatHeader.textContent = `${senderName} ${isGroup ? "(Grupo)" : ""}`;
+        chatHeader.textContent = `${senderName}`;
       }
 
       // Cargar y mostrar los mensajes
