@@ -1,5 +1,6 @@
 import { openChat } from "./openChat.js";
 import { formatDate } from './formatDate.js'; 
+import { currentUserId } from "../constants/const.js";
 
 /*
 // Renderizar la lista de usuarios (panel izquierdo)
@@ -64,7 +65,12 @@ export function renderUserList(chats) {
 
       // Al hacer clic, abrir el chat correspondiente
       chatItem.addEventListener("click", () => {
-          openChat(chat.id, chat.is_group, chat.is_group ? `${chat.chat_name} (Grupo)` : chat.chat_name);
+        if(chat.receiver_id == currentUserId){
+          openChat(chat.sender_id, chat.is_group, chat.is_group ? `${chat.chat_name} (Grupo)` : chat.chat_name);
+        }
+        else{
+          openChat(chat.receiver_id, chat.is_group, chat.is_group ? `${chat.chat_name} (Grupo)` : chat.chat_name);
+        }
       });
 
       chatListEl.appendChild(chatItem);
