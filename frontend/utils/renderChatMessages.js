@@ -13,7 +13,13 @@ export function renderChatMessages(messages) {
   messages.forEach((msg) => {
     // Comparamos con el username (o ID), dependiendo de tu lógica
     const currentUsername = localStorage.getItem('username') || "";
-    const isMine = (msg.sender_name === currentUsername);
+    let isMine = "";
+    
+    if (!msg.is_group){
+      isMine = (msg.sender_name === currentUsername);
+    } else{
+      isMine = (msg.user_name === currentUsername);
+    }
 
     const msgWrapper = document.createElement("div");
     msgWrapper.classList.add("mb-2", "flex", isMine ? "justify-end" : "justify-start");
