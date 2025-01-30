@@ -145,8 +145,12 @@ class Matias(object):
     # Ajustado el orden de la cláusula WHERE vs LIMIT/OFFSET.
     # He añadido receiver como parámetro para respetar la sintaxis de la SQL original.
     def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
-        sql = getMessagesChat
-        self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
+        if isGroup:
+            sql = getMessagesChatGroup
+            self.cursor.execute(sql, (sender_id, isGroup, limit, offset))
+        else:
+            sql = getMessagesChat
+            self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
         return self.cursor.fetchall()
 
     # Query to change the content of a message
