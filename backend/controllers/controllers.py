@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            #host="localhost",
-            host="192.168.193.133",
-            port=3306,
-            #user="root",
-            user="matiasianbastero",
-            password="49864854A",
-            #db="matias",
-            db="damahe",
+            host="localhost",
+            #host="192.168.193.133",
+            #port=3306,
+            user="root",
+            #user="matiasianbastero",
+            #password="49864854A",
+            db="matias",
+            #db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -25,7 +25,7 @@ class Matias(object):
     def getChats(self, user_id):
         # Fetch direct messages
         sql_direct = lastMessagesUsers
-        self.cursor.execute(sql_direct, (user_id,user_id))
+        self.cursor.execute(sql_direct, (user_id, user_id))
         direct_messages = self.cursor.fetchall()
 
         # Fetch group messages
@@ -34,9 +34,7 @@ class Matias(object):
         group_messages = self.cursor.fetchall()
 
         if not direct_messages and not group_messages:
-            sql = getAllUsers
-            self.cursor.execute(sql)
-            return self.cursor.fetchall()
+            return []
 
         if not group_messages:
             group_messages = []
@@ -46,6 +44,11 @@ class Matias(object):
         # Sort messages by date (new to old)
         sorted_messages = sorted(all_messages, key=lambda x: x['date'], reverse=True)
         return sorted_messages
+    
+    def getMissingGroups(self, user_id):
+        sql = missingGroups
+        self.cursor.execute(sql, (user_id,))
+        return self.cursor.fetchall()
     
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
     
@@ -126,19 +129,13 @@ class Matias(object):
     # Query to change the state (status) of a message (3m)
     # He añadido message_id para no actualizar todos los mensajes de la tabla
     # (la versión anterior no tenía WHERE).
-    def changeMessageState(self, messages_ids, new_status, receiver_id):
-        for message_id in messages_ids:
-            sql = checkMessageWithId
-            self.cursor.execute(sql, (message_id, receiver_id))
-            result = self.cursor.fetchone()
-            if not result:
-                return 0
-            if result['is_group']:
-                sql = updateMEssageGroupStatus
-                self.cursor.execute(sql, (new_status, message_id))
-            else:
-                sql = updateMessageStatus
-                self.cursor.execute(sql, (new_status, message_id))
+    def changeMessageState(self, message, new_status, receiver_id):
+        if message['is_group']:
+            sql = updateMEssageGroupStatus
+            self.cursor.execute(sql, (new_status, message['message_id'], receiver_id))
+        else:
+            sql = updateMessageStatus
+            self.cursor.execute(sql, (new_status, message['message_id']))
         return self.cursor.rowcount  # Return the total number of rows updated
 
     # Query to get all messages (o mensajes de un remitente a un destinatario) (2m)
@@ -205,7 +202,7 @@ class Matias(object):
         for member in group.Members:
             sql = insertGroupMemnber
             self.cursor.execute(sql, (group_id, member))
-        return self.cursor.lastrowid # ACÁ CREO QUE FUNCIONA PARA EL SEGUNDO O TERCER RETURN POR SI SE EJECTUA EL 3º O NO
+        return group_id
 
     # Query to add a user to a group (3g)
     # Se hace INSERT en group_members, no UPDATE.
@@ -217,7 +214,7 @@ class Matias(object):
         sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
-        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+        if not result['is_admin']: 
             return "User has no permissions"
         else:
             # Comprobamos si ya existe ese user en ese group
@@ -240,7 +237,7 @@ class Matias(object):
         sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
-        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+        if not result['is_admin']: 
             return "User has no permissions"
         else:
             # Comprobamos si el usuario está en el grupo
@@ -263,7 +260,7 @@ class Matias(object):
         sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
-        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+        if not result['is_admin']: 
             return "User has no permissions"
         else:
             sql = addAdmin
@@ -275,7 +272,7 @@ class Matias(object):
         sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
-        if not result['is_admin']: # ESTÁ ESCRITO PARA UN BOOELANO CAMBIAR POR result['is_admin'] == 0 SI NO ARREGLAMOS BD
+        if not result['is_admin']: 
             return "User has no permissions"
         else:
             sql = changeGroupName

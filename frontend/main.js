@@ -10,7 +10,6 @@ window.addEventListener("DOMContentLoaded", () => {
     async function init() {
       try {
         const chats = await fetchChats();
-            console.log(chats);
             renderUserList(chats);
         const searchInput = document.getElementById("searchInput");
         if (searchInput) {

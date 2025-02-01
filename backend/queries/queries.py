@@ -100,6 +100,7 @@ updateMEssageGroupStatus = """
 UPDATE group_message_status
 SET status = %s
 WHERE message_id = %s
+AND user_id = %s
 """
 
 updateMessageStatus = """
@@ -170,7 +171,7 @@ WHERE message_id = %s
 """
 
 getGroups = """
-SELECT groups.group_id, groups.name, groups.description
+SELECT groups.group_id, groups.name AS chat_name, groups.description  
 FROM groups
 INNER JOIN group_members ON groups.group_id = group_members.group_id
 WHERE group_members.user_id = %s
@@ -272,4 +273,12 @@ SELECT user_id
 FROM group_members
 WHERE group_id = %s
 AND user_id != %s
+"""
+
+missingGroups = """
+SELECT g.* 
+FROM groups g
+INNER JOIN group_members gm ON g.group_id = gm.group_id
+WHERE gm.user_id = %s
+AND g.group_id NOT IN (SELECT DISTINCT receiver_id FROM messages where is_group = true)
 """
