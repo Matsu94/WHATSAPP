@@ -72,7 +72,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         const messages = await response.json();
 
         // Extract message IDs from the messages array
-        const messageIds = messages.map(message => message.message_id);
+        //const messageIds = messages.map(message => message.message_id);
 
         // Send the IDs to the change_state endpoint
         const changeStateResponse = await fetch(`${URL}/change_state/${3}`, {
@@ -81,7 +81,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(messageIds) // Send the IDs as the body
+            body: JSON.stringify(messages) // Send the IDs as the body
         });
 
         if (!changeStateResponse.ok) {
@@ -159,13 +159,22 @@ export async function fetchChats() {
             }
         });
 
-        if (!response.ok) {
+        const response2 = await fetch(`${URL}/get_missing_groups`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok && !response2.ok) {
             const errorData = await response.json();
             throw new Error(`Error al obtener chats: ${response.status} - ${JSON.stringify(errorData)}`);
         }
 
         const data = await response.json();
-        return data; // Esperamos un array de objetos con usuarios/grupos y el último mensaje
+        const data2 = await response2.json();
+        return [...data, ...data2]; // Esperamos un array de objetos con usuarios/grupos, el último mensaje y los grps sin msjs
     } catch (error) {
         throw error;
     }

@@ -9,47 +9,52 @@ export function renderUserList(chats) {
   chatListEl.innerHTML = '';
 
   chats.forEach(chat => {
-      const chatItem = document.createElement('div');
-      chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)] flex justify-between items-center";
+    const isGroupWithoutMessages = !!chat.creator_id; // Groups without messages have `creator_id`
+    
+    // Create chat item container
+    const chatItem = document.createElement('div');
+    chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)] flex justify-between items-center";
 
-      // Información principal: Nombre y último mensaje
-      const infoDiv = document.createElement('div');
-      infoDiv.className = "flex flex-col";
+    // Create info div (name + last message)
+    const infoDiv = document.createElement('div');
+    infoDiv.className = "flex flex-col";
 
-      const nameEl = document.createElement('div');
-      nameEl.className = "font-semibold";
-      nameEl.innerText = chat.chat_name;
+    // Name of the chat
+    const nameEl = document.createElement('div');
+    nameEl.className = "font-semibold";
+    nameEl.innerText = isGroupWithoutMessages ? chat.name : chat.chat_name;
 
-      const lastMessageEl = document.createElement('div');
-      lastMessageEl.className = "text-sm text-gray-600 truncate";
-      lastMessageEl.innerText = chat.content ? chat.content : "No hay mensajes.";
+    // Last message or description
+    const lastMessageEl = document.createElement('div');
+    lastMessageEl.className = "text-sm text-gray-600 truncate";
+    lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes."; // TECNICAMENTE NO HAY CHATS VACIOS EN PREVIEW
 
-      infoDiv.appendChild(nameEl);
-      infoDiv.appendChild(lastMessageEl);
+    infoDiv.appendChild(nameEl);
+    infoDiv.appendChild(lastMessageEl);
 
-      // Timestamp del último mensaje
-      const timestampEl = document.createElement('div');
-      timestampEl.className = "text-xs text-gray-500";
-      if (chat.last_message && chat.date) {
-          const date = new Date(chat.date);
-          timestampEl.innerText = formatDate(date);
+    // Timestamp handling
+    const timestampEl = document.createElement('div');
+    timestampEl.className = "text-xs text-gray-500";
+    if (chat.date || chat.created_at) {
+      const date = new Date(chat.date ?? chat.created_at);
+      timestampEl.innerText = formatDate(date);
+    } else {
+      timestampEl.innerText = ""; // TECNICAMENTE TODO TIENE FECHA
+    }
+
+    chatItem.appendChild(infoDiv);
+    chatItem.appendChild(timestampEl);
+
+    // Click event to open chat
+    chatItem.addEventListener("click", () => {
+      if (isGroupWithoutMessages) {
+        openChat(chat.group_id, 1, chat.name);
       } else {
-          timestampEl.innerText = "";
+        const targetId = chat.receiver_id === currentUserId ? chat.sender_id : chat.receiver_id;
+        openChat(targetId, chat.is_group, chat.chat_name);
       }
+    });
 
-      chatItem.appendChild(infoDiv);
-      chatItem.appendChild(timestampEl);
-
-      // Al hacer clic, abrir el chat correspondiente
-      chatItem.addEventListener("click", () => {
-        if(chat.receiver_id == currentUserId){
-          openChat(chat.sender_id, chat.is_group, chat.chat_name);
-        }
-        else{
-          openChat(chat.receiver_id, chat.is_group, chat.chat_name);
-        }
-      });
-
-      chatListEl.appendChild(chatItem);
+    chatListEl.appendChild(chatItem);
   });
-} 
+}

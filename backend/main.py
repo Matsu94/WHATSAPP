@@ -49,6 +49,12 @@ def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user
     user_id = user['user_id']
     return db.getChats(user_id)
 
+@app.get("/get_missing_groups")
+def get_missing_groups(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
+    user_id = user['user_id']
+    return db.getMissingGroups(user_id)
+    
+
 # Endpoint to send a message (1m)
 @app.post("/sendMessage") 
 def send_message(message: Message, db: Matias = Depends(get_db)):
@@ -78,14 +84,14 @@ def receive_messages(
 @app.put("/change_state/{state_id}")
 def change_state(
     state_id: int,  # ID del estado que se quiere cambiar
-    messages_ids: list[int] = Body(...),  # Lista de IDs de mensajes recibida en el cuerpo de la solicitud
+    messages: list[dict] = Body(...),  # Lista de IDs de mensajes recibida en el cuerpo de la solicitud
     db: Matias = Depends(get_db), # Dependencia de la base de datos
     receiver: str = Depends(get_current_user) # Dependencia del usuario actual
 ):
     receiver_id = receiver['user_id']
     result = 0  # Initialize result to 0
-    for message_id in messages_ids:    
-        result += db.changeMessageState([message_id], state_id, receiver_id)  # Pass message_id directly
+    for message in messages:
+        result += db.changeMessageState(message, state_id, receiver_id)  # Pass message_id directly
     return {"message": "Estado actualizado correctamente.", "result": result}
 
 # Endpoint to change the content of a message [ACÁ TENDRÍAMOS QUE PONER UN LIMITE DE TIEMPO O ASÍ]

@@ -1,6 +1,8 @@
 import { currentUserId } from "../../constants/const.js";
-import { createGroup, fetchUsers } from "../../assets/fetching.js";
+import { createGroup, fetchChats } from "../../assets/fetching.js";
 import { nameGroupError } from "../../errors/errors.js";
+import { renderUserList } from "../../utils/renderUserList.js";
+import { openChat } from "../../utils/openChat.js";
 
 export async function handleCreateGroupFormSubmit() {
     const groupNameInput = document.getElementById("groupNameInput");
@@ -33,11 +35,11 @@ export async function handleCreateGroupFormSubmit() {
         alert(`Grupo "${name}" creado exitosamente.`);
 
         // Actualizar la lista de chats (usuarios y grupos)
-        const users = await fetchUsers();
-        renderUserList(users);
+        const chats = await fetchChats();
+        renderUserList(chats);
 
         // Abrir el chat del nuevo grupo
-        openChat(responseData.group_id, true, name);
+        openChat(responseData, true, name);
 
     } catch (error) {
         console.error(`${createGroupError}`, error);
