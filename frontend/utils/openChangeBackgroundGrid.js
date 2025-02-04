@@ -14,7 +14,7 @@ export function openChangeBackgroundGrid() {
                 option.addEventListener("click", (e) => {
                     e.preventDefault();
                     const selectedBackground = option.getAttribute("data-bg");
-                    setChatBackground(selectedBackground);
+                    localStorage.setItem("chatBackground", selectedBackground); // Save to localStorage
                     closeChatWindow(); // Close grid after selection
                 });
             });
@@ -31,11 +31,6 @@ export function openChangeBackgroundGrid() {
 
 // Function to update the chat background and save it
 export function setChatBackground(imageName) {
-    const messagesContainer = document.getElementById("messagesContainer");
-    if (messagesContainer) {
-        messagesContainer.style.backgroundImage = `url('/WHATSAPP/frontend/assets/${imageName}')`;
-        messagesContainer.style.backgroundSize = "cover";
-        messagesContainer.style.backgroundPosition = "center";
-        localStorage.setItem("chatBackground", imageName); // Save to localStorage
-    }
+    // Guardar en localStorage
+    localStorage.setItem("chatBackground", imageName);
 }
