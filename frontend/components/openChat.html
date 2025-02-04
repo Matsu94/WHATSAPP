@@ -30,7 +30,18 @@
             </button>
         </div>
     </div>
-
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const savedBackground = localStorage.getItem("chatBackground");
+            if (savedBackground) {
+                const messagesContainer = document.getElementById("messagesContainer");
+                messagesContainer.style.backgroundImage = `url('/WHATSAPP/frontend/assets/${savedBackground}')`;
+                messagesContainer.style.backgroundSize = "cover";
+                messagesContainer.style.backgroundPosition = "center";
+            }
+        });
+    </script>    
 </body>
 
 </html>
