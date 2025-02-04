@@ -28,9 +28,3 @@ export function openChangeBackgroundGrid() {
             console.error("Error loading background selection:", error);
         });
 }
-
-// Function to update the chat background and save it
-export function setChatBackground(imageName) {
-    // Guardar en localStorage
-    localStorage.setItem("chatBackground", imageName);
-}
