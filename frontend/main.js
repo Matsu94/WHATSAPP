@@ -38,19 +38,34 @@ window.addEventListener("DOMContentLoaded", () => {
       const menuBtn = document.getElementById('menuBtn');
       const dropdownMenu = document.getElementById('dropdownMenu');
 
-      // Abrir o cerrar el menú al hacer clic en el botón
       menuBtn.addEventListener('click', () => {
-          dropdownMenu.classList.toggle('hidden'); // Alternar la clase 'hidden'
+          dropdownMenu.classList.toggle('hidden');
       });
       dropdownMenu.addEventListener('mouseleave', () => {
           dropdownMenu.classList.add('hidden');
       });
 
+      // Implementación para ocultar la lista de chats en móviles
+      const chatList = document.getElementById("chatList");
+      const chatContainer = document.getElementById("chatContainer");
+      const userListDiv = document.getElementById("userListDiv");
+
+      document.querySelectorAll(".chat-item").forEach(chatItem => {
+        chatItem.addEventListener("click", () => {
+          userListDiv.classList.add("hidden");
+          chatList.classList.add("hidden");
+          chatContainer.classList.remove("hidden");
+        });
+      });
+
     } catch (error) {
       console.error(getUsersError, error);
-      // Manejo de error si deseas
     }
   }
 
   init();
 });
+
+export function backToUserList() {
+
+}

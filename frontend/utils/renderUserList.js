@@ -53,6 +53,13 @@ export function renderUserList(chats) {
         const targetId = chat.receiver_id === currentUserId ? chat.sender_id : chat.receiver_id;
         openChat(targetId, chat.is_group, chat.chat_name);
       }
+
+      // Ocultar lista de chats y mostrar ventana de conversación en móviles
+      if (window.innerWidth < 768) {
+        document.getElementById("userListDiv").classList.add("hidden");
+        document.getElementById("chatList").classList.add("hidden");
+        document.getElementById("chatWindow").classList.remove("hidden");
+      }
     });
 
     chatListEl.appendChild(chatItem);
