@@ -2,6 +2,12 @@
 // renderChatMessages: pinta las burbujas con los más antiguos arriba
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
+  const savedBackground = localStorage.getItem("chatBackground");
+            if (savedBackground) {   
+                container.style.backgroundImage = `url('../frontend/img/${savedBackground}')`;
+                container.style.backgroundSize = "cover";
+                container.style.backgroundPosition = "center";
+            }
   if (!container) return;
 
   container.innerHTML = "";

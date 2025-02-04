@@ -1,5 +1,4 @@
 from fastapi import Body, FastAPI, Depends, HTTPException, status
-from fastapi.responses import RedirectResponse
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
 from models.models import Message, Group, User, Token

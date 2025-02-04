@@ -1,42 +1,35 @@
-// 1) Toggle modo claro/oscuro
-const htmlEl = document.documentElement;
-const themeCheckbox = document.getElementById("themeCheckbox");
-
-themeCheckbox.addEventListener("change", () => {
-  if (themeCheckbox.checked) {
-    // Checkbox activado => modo oscuro
-    htmlEl.setAttribute("data-theme", "dark");
-  } else {
-    // Checkbox desactivado => modo claro
-    htmlEl.setAttribute("data-theme", "light");
+$(document).ready(function () {
+  // Check for saved theme in localStorage
+  if (localStorage.getItem("theme") === "dark") {
+      $("html").attr("data-theme", "dark");
+      $("#themeCheckbox").prop("checked", true);
   }
+
+  // 1) Toggle Light/Dark Theme
+  $("#themeCheckbox").on("change", function () {
+      if ($(this).is(":checked")) {
+          $("html").attr("data-theme", "dark");
+          localStorage.setItem("theme", "dark");
+      } else {
+          $("html").attr("data-theme", "light");
+          localStorage.setItem("theme", "light");
+      }
+  });
+
+  // 2) Toggle Show/Hide Password
+  $("#togglePassword").on("click", function () {
+      const passwordInput = $("#password");
+      const eyeOpen = $("#eyeOpen");
+      const eyeSlash = $("#eyeSlash");
+
+      if (passwordInput.attr("type") === "password") {
+          passwordInput.attr("type", "text");
+          eyeOpen.addClass("hidden");
+          eyeSlash.removeClass("hidden");
+      } else {
+          passwordInput.attr("type", "password");
+          eyeOpen.removeClass("hidden");
+          eyeSlash.addClass("hidden");
+      }
+  });
 });
-
-// 2) Toggle mostrar/ocultar contraseña
-const passwordInput = document.getElementById("password");
-const togglePasswordBtn = document.getElementById("togglePassword");
-const eyeOpen = document.getElementById("eyeOpen");
-const eyeSlash = document.getElementById("eyeSlash");
-
-function updatePasswordIcons() {
-  if (passwordInput.type === "password") {
-    eyeOpen.classList.remove("hidden"); 
-    eyeSlash.classList.add("hidden");
-  } else {
-    eyeOpen.classList.add("hidden");
-    eyeSlash.classList.remove("hidden");
-  }
-}
-
-// Al hacer clic en el icono ojo
-togglePasswordBtn.addEventListener("click", () => {
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-  } else {
-    passwordInput.type = "password";
-  }
-  updatePasswordIcons();
-});
-
-// Ajustar icono de la contraseña al cargar la página
-updatePasswordIcons();
