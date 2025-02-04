@@ -3,11 +3,14 @@
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
   const savedBackground = localStorage.getItem("chatBackground");
-            if (savedBackground) {   
-                container.style.backgroundImage = `url('../frontend/img/${savedBackground}')`;
-                container.style.backgroundSize = "cover";
-                container.style.backgroundPosition = "center";
-            }
+      if (savedBackground) {   
+        //JQUERY para la parte de Petrus
+        $(container).css({
+            "background-image": `url('../frontend/img/${savedBackground}')`,
+            "background-size": "cover",
+            "background-position": "center"
+        });
+    }
   if (!container) return;
 
   container.innerHTML = "";
