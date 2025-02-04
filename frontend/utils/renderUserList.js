@@ -59,7 +59,6 @@ export function renderUserList(chats) {
         document.getElementById("userListDiv").classList.add("hidden");
         document.getElementById("chatList").classList.add("hidden");
         document.getElementById("chatWindow").classList.remove("hidden");
-        document.getElementById("closeChatBtn").classList.remove("hidden");
       }
     });
 

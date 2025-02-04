@@ -65,3 +65,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   init();
 });
+
+export function backToUserList() {
+
+}

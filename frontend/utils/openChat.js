@@ -2,6 +2,7 @@ import { loadMessages } from "./loadMessages.js";
 import { sendMessage } from "./sendMessage.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
+import { backToUserList } from "../main.js";
 
 //Abrir chat en la sección derecha
 export function openChat(senderId, isGroup, senderName) {
@@ -38,6 +39,24 @@ export function openChat(senderId, isGroup, senderName) {
           closeChatWindow();
         }
       });
+
+      // Esperar a que el DOM actualice y luego llamar la función
+      setTimeout(() => {
+        const closeBtn = document.getElementById("closeChatBtn");
+        const chatList = document.getElementById("chatList");
+        const userListDiv = document.getElementById("userListDiv");
+        const chatWindow = document.getElementById("chatWindow");
+    
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => {
+            closeChatWindow();
+            chatList.classList.remove("hidden");
+            chatWindow.classList.add("hidden");
+            userListDiv.classList.remove("hidden");
+            closeBtn.classList.add("hidden");
+          });
+        }
+      }, 100);
 
       // Poner foco en el input
       input.focus();
