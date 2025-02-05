@@ -8,6 +8,9 @@ import { loadingGroupForm, getUsersForGroupsError } from "../errors/errors.js";
 export function openCreateGroupForm() {
     const chatWindow = document.getElementById("chatWindow");
     if (!chatWindow) return;
+
+    const userListDiv = document.getElementById("userListDiv");
+    const chatList = document.getElementById("chatList");
   
     // Obtener la lista completa de usuarios para seleccionar miembros
     fetchUsers()
@@ -24,9 +27,9 @@ export function openCreateGroupForm() {
   
                   // Ocultar lista de chats y mostrar ventana de conversación en móviles
       if (window.innerWidth < 768) {
-        document.getElementById("userListDiv").classList.add("hidden");
-        document.getElementById("chatList").classList.add("hidden");
-        document.getElementById("chatWindow").classList.remove("hidden");
+        userListDiv.classList.add("hidden");
+        chatList.classList.add("hidden");
+        chatWindow.classList.remove("hidden");
       }
 
             // Insertar los usuarios disponibles en el formulario
@@ -53,11 +56,11 @@ export function openCreateGroupForm() {
             cancelCreateGroupBtn.addEventListener("click", () => {
               closeChatWindow();
                     // Ocultar lista de chats y mostrar ventana de conversación en móviles
-            if (window.innerWidth < 768) {
-              document.getElementById("userListDiv").classList.remove("hidden");
-              document.getElementById("chatList").classList.remove("hidden");
-              document.getElementById("chatWindow").classList.add("hidden");
-            }
+            
+              userListDiv.classList.remove("hidden");
+              chatList.classList.remove("hidden");
+              chatWindow.classList.add("hidden");
+
             });
   
             createGroupForm.addEventListener("submit", async (e) => {

@@ -64,6 +64,11 @@ window.addEventListener("DOMContentLoaded", () => {
           chatList.classList.add("hidden");
         });
 
+        changeBackgroundBtn.addEventListener("click", () => {
+          userListDiv.classList.add("hidden");
+          chatList.classList.add("hidden");
+        });
+
     } catch (error) {
       console.error(getUsersError, error);
     }
