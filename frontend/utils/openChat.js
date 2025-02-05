@@ -2,7 +2,6 @@ import { loadMessages } from "./loadMessages.js";
 import { sendMessage } from "./sendMessage.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
-import { backToUserList } from "../main.js";
 
 //Abrir chat en la sección derecha
 export function openChat(senderId, isGroup, senderName) {

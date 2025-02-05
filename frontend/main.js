@@ -45,7 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
           dropdownMenu.classList.add('hidden');
       });
 
-      // Implementación para ocultar la lista de chats en móviles
+      // Implementación versión móvil
       const chatList = document.getElementById("chatList");
       const chatContainer = document.getElementById("chatContainer");
       const userListDiv = document.getElementById("userListDiv");
@@ -58,6 +58,12 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       });
 
+      const openCreateGroup = document.getElementById("createGroupBtn")
+        openCreateGroup.addEventListener("click", () => {
+          userListDiv.classList.add("hidden");
+          chatList.classList.add("hidden");
+        });
+
     } catch (error) {
       console.error(getUsersError, error);
     }
@@ -65,7 +71,3 @@ window.addEventListener("DOMContentLoaded", () => {
 
   init();
 });
-
-export function backToUserList() {
-
-}

@@ -7,7 +7,7 @@
 </head>
 <body>
     <!-- createGroupForm.html -->
-<div class="flex flex-col w-full h-full p-6 bg-[var(--color-background)] shadow-lg rounded-lg">
+<div class="flex flex-col w-full h-full p-6 bg-[var(--color-background)] shadow-lg rounded-lg max-w-md mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)]">Crear Nuevo Grupo</h2>
     <form id="createGroupForm" class="flex flex-col space-y-6">
       <div>
@@ -31,15 +31,15 @@
       </div>
       <div>
         <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
-        <div class="grid grid-cols-2 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg" id="availableMembers">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg" id="availableMembers">
           <!-- Aquí se insertarán los miembros disponibles -->
         </div>
       </div>
-      <div class="flex justify-between space-x-4">
+      <div class="flex flex-col sm:flex-row justify-between space-x-0 sm:space-x-4">
         <button
           type="submit"
           id="submitCreateGroup"
-          class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm">
+          class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm mb-4 sm:mb-0">
           Crear Grupo
         </button>
         <button
@@ -51,7 +51,7 @@
       </div>
       <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
     </form>
-  </div>
-  
+</div>
+
 </body>
 </html>
