@@ -2,8 +2,9 @@ import { renderUserList } from "./utils/renderUserList.js";
 import { searchUsers } from "./utils/searchUsers.js";
 import { openCreateGroupForm } from "./utils/openCreateGroupForm.js";
 import { getUsersError } from "./errors/errors.js";
-import { fetchChats } from "./assets/fetching.js";
+import { fetchChats, fetchUsers } from "./assets/fetching.js";
 import { openChangeBackgroundGrid } from "./utils/openChangeBackgroundGrid.js";
+import { showUsers } from "./utils/showAllUsers.js";
 
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
@@ -31,6 +32,18 @@ window.addEventListener("DOMContentLoaded", () => {
       if (changeBackgroundBtn) {
         changeBackgroundBtn.addEventListener("click", () => {
           openChangeBackgroundGrid();
+        });
+      }
+
+      const createNewChat = document.getElementById("createNewChat");
+      if (createNewChat) {
+        createNewChat.addEventListener("click", async () => { // <-- Agregar "async" aquí
+          try {
+            const users = await fetchUsers();
+            showUsers(users);
+          } catch (error) {
+            console.error("Error fetching users:", error);
+          }
         });
       }
 

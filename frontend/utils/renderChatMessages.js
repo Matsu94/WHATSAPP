@@ -44,7 +44,7 @@ export function renderChatMessages(messages) {
       "text-[var(--color-text)]",
       isMine ? "bg-[var(--color-other)]" : "bg-[var(--color-user)]"
     );
-    console.log(messages)
+
     // Si es mi mensaje => "Yo", si no => msg.sender_name
     let senderDisplay = "";
     if (!msg.is_group){

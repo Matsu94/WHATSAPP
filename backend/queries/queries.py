@@ -1,5 +1,12 @@
-getAllUsers = """ 
-SELECT * FROM users 
+getAllUsersNoChat = """ 
+SELECT * 
+FROM users u
+WHERE NOT EXISTS (
+    SELECT * 
+    FROM messages m
+    WHERE (m.sender_id = u.user_id OR m.receiver_id = u.user_id)
+    AND (m.sender_id = %s OR m.receiver_id = %s)
+);
 """
 
 lastMessagesUsers = """
