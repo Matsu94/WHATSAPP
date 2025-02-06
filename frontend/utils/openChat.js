@@ -2,11 +2,15 @@ import { loadMessages } from "./loadMessages.js";
 import { sendMessage } from "./sendMessage.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
+import { fetchChats } from "../assets/fetching.js";
+import { renderUserList } from "./renderUserList.js";
 
 //Abrir chat en la sección derecha
-export function openChat(senderId, isGroup, senderName) {
+export async function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
   if (!chatWindow) return;
+  const chats = await fetchChats();
+  renderUserList(chats);
 
   // Cargar el contenido de openChat.html
   fetch("/WHATSAPP/frontend/components/openChat.html")
@@ -27,13 +31,17 @@ export function openChat(senderId, isGroup, senderName) {
       const sendBtn = document.getElementById("sendMessageBtn");
       const input = document.getElementById("newMessageInput");
 
-      sendBtn.addEventListener("click", () => {
+      sendBtn.addEventListener("click", async () => {
         sendMessage(senderId, isGroup);
+        const chats = await fetchChats();
+        renderUserList(chats);
       });
 
-      input.addEventListener("keydown", (e) => {
+      input.addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
           sendMessage(senderId, isGroup);
+          const chats = await fetchChats();
+          renderUserList(chats);
         } else if (e.key === "Escape") {
           closeChatWindow();
         }

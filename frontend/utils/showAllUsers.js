@@ -30,7 +30,7 @@ export async function showUsers(users){
 
     // Click event to open chat
     chatItem.addEventListener("click", () => {
-        openChat(user.id, 0, user.username);
+        openChat(user.user_id, false, user.username);
       
 
       // Ocultar lista de chats y mostrar ventana de conversación en móviles
