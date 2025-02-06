@@ -32,7 +32,7 @@ export async function fetchUsers() {
     try {
         const token = localStorage.getItem('token'); // Si requieres autenticación
 
-        const response = await fetch(`${URL}/users`, {
+        const response = await fetch(`${URL}/usersWithoutChat`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,9 +1,12 @@
-getAllUsers = """ 
+getAllUsersNoChat = """ 
 SELECT * 
-FROM users
-INNER JOIN messages m
-on users.user_id = messages.sender_id
-where (m.receiver_id != %s or m.sender_id != %s)
+FROM users u
+WHERE NOT EXISTS (
+    SELECT * 
+    FROM messages m
+    WHERE (m.sender_id = u.user_id OR m.receiver_id = u.user_id)
+    AND (m.sender_id = 20 OR m.receiver_id = 20)
+);
 """
 
 lastMessagesUsers = """
