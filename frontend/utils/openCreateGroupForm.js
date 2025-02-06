@@ -26,11 +26,9 @@ export function openCreateGroupForm() {
             chatWindow.innerHTML = html;
   
                   // Ocultar lista de chats y mostrar ventana de conversación en móviles
-      if (window.innerWidth < 768) {
-        userListDiv.classList.add("hidden");
-        chatList.classList.add("hidden");
-        chatWindow.classList.remove("hidden");
-      }
+              userListDiv.classList.add("hidden");
+              chatList.classList.add("hidden");
+              chatWindow.classList.remove("hidden");
 
             // Insertar los usuarios disponibles en el formulario
             const membersContainer = document.getElementById("availableMembers");
@@ -66,6 +64,9 @@ export function openCreateGroupForm() {
             createGroupForm.addEventListener("submit", async (e) => {
               e.preventDefault();
               await handleCreateGroupFormSubmit();
+              userListDiv.classList.remove("hidden");
+              chatList.classList.remove("hidden");
+              chatWindow.classList.add("hidden");
             });
           })
           .catch(error => {

@@ -31,9 +31,6 @@ export async function handleCreateGroupFormSubmit() {
     try {
         const responseData = await createGroup(groupObj);
 
-        // Opcional: Mostrar un mensaje de éxito
-        alert(`Grupo "${name}" creado exitosamente.`);
-
         // Actualizar la lista de chats (usuarios y grupos)
         const chats = await fetchChats();
         renderUserList(chats);
