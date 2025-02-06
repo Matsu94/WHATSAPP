@@ -1,5 +1,9 @@
 getAllUsers = """ 
-SELECT * FROM users 
+SELECT * 
+FROM users
+INNER JOIN messages m
+on users.user_id = messages.sender_id
+where (m.receiver_id != %s or m.sender_id != %s)
 """
 
 lastMessagesUsers = """

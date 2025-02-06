@@ -53,9 +53,9 @@ class Matias(object):
     # /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
     
     # Query to get all users (1a)
-    def getUsers(self):
+    def getUsers(self, user_id):
         sql = getAllUsers
-        self.cursor.execute(sql)
+        self.cursor.execute(sql, (user_id,))
         return self.cursor.fetchall()
     
     def checkUser(self, username):

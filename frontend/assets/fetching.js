@@ -30,11 +30,13 @@ export async function fetchToken(username, password) {
 //CARGAR USUARIOS PARA EL LISTADO
 export async function fetchUsers() {
     try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
         const response = await fetch(`${URL}/users`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
-                // Si no hay token requerido, no hace falta 'Authorization'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
             }
         });
         if (!response.ok) {

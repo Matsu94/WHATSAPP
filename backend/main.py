@@ -30,8 +30,9 @@ def read_root():
 
 # Endpoint to list all users (1a)
 @app.get("/users") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN PERO PODRÍA SER DIRECTAMENTE getChats 
-def read_users(db: Matias = Depends(get_db)):
-    return db.getUsers()
+def read_users(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
+    user_id = user['user_id']
+    return db.getUsers(user_id)
 
 # /missatgesAmics: permet enviar missatges a un amic (1m) o rebre els missatges d’aquest amic. (2m)
 # Inicialment rebrà els 10 missatges més recents, tant els que hem enviat com els que hem rebut, cronològicament. (2m)
