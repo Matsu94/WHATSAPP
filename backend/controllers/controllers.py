@@ -63,6 +63,10 @@ class Matias(object):
         self.cursor.execute(sql, (username,))
         return self.cursor.fetchone()
     
+    def getusersForGroup(self, user_id):
+        sql = getUsersForGroup
+        self.cursor.execute(sql, (user_id,))
+        return self.cursor.fetchall()
     
     
 

@@ -9,6 +9,12 @@ WHERE NOT EXISTS (
 );
 """
 
+getUsersForGroup = """
+SELECT *
+FROM users 
+WHERE user_id != %s;
+"""
+
 lastMessagesUsers = """
 WITH RankedMessages AS (
         SELECT m.*, 
