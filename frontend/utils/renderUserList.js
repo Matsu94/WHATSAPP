@@ -21,7 +21,7 @@ export function renderUserList(chats) {
 
     // Name of the chat
     const nameEl = document.createElement('div');
-    nameEl.className = "font-semibold";
+    nameEl.className = "font-semibold text-[var(--color-dark)]";
     nameEl.innerText = isGroupWithoutMessages ? chat.name : chat.chat_name;
 
     // Last message or description
@@ -34,7 +34,7 @@ export function renderUserList(chats) {
 
     // Timestamp handling
     const timestampEl = document.createElement('div');
-    timestampEl.className = "text-xs text-gray-500";
+    timestampEl.className = "text-xs text-gray-400";
     if (chat.date || chat.created_at) {
       const date = new Date(chat.date ?? chat.created_at);
       timestampEl.innerText = formatDate(date);

@@ -7,7 +7,7 @@ export function renderChatMessages(messages) {
     //JQUERY para la parte de Petrus
     $(container).css({
       "background-image": `url('../frontend/img/${savedBackground}')`,
-      "background-size": "cover",
+      "background-repeat": "repeat",
       "background-position": "center"
     });
   }
