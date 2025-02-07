@@ -49,6 +49,28 @@ export async function fetchUsers() {
     }
 }
 
+//CARGAR USUARIOS PARA GRUPO
+export async function fetchUsersForGroup() {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/usersForGroup`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`${errors.getUsersError}, ${response.status}`);
+        }
+        return await response.json(); 
+        // Esto será un array de objetos: [{ user_id, username, password }, ...]
+    } catch (error) {
+        throw error; // Relanzamos el error para manejarlo fuera
+    }
+}
+
 //Para cargar los mensajes
 export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
     try {
