@@ -1,4 +1,4 @@
-import { fetchUsers } from "../assets/fetching.js";
+import { fetchUsersForGroup } from "../assets/fetching.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { handleCreateGroupFormSubmit } from "../login/validations/groupValidations.js";
 import { currentUserId } from "../constants/const.js";
