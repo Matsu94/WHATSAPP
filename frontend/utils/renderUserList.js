@@ -13,7 +13,7 @@ export function renderUserList(chats) {
     
     // Create chat item container
     const chatItem = document.createElement('div');
-    chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)] flex justify-between items-center";
+    chatItem.className = "p-3 hover:bg-[var(--color-border)] cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center";
 
     // Create info div (name + last message)
     const infoDiv = document.createElement('div');
@@ -21,12 +21,12 @@ export function renderUserList(chats) {
 
     // Name of the chat
     const nameEl = document.createElement('div');
-    nameEl.className = "font-semibold";
+    nameEl.className = "font-semibold text-[var(--color-dark)]";
     nameEl.innerText = isGroupWithoutMessages ? chat.name : chat.chat_name;
 
     // Last message or description
     const lastMessageEl = document.createElement('div');
-    lastMessageEl.className = "text-sm text-gray-600 truncate";
+    lastMessageEl.className = "text-sm text-gray-400 truncate";
     lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes."; // TECNICAMENTE NO HAY CHATS VACIOS EN PREVIEW
 
     infoDiv.appendChild(nameEl);
@@ -34,7 +34,7 @@ export function renderUserList(chats) {
 
     // Timestamp handling
     const timestampEl = document.createElement('div');
-    timestampEl.className = "text-xs text-gray-500";
+    timestampEl.className = "text-xs text-gray-400";
     if (chat.date || chat.created_at) {
       const date = new Date(chat.date ?? chat.created_at);
       timestampEl.innerText = formatDate(date);

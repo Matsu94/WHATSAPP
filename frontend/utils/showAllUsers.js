@@ -12,7 +12,7 @@ export async function showUsers(users){
 
     // Create chat item container
     const chatItem = document.createElement('div');
-    chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)] flex justify-between items-center";
+    chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center";
 
     // Create info div (name + last message)
     const infoDiv = document.createElement('div');

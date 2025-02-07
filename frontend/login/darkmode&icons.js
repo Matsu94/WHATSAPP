@@ -18,18 +18,21 @@ $(document).ready(function () {
 
   // 2) Toggle Show/Hide Password
   $("#togglePassword").on("click", function () {
-      const passwordInput = $("#password");
-      const eyeOpen = $("#eyeOpen");
-      const eyeSlash = $("#eyeSlash");
-
-      if (passwordInput.attr("type") === "password") {
-          passwordInput.attr("type", "text");
-          eyeOpen.addClass("hidden");
-          eyeSlash.removeClass("hidden");
-      } else {
-          passwordInput.attr("type", "password");
-          eyeOpen.removeClass("hidden");
-          eyeSlash.addClass("hidden");
-      }
+    const passwordInput = $("#password");
+    const eyeOpen = $("#eyeOpen");
+    const eyeSlash = $("#eyeSlash");
+  
+    if (passwordInput.attr("type") === "password") {
+      // Cambiar a texto y alternar iconos:
+      passwordInput.attr("type", "text");
+      eyeOpen.addClass("hidden");      // Ocultar el icono de ojo abierto
+      eyeSlash.removeClass("hidden");  // Mostrar el icono de ojo cerrado
+    } else {
+      // Volver a contraseña y alternar iconos:
+      passwordInput.attr("type", "password");
+      eyeOpen.removeClass("hidden");   // Mostrar el icono de ojo abierto
+      eyeSlash.addClass("hidden");     // Ocultar el icono de ojo cerrado
+    }
   });
+  
 });
