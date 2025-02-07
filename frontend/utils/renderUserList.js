@@ -13,7 +13,7 @@ export function renderUserList(chats) {
     
     // Create chat item container
     const chatItem = document.createElement('div');
-    chatItem.className = "p-3 hover:bg-gray-100 cursor-pointer border-b border-[var(--color-border)] flex justify-between items-center";
+    chatItem.className = "p-3 hover:bg-[var(--color-border)] cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center";
 
     // Create info div (name + last message)
     const infoDiv = document.createElement('div');
@@ -26,7 +26,7 @@ export function renderUserList(chats) {
 
     // Last message or description
     const lastMessageEl = document.createElement('div');
-    lastMessageEl.className = "text-sm text-gray-600 truncate";
+    lastMessageEl.className = "text-sm text-gray-400 truncate";
     lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes."; // TECNICAMENTE NO HAY CHATS VACIOS EN PREVIEW
 
     infoDiv.appendChild(nameEl);

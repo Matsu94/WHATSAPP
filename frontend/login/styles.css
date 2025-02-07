@@ -1,10 +1,12 @@
- /* ========== MODO CLARO (light) ========== */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* ========== MODO CLARO (light) ========== */
  :root {
-    --color-user: #A1B2BA;    /* Fondo contenedor */
-    --color-other: #ABA0BA;
-    --color-dark: #544E61;   /* Botones / detalles oscuros */
-    --color-headers: #519072;/* P.ej. para focus ring */
-    --color-base: #CEEDDB;   /* Fondo de la página */
+    --color-user: #7E9B7B;    /* Fondo contenedor */
+    --color-other: #e9cae9;
+    --color-dark: #586642;   /* Botones / detalles oscuros */
+    --color-headers: #e3f7d1;/* P.ej. para focus ring */
+    --color-base: #fffefc;   /* Fondo de la página */
+    --color-chats: #f3e3f3;
     
     /* Variables para texto y bordes en modo claro */
     --color-text: #000000;   /* Texto principal en modo claro */
@@ -13,6 +15,18 @@
 
   /* ========== MODO OSCURO (dark) ========== */
   :root[data-theme="dark"] {
+    --color-user: #212522;    /* Ejemplo contenedor más oscuro */
+    --color-other: #916f91;
+    --color-dark: #56735d;    /* Botones en modo oscuro */
+    --color-headers: #56735d; /* Para focus ring en modo oscuro */
+    --color-base:  #272532; /* Fondo de la página en modo oscuro */
+    --color-chats: #292229;
+    /* Texto y bordes en modo oscuro */
+    --color-text: #fffefc;    /* Texto principal en modo oscuro */
+    --color-border: #4f4f4f;  /* Bordes en modo oscuro */
+  }
+
+  :root[data-theme="highcontrast"] {
     --color-user: #444D55;    /* Ejemplo contenedor más oscuro */
     --color-other: #5B5466;
     --color-dark: #272532;    /* Botones en modo oscuro */
@@ -23,6 +37,24 @@
     --color-text: #ffffff;    /* Texto principal en modo oscuro */
     --color-border: #555555;  /* Bordes en modo oscuro */
   }
+
+  :root {
+    --font-titles: 'Poppins', sans-serif; /* Para títulos y botones */
+    --font-body: 'Lato', serif;          /* Para cuerpo de texto */
+    --font-dates: 'Poppins', sans-serif;   /* Para fechas y horas (usa font-weight: 300 para light) */
+  }
+  /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
+
+  .btn-custom {
+    @apply group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-transparent px-6 font-medium text-neutral-600 transition-all duration-100;
+    box-shadow: 5px 5px rgb(82, 82, 82);
+  }
+  
+  .btn-custom:active {
+    transform: translateX(3px) translateY(3px);
+    box-shadow: 0px 0px rgb(82, 82, 82);
+  }
+  
 
   /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
   .theme-switch {

@@ -3,14 +3,14 @@
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
   const savedBackground = localStorage.getItem("chatBackground");
-      if (savedBackground) {   
-        //JQUERY para la parte de Petrus
-        $(container).css({
-            "background-image": `url('../frontend/img/${savedBackground}')`,
-            "background-size": "cover",
-            "background-position": "center"
-        });
-    }
+  if (savedBackground) {
+    //JQUERY para la parte de Petrus
+    $(container).css({
+      "background-image": `url('../frontend/img/${savedBackground}')`,
+      "background-size": "cover",
+      "background-position": "center"
+    });
+  }
   if (!container) return;
 
   container.innerHTML = "";
@@ -23,10 +23,10 @@ export function renderChatMessages(messages) {
     // Comparamos con el username (o ID), dependiendo de tu lógica
     const currentUsername = localStorage.getItem('username') || "";
     let isMine = "";
-    
-    if (!msg.is_group){
+
+    if (!msg.is_group) {
       isMine = (msg.sender_name === currentUsername);
-    } else{
+    } else {
       isMine = (msg.user_name === currentUsername);
     }
 
@@ -47,18 +47,18 @@ export function renderChatMessages(messages) {
 
     // Si es mi mensaje => "Yo", si no => msg.sender_name
     let senderDisplay = "";
-    if (!msg.is_group){
+    if (!msg.is_group) {
       senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
-    } else{
-      senderDisplay = isMine ? "Yo" : (msg.user_name|| `User ${msg.user_name}`);
+    } else {
+      senderDisplay = isMine ? "Yo" : (msg.user_name || `User ${msg.user_name}`);
     }
-    
 
     msgBubble.innerHTML = `
-      <div class="font-semibold mb-1">${senderDisplay}</div>
+      <div class="font-titles mb-1">${senderDisplay}</div>
       <div>${msg.content}</div>
-      <div class="text-xs text-gray-700 mt-1">${msg.date}</div>
+      <div class="text-xs text-gray-200 mt-1 font-dates font-light">${msg.date}</div>
     `;
+
 
     msgWrapper.appendChild(msgBubble);
     container.appendChild(msgWrapper);

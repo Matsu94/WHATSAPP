@@ -1,58 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>createGroupForm</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>createGroupForm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Poppins (300,700) y Lora -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;700&family=Lora&display=swap" rel="stylesheet">
 </head>
-<body class="bg-[var(--color-background)] flex items-center justify-center min-h-screen">
-
-<div class="flex flex-col items-center justify-center w-full max-w-xl lg:max-w-3xl bg-[var(--color-background)] p-4 md:p-6 lg:p-8 shadow-lg rounded-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)]">Crear Nuevo Grupo</h2>
+<body class="bg-[var(--color-background)] flex items-center justify-center min-h-screen" style="font-family: var(--font-body);">
+  <div class="flex flex-col items-center justify-center w-full max-w-xl lg:max-w-3xl bg-[var(--color-other)] p-4 md:p-6 lg:p-8 shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles">Crear Nuevo Grupo</h2>
     <form id="createGroupForm" class="w-full space-y-6">
-        <div>
-            <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Nombre del Grupo</label>
-            <input
-                type="text"
-                id="groupNameInput"
-                class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
-                placeholder="Escribe el nombre del grupo"
-                required
-            />
+      <div>
+        <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Nombre del Grupo</label>
+        <input
+          type="text"
+          id="groupNameInput"
+          class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+          placeholder="Escribe el nombre del grupo"
+          required
+        />
+      </div>
+      <div>
+        <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Descripción del Grupo</label>
+        <textarea
+          id="groupDescriptionInput"
+          class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
+          placeholder="Agrega una breve descripción del grupo"
+          rows="4"
+        ></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg" id="availableMembers">
+          <!-- Aquí se insertarán los miembros disponibles -->
         </div>
-        <div>
-            <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">Descripción del Grupo</label>
-            <textarea
-                id="groupDescriptionInput"
-                class="w-full p-3 border border-[var(--color-border)] rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
-                placeholder="Agrega una breve descripción del grupo"
-                rows="4"
-            ></textarea>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg" id="availableMembers">
-                <!-- Aquí se insertarán los miembros disponibles -->
-            </div>
-        </div>
-        <div class="flex flex-col md:flex-row md:justify-between space-y-3 md:space-y-0 md:space-x-4">
-            <button
-                type="submit"
-                id="submitCreateGroup"
-                class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm">
-                Crear Grupo
-            </button>
-            <button
-                type="button"
-                id="cancelCreateGroupBtn"
-                class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm">
-                Cancelar
-            </button>
-        </div>
-        <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
+      </div>
+      <div class="flex flex-col md:flex-row md:justify-between space-y-3 md:space-y-0 md:space-x-4">
+        <button
+          type="submit"
+          id="submitCreateGroup"
+          class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm font-titles"
+        >
+          Crear Grupo
+        </button>
+        <button
+          type="button"
+          id="cancelCreateGroupBtn"
+          class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm font-titles"
+        >
+          Cancelar
+        </button>
+      </div>
+      <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
     </form>
-</div>
-
+  </div>
 </body>
 </html>
