@@ -40,18 +40,6 @@
     --color-border: #a5a5a5;  /* Bordes en modo oscuro */
   }
 
-  :html[data-theme="dark"] {
-    --color-user: #5b6a57;    /* Ejemplo contenedor más oscuro */
-    --color-other: #916f91;
-    --color-dark: #a6bcab;    /* Botones en modo oscuro */
-    --color-headers: #d2ecd8; /* Para focus ring en modo oscuro */
-    --color-base:  #272532; /* Fondo de la página en modo oscuro */
-    --color-chats: #292229;
-    /* Texto y bordes en modo oscuro */
-    --color-text: #ffffff;    /*o Texto principal en modo oscuro */
-    --color-border: #4f4f4f;  /* Bordes en modo oscuro */
-  }
-
 
   :root {
     --font-titles: 'Poppins', sans-serif; /* Para títulos y botones */
