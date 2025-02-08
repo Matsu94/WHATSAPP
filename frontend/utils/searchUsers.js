@@ -1,7 +1,7 @@
 // Búsqueda en local (si tuvieras un array de users en memoria)
-export function searchUsers(users, query) {
+export function searchUsers(chats, query) {
     const lowerQuery = query.toLowerCase();
-    return users.filter(u => 
-      u.chat_name.toLowerCase().includes(lowerQuery)
+    return chats.filter(u => 
+      (u.chat_name || '').toLowerCase().includes(lowerQuery)
     );
   }

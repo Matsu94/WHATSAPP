@@ -17,9 +17,9 @@ export async function fetchToken(username, password) {
         }
 
         const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('username', username);
-        localStorage.setItem('user_id', data.user_id);
+        sessionStorage.setItem('token', data.access_token);
+        sessionStorage.setItem('username', username);
+        sessionStorage.setItem('user_id', data.user_id);
         window.location.href = '../inicio.html';
     } catch (error) {
         console.error('Error:', error);
@@ -30,7 +30,7 @@ export async function fetchToken(username, password) {
 //CARGAR USUARIOS PARA EL LISTADO
 export async function fetchUsers() {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/usersWithoutChat`, {
             method: 'GET',
@@ -52,7 +52,7 @@ export async function fetchUsers() {
 //CARGAR USUARIOS PARA GRUPO
 export async function fetchUsersForGroup() {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/usersForGroup`, {
             method: 'GET',
@@ -76,8 +76,8 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
     try {
         const isGroupParam = isGroup ? 'true' : 'false';
 
-        // Retrieve the token from localStorage
-        const token = localStorage.getItem('token');
+        // Retrieve the token from sessionStorage
+        const token = sessionStorage.getItem('token');
 
         // Fetch messages from the backend
         const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?limit=${limit}&offset=${offset}`, {
@@ -123,7 +123,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
 export async function postMessage(messageObj) {
     try {
         // Si requieres token, obténlo:
-        // const token = localStorage.getItem('token');
+        // const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/sendMessage`, {
             method: 'POST',
@@ -148,7 +148,7 @@ export async function postMessage(messageObj) {
 // crear grupo
 export async function createGroup(groupObj) {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/create_group`, {
             method: 'POST',
@@ -173,7 +173,7 @@ export async function createGroup(groupObj) {
 
 export async function fetchChats() {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/chats`, {
             method: 'GET',

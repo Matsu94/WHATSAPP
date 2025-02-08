@@ -21,12 +21,12 @@ export function renderUserList(chats) {
 
     // Name of the chat
     const nameEl = document.createElement('div');
-    nameEl.className = "font-semibold text-[var(--color-dark)]";
+    nameEl.className = "font-semibold text-[var(--color-text)]";
     nameEl.innerText = isGroupWithoutMessages ? chat.name : chat.chat_name;
 
     // Last message or description
     const lastMessageEl = document.createElement('div');
-    lastMessageEl.className = "text-sm text-gray-400 truncate";
+    lastMessageEl.className = "text-sm text-[var(--color-dark)] truncate";
     lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes."; // TECNICAMENTE NO HAY CHATS VACIOS EN PREVIEW
 
     infoDiv.appendChild(nameEl);

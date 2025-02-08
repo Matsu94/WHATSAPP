@@ -3,7 +3,7 @@
 
 /* ========== MODO CLARO (light) ========== */
  :root {
-    --color-user: #7E9B7B;    /* Fondo contenedor */
+    --color-user: #a1c49d;    /* Fondo contenedor */
     --color-other: #e9cae9;
     --color-dark: #586642;   /* Botones / detalles oscuros */
     --color-headers: #e3f7d1;/* P.ej. para focus ring */
@@ -19,12 +19,12 @@
   :root[data-theme="dark"] {
     --color-user: #212522;    /* Ejemplo contenedor más oscuro */
     --color-other: #916f91;
-    --color-dark: #56735d;    /* Botones en modo oscuro */
-    --color-headers: #799780; /* Para focus ring en modo oscuro */
+    --color-dark: #a6bcab;    /* Botones en modo oscuro */
+    --color-headers: #c0e8c9; /* Para focus ring en modo oscuro */
     --color-base:  #272532; /* Fondo de la página en modo oscuro */
     --color-chats: #292229;
     /* Texto y bordes en modo oscuro */
-    --color-text: #5f5d5b;    /* Texto principal en modo oscuro */
+    --color-text: #ffffff;    /* Texto principal en modo oscuro */
     --color-border: #4f4f4f;  /* Bordes en modo oscuro */
   }
 

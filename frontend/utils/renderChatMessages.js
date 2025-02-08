@@ -2,7 +2,7 @@
 // renderChatMessages: pinta las burbujas con los más antiguos arriba
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
-  const savedBackground = localStorage.getItem("chatBackground");
+  const savedBackground = sessionStorage.getItem("chatBackground");
   if (savedBackground) {
     //JQUERY para la parte de Petrus
     $(container).css({
@@ -21,7 +21,7 @@ export function renderChatMessages(messages) {
 
   messages.forEach((msg) => {
     // Comparamos con el username (o ID), dependiendo de tu lógica
-    const currentUsername = localStorage.getItem('username') || "";
+    const currentUsername = sessionStorage.getItem('username') || "";
     let isMine = "";
 
     if (!msg.is_group) {
@@ -56,7 +56,7 @@ export function renderChatMessages(messages) {
     msgBubble.innerHTML = `
       <div class="font-titles mb-1">${senderDisplay}</div>
       <div>${msg.content}</div>
-      <div class="text-xs text-gray-200 mt-1 font-dates font-light">${msg.date}</div>
+      <div class="text-xs text-[var(--color-text)] mt-1 font-dates font-light">${msg.date}</div>
     `;
 
 

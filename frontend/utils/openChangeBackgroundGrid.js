@@ -20,7 +20,7 @@ export function openChangeBackgroundGrid() {
             $(".bg-option").on("click", function (e) {
                 e.preventDefault();
                 const selectedBackground = $(this).data("bg");
-                localStorage.setItem("chatBackground", selectedBackground); // Save to localStorage
+                sessionStorage.setItem("chatBackground", selectedBackground);
                 closeChatWindow(); // Close grid after selection
                 userListDiv.classList.remove("hidden");
                 chatList.classList.remove("hidden");

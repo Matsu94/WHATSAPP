@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="localhost",
-            #host="192.168.193.133",
-            #port=3306,
-            user="root",
-            #user="matiasianbastero",
-            #password="49864854A",
-            db="matias",
-            #db="damahe",
+            #host="localhost",
+            host="192.168.193.133",
+            port=3306,
+            #user="root",
+            user="matiasianbastero",
+            password="49864854A",
+            #db="matias",
+            db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -207,7 +207,7 @@ class Matias(object):
             sql = insertGroupMemnber
             self.cursor.execute(sql, (group_id, member))
         return group_id
-
+    
     # Query to add a user to a group (3g)
     # Se hace INSERT en group_members, no UPDATE.
     # POR AHORA TODOS TIENEN LA OPCION DE INTENTAR METER A ALGUIEN EN EL GRP Y SI NO SON ADMIN TIRA ERROR 
