@@ -120,6 +120,7 @@ updateMessageStatus = """
 UPDATE messages
 SET status = %s
 WHERE message_id = %s
+AND receiver_id = %s
 """
 
 getMessagesChat = """

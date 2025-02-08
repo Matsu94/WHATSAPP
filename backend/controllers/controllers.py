@@ -139,7 +139,7 @@ class Matias(object):
             self.cursor.execute(sql, (new_status, message['message_id'], receiver_id))
         else:
             sql = updateMessageStatus
-            self.cursor.execute(sql, (new_status, message['message_id']))
+            self.cursor.execute(sql, (new_status, message['message_id'], receiver_id))
         return self.cursor.rowcount  # Return the total number of rows updated
 
     # Query to get all messages (o mensajes de un remitente a un destinatario) (2m)
