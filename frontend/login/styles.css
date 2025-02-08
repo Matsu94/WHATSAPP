@@ -12,19 +12,19 @@
     
     /* Variables para texto y bordes en modo claro */
     --color-text: #000000;   /* Texto principal en modo claro */
-    --color-border: #cccccc; /* Bordes en modo claro */
+    --color-border: #d9d3d8; /* Bordes en modo claro */
   }
 
   /* ========== MODO OSCURO (dark) ========== */
   :root[data-theme="dark"] {
-    --color-user: #212522;    /* Ejemplo contenedor más oscuro */
+    --color-user: #515c54;    /* Ejemplo contenedor más oscuro */
     --color-other: #916f91;
     --color-dark: #a6bcab;    /* Botones en modo oscuro */
     --color-headers: #c0e8c9; /* Para focus ring en modo oscuro */
     --color-base:  #272532; /* Fondo de la página en modo oscuro */
     --color-chats: #292229;
     /* Texto y bordes en modo oscuro */
-    --color-text: #ffffff;    /* Texto principal en modo oscuro */
+    --color-text: #ffffff;    /*o Texto principal en modo oscuro */
     --color-border: #4f4f4f;  /* Bordes en modo oscuro */
   }
 
