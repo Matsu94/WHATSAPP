@@ -4,6 +4,8 @@ import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
 import { fetchChats } from "../assets/fetching.js";
 import { renderUserList } from "./renderUserList.js";
+import { openGroupOptions } from "./openGroupOptions.js";
+
 
 //Abrir chat en la sección derecha
 export async function openChat(senderId, isGroup, senderName) {
@@ -18,10 +20,18 @@ export async function openChat(senderId, isGroup, senderName) {
     .then((html) => {
       chatWindow.innerHTML = html;
 
-      // Actualizar dinámicamente el encabezado
+
       const chatHeader = document.getElementById("chatHeader");
+      const groupOptions = document.getElementById("groupOptions");
       if (chatHeader) {
-        chatHeader.textContent = `${senderName}`;
+        chatHeader.textContent = senderName; // Default header text
+      }
+
+      if (isGroup && groupOptions) {
+        groupOptions.classList.remove("hidden"); // Make the <a> tag visible
+        groupOptions.addEventListener("click", () => {
+          openGroupOptions(senderId); // Call the function to open group settings
+        });
       }
 
       // Cargar y mostrar los mensajes
@@ -53,7 +63,7 @@ export async function openChat(senderId, isGroup, senderName) {
         const chatList = document.getElementById("chatList");
         const userListDiv = document.getElementById("userListDiv");
         const chatWindow = document.getElementById("chatWindow");
-    
+
         if (closeBtn) {
           closeBtn.addEventListener("click", () => {
             closeChatWindow();

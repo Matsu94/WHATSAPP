@@ -127,30 +127,43 @@ def get_groups(user_id: int, db: Matias = Depends(get_db)):
 @app.post("/create_group")
 def create_group(group: Group, db: Matias = Depends(get_db)):
     return db.createGroup(group)
+# Endpoint to get members of a group
+@app.get("/get_members/{group_id}")
+def get_members(group_id: int, db: Matias = Depends(get_db)):
+    return db.getMembers(group_id)
+
+# Endpoint to get admins of a group
+# @app.get("/get_admins/{group_id}")
+# def get_admins(group_id: int, db: Matias = Depends(get_db)):
+#     return db.getAdmins(group_id)
 
 # Endpoint to add a user to a group (3g)
 @app.put("/add_user/{group_id}/{member_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
-def add_user_to_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+def add_user_to_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    admin_id = admin['user_id']
     return db.addUserToGroup(group_id, member_id, admin_id)
 
 # Endpoint to delete a user from a group (3g)
-@app.delete("/delete_user/{group_id}/{member_id}")
-def delete_user_from_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+@app.delete("/remove_user/{group_id}/{member_id}")
+def delete_user_from_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    admin_id = admin['user_id']
     return db.deleteUserFromGroup(group_id, member_id, admin_id)
 
 # Endpoint to change group admin (3g)
-@app.put("/change_admin/{group_id}/{member_id}")
-def change_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+@app.put("/add_admin/{group_id}/{member_id}")
+def add_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    admin_id = admin['user_id']
     return db.addAdmin(group_id, member_id, admin_id)
 
 # Endpoint to change group name (4g)
-@app.put("/change_name/{group_id}/{name}")
-def change_name(group_id: int, name: str, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+def change_name(group_id: int, name: str, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    admin_id = admin['user_id']
     return db.changeName(group_id, name, admin_id)
 
 # Endpoint to leave a group (5g)
-@app.delete("/leave_group/{group_id}/{user_id}")
-def leave_group(group_id: int, db: Matias = Depends(get_db), admin_id: str = Depends(get_current_user)):
+@app.delete("/leave_group/{group_id}") # ESTE POR LIMPIEZA EN LA BD TENDRÍA QUE HACER QUE BORRE TODA LA INFO DEL GRUPO, GROUP_MEMBERS, MENSAJES Y STATUS
+def leave_group(group_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    admin_id = admin['user_id']
     return db.leaveGroup(group_id, admin_id)
 
 # Endpoint to delete a group

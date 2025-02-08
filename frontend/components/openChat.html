@@ -12,23 +12,22 @@
         <button id="closeChatBtn" class="md:hidden flex absolute left-4 px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 transition duration-200">
           ← Volver
         </button>
-        <h2 id="chatHeader" class="text-lg font-bold text-[var(--color-headers)]">Grupo Frontend</h2>
-      </div>
+        <h2 id="chatHeader" class="text-lg font-bold text-[var(--color-headers)]"></h2>
+        <a id="groupOptions" href="#" class="hidden absolute w-full h-full top-0 left-0"></a>
+    </div>
       
-      
-           
-
     <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-[var(--color-base)] flex flex-col">
       <!-- Los mensajes se cargarán dinámicamente -->
     </div>
 
-    <div class="p-3 border-t border-[var(--color-border)] flex items-center bg-[var(--color-user)]">
-      <input type="text" id="newMessageInput" class="flex-1 p-2 border border-[var(--color-border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-headers)]" placeholder="Escribe un mensaje..." />
-      <button id="sendMessageBtn" class="ml-2 px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 flex items-center transition duration-200">
-        Enviar
-        <span class="ml-2">➡️</span>
-      </button>
+    <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-chats)] overflow-hidden bg-[var(--color-border)]">
+      <input type="text" id="newMessageInput" placeholder="Escribe un mensaje..." 
+             class="flex-1 outline-none bg-transparent text-[var-(--color-dark)] text-sm" />
+             <a href="#_" id="sendMessageBtn" class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-border)] border-2 border-[var(--color-headers)] rounded-full shadow-sm hover:bg-transparent hover:text-[var(--color-text)] hover:border-[var(--color-text)] focus:outline-none">
+              Enviar
+            </a>
     </div>
+    
   </div>
 </body>
 </html>
