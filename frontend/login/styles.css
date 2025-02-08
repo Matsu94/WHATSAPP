@@ -17,10 +17,10 @@
 
   /* ========== MODO OSCURO (dark) ========== */
   :root[data-theme="dark"] {
-    --color-user: #515c54;    /* Ejemplo contenedor más oscuro */
+    --color-user: #5b6a57;    /* Ejemplo contenedor más oscuro */
     --color-other: #916f91;
     --color-dark: #a6bcab;    /* Botones en modo oscuro */
-    --color-headers: #c0e8c9; /* Para focus ring en modo oscuro */
+    --color-headers: #d2ecd8; /* Para focus ring en modo oscuro */
     --color-base:  #272532; /* Fondo de la página en modo oscuro */
     --color-chats: #292229;
     /* Texto y bordes en modo oscuro */
@@ -45,6 +45,32 @@
     --font-body: 'Lato', serif;          /* Para cuerpo de texto */
     --font-dates: 'Poppins', sans-serif;   /* Para fechas y horas (usa font-weight: 300 para light) */
   }
+
+    /* ========== SCROLL BAR ========== */
+/* Para navegadores basados en WebKit */
+::-webkit-scrollbar {
+  width: 8px; /* ancho del scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-border); /* color de la pista */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-user); /* color de la barra */
+  border-radius: 4px; /* redondear el pulgar */
+}
+
+/* Para Firefox */
+* {
+  scrollbar-width: thin; /* scrollbar delgado */
+  scrollbar-color: var(--color-user) var(--color-border); /* primer valor: thumb, segundo: track */
+}
+
+
+
+
+
   /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
 
   .btn-custom {

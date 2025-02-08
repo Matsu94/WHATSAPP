@@ -12,10 +12,17 @@
     <!-- Título Modo de Visualización -->
     <h2 class="text-xl font-bold text-center mb-6">Modo de visualización</h2>
     <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
-      <button class="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Standard</button>
-      <button class="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Modo de alto contraste</button>
-      <button class="w-full sm:w-auto px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Modo oscuro</button>
+      <button class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+        Standard
+      </button>
+      <button class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+        Modo de alto contraste
+      </button>
+      <button class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+        Modo oscuro
+      </button>
     </div>
+    
 
     <!-- Título Seleccionar Fondo -->
     <h2 class="text-xl font-bold text-center mb-6">Cambiar Fondo del Chat</h2>
@@ -43,9 +50,8 @@
     </div>
 
     <!-- Botón Cancelar -->
-    <button id="cancelChangeBackgroundBtn" class="mt-6 w-full py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+    <button id="cancelChangeBackgroundBtn" class="mt-6 w-full flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-border)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
       Cancelar
     </button>
-  </div>
 </body>
 </html>

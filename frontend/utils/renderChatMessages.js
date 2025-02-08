@@ -54,7 +54,7 @@ export function renderChatMessages(messages) {
     }
 
     msgBubble.innerHTML = `
-      <div class="font-titles mb-1">${senderDisplay}</div>
+      <div class="font-titles font-bold mb-1">${senderDisplay}</div>
       <div>${msg.content}</div>
       <div class="text-xs text-[var(--color-text)] mt-1 font-dates font-light">${msg.date}</div>
     `;
