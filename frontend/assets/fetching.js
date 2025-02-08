@@ -42,32 +42,42 @@ export async function fetchUsers() {
         if (!response.ok) {
             throw new Error(`${errors.getUsersError}, ${response.status}`);
         }
-        return await response.json(); 
+        return await response.json();
         // Esto será un array de objetos: [{ user_id, username, password }, ...]
     } catch (error) {
         throw error; // Relanzamos el error para manejarlo fuera
     }
 }
 
-//CARGAR USUARIOS PARA GRUPO
-export async function fetchUsersForGroup() {
+export async function fetchChats() {
     try {
         const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
-        const response = await fetch(`${URL}/usersForGroup`, {
+        const response = await fetch(`${URL}/chats`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
             }
         });
-        if (!response.ok) {
-            throw new Error(`${errors.getUsersError}, ${response.status}`);
+
+        const response2 = await fetch(`${URL}/get_missing_groups`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok && !response2.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error al obtener chats: ${response.status} - ${JSON.stringify(errorData)}`);
         }
-        return await response.json(); 
-        // Esto será un array de objetos: [{ user_id, username, password }, ...]
+        const data = await response.json();
+        const data2 = await response2.json();
+        return [...data, ...data2]; // Esperamos un array de objetos con usuarios/grupos, el último mensaje y los grps sin msjs
     } catch (error) {
-        throw error; // Relanzamos el error para manejarlo fuera
+        throw error;
     }
 }
 
@@ -171,34 +181,108 @@ export async function createGroup(groupObj) {
     }
 }
 
-export async function fetchChats() {
+//CARGAR USUARIOS PARA GRUPO
+export async function fetchUsersForGroup() {
     try {
         const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
-        const response = await fetch(`${URL}/chats`, {
+        const response = await fetch(`${URL}/usersForGroup`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
             }
         });
+        if (!response.ok) {
+            throw new Error(`${errors.getUsersError}, ${response.status}`);
+        }
+        return await response.json();
+        // Esto será un array de objetos: [{ user_id, username, password }, ...]
+    } catch (error) {
+        throw error; // Relanzamos el error para manejarlo fuera
+    }
+}
+//CARGAR USUARIOS DE GRUPO
+export async function fetchUsersFromGroup(group_id) {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
 
-        const response2 = await fetch(`${URL}/get_missing_groups`, {
+        const response = await fetch(`${URL}/get_members/${group_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
             }
         });
+        if (!response.ok) {
+            throw new Error(`${errors.getUsersError}, ${response.status}`);
+        }
+        return await response.json();
+        // Esto será un array de objetos: [{ user_id, username, password }, ...]
+    } catch (error) {
+        throw error; // Relanzamos el error para manejarlo fuera
+    }
+}
+export async function fetchRemoveUserFromGroup(group_id, userId) {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
 
-        if (!response.ok && !response2.ok) {
-            const errorData = await response.json();
-            throw new Error(`Error al obtener chats: ${response.status} - ${JSON.stringify(errorData)}`);
+        const response = await fetch(`${URL}/remove_user/${group_id}/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.removeUserError}, ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function fetchPromoteUserToAdmin(group_id, userId) {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/add_admin/${group_id}/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.promoteUserError}, ${response.status}`);
         }
 
-        const data = await response.json();
-        const data2 = await response2.json();
-        return [...data, ...data2]; // Esperamos un array de objetos con usuarios/grupos, el último mensaje y los grps sin msjs
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function fetchLeaveGroup(group_id) {
+    try {
+        const token = localStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/leave_group/${group_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.leaveGroupError}, ${response.status}`);
+        }
+
+        return await response.json();
     } catch (error) {
         throw error;
     }

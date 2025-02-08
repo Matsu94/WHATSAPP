@@ -207,7 +207,15 @@ class Matias(object):
             sql = insertGroupMemnber
             self.cursor.execute(sql, (group_id, member))
         return group_id
-    
+    def getMembers(self, group_id):
+        sql = getMembers
+        self.cursor.execute(sql, (group_id,))
+        return self.cursor.fetchall()
+
+    # def getAdmins(self, group_id):
+    #     sql = getAdmins
+    #     self.cursor.execute(sql, (group_id,))
+    #     return self.cursor.fetchall()
     # Query to add a user to a group (3g)
     # Se hace INSERT en group_members, no UPDATE.
     # POR AHORA TODOS TIENEN LA OPCION DE INTENTAR METER A ALGUIEN EN EL GRP Y SI NO SON ADMIN TIRA ERROR 
@@ -244,14 +252,14 @@ class Matias(object):
         if not result['is_admin']: 
             return "User has no permissions"
         else:
-            # Comprobamos si el usuario está en el grupo
-            sql = memberExistsInGrouop
-            self.cursor.execute(sql, (group_id, member_id))
-            result = self.cursor.fetchone()
-            # Si NO existe, "User not in group" ESTO EVENTUALMENTE TENDRIAMOS QUE EXPRESARLO EN FRONT END (LISTA DE USERS DE GRP Y BOTON DE BORRAR)
-            if not result:
-                return "User not in group"
-            else:
+             # # Comprobamos si el usuario está en el grupo
+            # sql = memberExistsInGrouop
+            # self.cursor.execute(sql, (group_id, member_id,))
+            # result = self.cursor.fetchone()
+            # # Si NO existe, "User not in group" ESTO EVENTUALMENTE TENDRIAMOS QUE EXPRESARLO EN FRONT END (LISTA DE USERS DE GRP Y BOTON DE BORRAR)
+            # if not result:
+            #     return "User not in group"
+            # else:
                 # Lo eliminamos
                 sql = deleteGroupMember
                 self.cursor.execute(sql, (group_id, member_id))
@@ -285,21 +293,31 @@ class Matias(object):
     
     # Query to leave a group (5g)
     def leaveGroup(self, group_id, admin_id):
-        sql = checkOtherGroupAdmin 
+        sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
-        other_admins = self.cursor.rowcount
-        sql = checkOtherGroupMembers 
-        self.cursor.execute(sql, (group_id, admin_id))
-        other_users = self.cursor.rowcount
-        if other_users == 0:
+        result = self.cursor.fetchone()
+        if result['is_admin'] == False:
             sql = leaveGroup
             self.cursor.execute(sql, (group_id, admin_id))
-            sql = deleteGroup
-            self.cursor.execute(sql, (group_id,))
-            return self.cursor.lastrowid  
-        elif other_admins == 0 & other_users > 0:
-            return "You are the only admin"
-        return self.cursor.rowcount
+            return self.cursor.rowcount
+        else:
+            sql = checkOtherGroupAdmin 
+            self.cursor.execute(sql, (group_id, admin_id))
+            other_admins = self.cursor.rowcount
+            sql = checkOtherGroupMembers 
+            self.cursor.execute(sql, (group_id, admin_id))
+            other_users = self.cursor.rowcount
+            if other_users == 0:
+                sql = leaveGroup
+                self.cursor.execute(sql, (group_id, admin_id))
+                sql = deleteGroup
+                self.cursor.execute(sql, (group_id,))
+                return self.cursor.lastrowid  
+            elif other_admins == 0 and other_users > 0:
+                return "You are the only admin"
+            else:
+                sql = leaveGroup
+                self.cursor.execute(sql, (group_id, admin_id))
 
     # Query to delete a group
     def deleteGroup(self, group_id):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
