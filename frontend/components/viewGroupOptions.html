@@ -10,25 +10,49 @@
         rel="stylesheet">
 </head>
 
-<body class="bg-[var(--color-background)] flex items-center justify-center min-h-screen"
+<body class="bg-[var(--color-base)] flex items-center justify-center min-h-screen"
     style="font-family: var(--font-body);">
     <div
-        class="flex flex-col items-center justify-center w-full max-w-xl lg:max-w-3xl bg-[var(--color-other)] p-4 md:p-6 lg:p-8 shadow-lg rounded-lg">
-        <h2 id="groupName" class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles"></h2>
-        <div class="flex flex-col md:flex-row md:space-x-4 w-full">
-            <!-- Users List -->
-            <div class="w-full md:w-1/2">
-                <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Miembros:</label>
-                <div id="groupMembers" class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
-                    <!-- Members will be inserted here dynamically -->
-                </div>
-            </div>
+        class="flex flex-col items-center justify-center w-full max-w-2xl lg:max-w-3xl bg-[var(--color-other)] p-8 md:p-10 lg:p-12 shadow-lg rounded-lg">
 
-            <!-- Group Description -->
-            <div class="w-full md:w-1/2">
-                <label id="descipcionTitle" class="block text-sm font-medium text-[var(--color-text)] mb-2">Descripción:</label>
-                <div id="groupDescription" class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
-                    <!-- Description here -->
+        <!-- Modo Visual: muestra el nombre y la descripción -->
+        <div id="groupHeaderDisplay" class="w-full mb-6">
+            <!-- Se asigna el ID del grupo en un data attribute -->
+            <h2 id="groupName" data-group-id="123"
+                class="text-2xl font-bold text-center text-[var(--color-headers)] font-titles">
+                Group Name
+            </h2>
+            <p id="groupDescription" class="text-lg text-center text-[var(--color-text)] mt-2">
+                Group description goes here.
+            </p>
+            <!-- Botón para activar la edición (solo visible para administradores) -->
+        </div>
+
+        <!-- Modo Edición: formulario para editar nombre y descripción (oculto por defecto) -->
+        <div id="groupHeaderEdit" class="w-full mb-6 hidden flex-col items-center">
+            <input type="text" id="editGroupName" class="w-full p-3 border border-[var(--color-dark)] rounded mb-3"
+                placeholder="Group Name">
+            <textarea id="editGroupDescription" class="w-full p-3 border border-[var(--color-dark)] rounded mb-3"
+                rows="3" placeholder="Group Description"></textarea>
+            <div class="flex space-x-4">
+                <button id="saveGroupBtn"
+                    class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm font-titles">
+                    Save Changes
+                </button>
+                <button id="cancelEditGroupBtn"
+                    class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm font-titles">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:space-x-4 w-full">
+            <!-- Lista de Miembros -->
+            <div class="w-full md:w-full">
+                <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Miembros:</label>
+                <div id="groupMembers"
+                    class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
+                    <!-- Los miembros se insertarán aquí dinámicamente -->
                 </div>
             </div>
         </div>
@@ -38,16 +62,15 @@
                 class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm font-titles">
                 Close
             </button>
-
+            <!-- Botón para abandonar el grupo -->
             <button type="button" id="leaveGroupBtn"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-opacity-90 text-sm font-titles">
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-opacity-90 text-sm font-titles">
                 Leave Group
             </button>
-            
         </div>
 
         <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
     </div>
-</body>
+    <script src="../js/viewGroupOptions.js"></script>
 
 </html>

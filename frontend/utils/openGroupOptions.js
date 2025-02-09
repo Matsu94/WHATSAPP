@@ -1,9 +1,21 @@
-import { fetchUsersFromGroup, removeUserFromGroup, updateUserToAdmin, leaveGroup, fetchGroupInfo, updateGroupDescription, updateGroupName } from "../assets/fetching.js";
+import {
+    fetchUsersFromGroup,
+    removeUserFromGroup,
+    updateUserToAdmin,
+    leaveGroup,
+    fetchGroupInfo,
+    updateGroupDescription,
+    updateGroupName
+} from "../assets/fetching.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { currentUserId } from "../constants/const.js";
 import { loadingGroupForm, getUsersForGroupsError } from "../errors/errors.js";
 
-// Render group options UI
+/**
+ * Renderiza la interfaz de opciones del grupo.
+ * Carga la información del grupo y la lista de miembros, configura la vista visual y los botones.
+ * @param {number} group_id 
+ */
 export async function openGroupOptions(group_id) {
     const chatWindow = document.getElementById("chatWindow");
     if (!chatWindow) return;
@@ -14,65 +26,71 @@ export async function openGroupOptions(group_id) {
             fetchUsersFromGroup(group_id),
         ]);
 
-        // Determine if current user is an admin
+        // Determinar si el usuario actual es administrador
         const isViewerAdmin = users.some(user => user.user_id === currentUserId && user.is_admin);
 
-        // Load the HTML structure
+        // Cargar la estructura HTML (vista de grupo) desde tu componente
         const response = await fetch("/WHATSAPP/frontend/components/viewGroupOptions.html");
         const html = await response.text();
         chatWindow.innerHTML = html;
 
-        // Hide chat list and show group options
+        // Ocultar la lista de usuarios y chats, y mostrar la vista de opciones del grupo
         document.getElementById("userListDiv").classList.add("hidden");
         document.getElementById("chatList").classList.add("hidden");
         chatWindow.classList.remove("hidden");
 
-        // Set group name and add edit button if user is admin
+        // Configurar la vista visual: asignar nombre y descripción
         const groupNameContainer = document.getElementById("groupName");
         if (groupNameContainer) {
+            // Usa group.group_id o group.id según corresponda y asígnalo en un data attribute
+            const groupId = group.group_id || group.id;
+            groupNameContainer.dataset.groupId = groupId;
             groupNameContainer.innerHTML = `
-                <span id="groupNameText">${group.name}</span>
-                ${isViewerAdmin ? '<button id="editGroupName" class="text-blue-500 ml-2">✏️</button>' : ''}
-            `;
-
-            if (isViewerAdmin) {
-                document.getElementById("editGroupName").addEventListener("click", () => openEditField("groupName", group.name, group_id, "name"));
-            }
+            <span id="groupNameText" class="text-2xl font-bold">${group.name}</span>
+        `;
         }
-
-        // Set group description and add edit button if user is admin
         const groupDescriptionContainer = document.getElementById("groupDescription");
         if (groupDescriptionContainer) {
             groupDescriptionContainer.innerHTML = `
-                <span id="groupDescText">${group.description}</span>
-                ${isViewerAdmin ? '<button id="editGroupDesc" class="text-blue-500 ml-2">✏️</button>' : ''}
-            `;
-
-            if (isViewerAdmin) {
-                document.getElementById("editGroupDesc").addEventListener("click", () => openEditField("groupDescription", group.description, group_id, "description"));
-            }
+            <span id="groupDescText" class="text-lg">${group.description}</span>
+        `;
         }
 
-        // Populate the members list
+        // Si el usuario es administrador, agregar un botón "Edit Group" (en la parte inferior del header visual)
+        if (isViewerAdmin) {
+            const editGroupContainer = document.createElement("div");
+            editGroupContainer.className = "mt-4 flex justify-center";
+            editGroupContainer.innerHTML = `
+            <button id="editGroupBtn" class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm font-titles">
+                Edit Group
+            </button>
+        `;
+            const displaySection = document.getElementById("groupHeaderDisplay");
+            displaySection.appendChild(editGroupContainer);
+            document.getElementById("editGroupBtn").addEventListener("click", () => {
+                enterEditMode(group);
+            });
+        }
+
+        // Renderizar la lista de miembros
         const membersContainer = document.getElementById("groupMembers");
         membersContainer.innerHTML = users.map(user => {
             const isCurrentUser = user.user_id === currentUserId;
             const isUserAdmin = user.is_admin;
-
             return `
-                <div class="user-entry flex items-center justify-between p-2 border rounded bg-[var(--color-light)]">
-                  <span class="text-[var(--color-text)]">${isCurrentUser ? "Me" : user.username}</span>
-                  ${isViewerAdmin && !isCurrentUser ? `
-                    <div class="flex space-x-2">
-                      <button class="removeUserBtn text-red-500" data-user-id="${user.user_id}">❌</button>
-                      ${!isUserAdmin ? `<button class="promoteUserBtn text-green-500" data-user-id="${user.user_id}">⬆️</button>` : ""}
-                    </div>
-                  ` : ""}
-                </div>
-            `;
+          <div class="user-entry flex items-center justify-between p-2 border rounded bg-[var(--color-light)]">
+            <span class="text-[var(--color-text)]">${isCurrentUser ? "Yo" : user.username}</span>
+            ${isViewerAdmin && !isCurrentUser ? `
+              <div class="flex space-x-2">
+                <button class="removeUserBtn text-red-500" data-user-id="${user.user_id}">❌</button>
+                ${!isUserAdmin ? `<button class="promoteUserBtn text-green-500" data-user-id="${user.user_id}">⬆️</button>` : ""}
+              </div>
+            ` : ""}
+          </div>
+        `;
         }).join('');
 
-        // Add event listeners for remove and promote buttons
+        // Agregar listeners para botones de remover y promover usuarios
         document.querySelectorAll(".removeUserBtn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const userId = e.target.dataset.userId;
@@ -89,7 +107,7 @@ export async function openGroupOptions(group_id) {
             });
         });
 
-        // Close button event listener
+        // Listener para el botón "Close"
         const closeGroupOptionsBtn = document.getElementById("closeGroupOptionsBtn");
         closeGroupOptionsBtn.addEventListener("click", () => {
             closeChatWindow();
@@ -97,7 +115,8 @@ export async function openGroupOptions(group_id) {
             document.getElementById("chatList").classList.remove("hidden");
             chatWindow.classList.add("hidden");
         });
-        // Leave group button event listener
+
+        // Listener para el botón "Leave Group"
         const leaveGroupBtn = document.getElementById("leaveGroupBtn");
         if (leaveGroupBtn) {
             leaveGroupBtn.addEventListener("click", async () => {
@@ -112,69 +131,67 @@ export async function openGroupOptions(group_id) {
     }
 }
 
-// Function to open an editable input field
-function openEditField(elementId, currentValue, group_id, type) {
-    const container = document.getElementById(elementId);
-    if (!container) return;
+/**
+ * Entra en modo edición: oculta la vista visual y muestra el formulario de edición
+ * para modificar el nombre y la descripción del grupo.
+ * Los cambios se guardan solo al pulsar "Save Changes".
+ * @param {Object} group - Objeto con las propiedades del grupo (group_id o id, name, description).
+ */
+function enterEditMode(group) {
+    const displaySection = document.getElementById("groupHeaderDisplay");
+    const editSection = document.getElementById("groupHeaderEdit");
+    if (!displaySection || !editSection) return;
 
-    // Create input/textarea
-    const inputField = type === "name"
-        ? `<input id="editField" type="text" value="${currentValue}" class="border rounded p-1 w-full focus:outline-none">`
-        : `<textarea id="editField" class="border rounded p-1 w-full h-20 focus:outline-none">${currentValue}</textarea>`;
+    // Ocultar la vista visual y mostrar el formulario de edición
+    displaySection.classList.add("hidden");
+    editSection.classList.remove("hidden");
 
-    container.innerHTML = inputField;
+    // Pre-cargar los campos de edición con los valores actuales
+    document.getElementById("editGroupName").value = group.name;
+    document.getElementById("editGroupDescription").value = group.description;
 
-    const input = document.getElementById("editField");
-    input.focus();
+    // Limpiar cualquier mensaje de error previo
+    const errorDiv = document.getElementById("createGroupError");
+    if (errorDiv) errorDiv.classList.add("hidden");
 
-    // Save on Enter or clicking outside
-    input.addEventListener("blur", () => saveEditField(elementId, group_id, type, input.value));
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && type === "name") {
-            e.preventDefault();
-            input.blur();
-        } else if (e.key === "Escape") {
-            cancelEditField(elementId, currentValue, group_id, type);
+    // Configurar el botón "Cancel"
+    document.getElementById("cancelEditGroupBtn").addEventListener("click", () => {
+        editSection.classList.add("hidden");
+        displaySection.classList.remove("hidden");
+    });
+
+    // Configurar el botón "Save Changes"
+    document.getElementById("saveGroupBtn").addEventListener("click", async () => {
+        const newName = document.getElementById("editGroupName").value.trim();
+        const newDescription = document.getElementById("editGroupDescription").value.trim();
+        if (!newName) {
+            alert("El nombre del grupo es obligatorio.");
+            return;
+        }
+        // Obtener el ID del grupo desde el data attribute del contenedor visual
+        const groupId = document.getElementById("groupName").dataset.groupId;
+        if (!groupId) {
+            console.error("No se encontró el ID del grupo.");
+            return;
+        }
+        try {
+            await updateGroupName(groupId, newName);
+            await updateGroupDescription(groupId, newDescription);
+            // Actualiza la vista visual con los nuevos datos
+            document.getElementById("groupName").innerHTML = `
+          <span id="groupNameText" class="text-2xl font-bold">${newName}</span>
+        `;
+            document.getElementById("groupDescription").innerHTML = `
+          <span id="groupDescText" class="text-lg">${newDescription}</span>
+        `;
+            // Vuelve a mostrar la vista visual y oculta el formulario de edición
+            editSection.classList.add("hidden");
+            displaySection.classList.remove("hidden");
+        } catch (error) {
+            console.error("Error saving group changes:", error);
+            const errorDiv = document.getElementById("createGroupError");
+            errorDiv.textContent = "Error saving changes. Please try again.";
+            errorDiv.classList.remove("hidden");
         }
     });
-}
-
-// Function to save the new value
-async function saveEditField(elementId, group_id, type, newValue) {
-    if (!newValue.trim()) return;
-
-    try {
-        if (type === "name") {
-            await updateGroupName(group_id, newValue); // ✅ Calls the fixed function
-        } else {
-            await updateGroupDescription(group_id, newValue); // ✅ Calls the fixed function
-        }
-
-        // Restore display with updated text
-        const container = document.getElementById(elementId);
-        if (container) {
-            container.innerHTML = `
-                <span id="${type === 'name' ? 'groupNameText' : 'groupDescText'}">${newValue}</span>
-                <button id="edit${type === 'name' ? 'GroupName' : 'GroupDesc'}" class="text-blue-500 ml-2">✏️</button>
-            `;
-            document.getElementById(`edit${type === 'name' ? 'GroupName' : 'GroupDesc'}`)
-                .addEventListener("click", () => openEditField(elementId, newValue, group_id, type));
-        }
-    } catch (error) {
-        console.error("Error saving edit:", error);
-    }
-}
-
-
-// Function to cancel editing
-function cancelEditField(elementId, currentValue, group_id, type) {
-    const container = document.getElementById(elementId);
-    if (container) {
-        container.innerHTML = `
-            <span id="${type === 'name' ? 'groupNameText' : 'groupDescText'}">${currentValue}</span>
-            <button id="edit${type === 'name' ? 'GroupName' : 'GroupDesc'}" class="text-blue-500 ml-2">✏️</button>
-        `;
-        document.getElementById(`edit${type === 'name' ? 'GroupName' : 'GroupDesc'}`)
-            .addEventListener("click", () => openEditField(elementId, currentValue, group_id, type));
-    }
 }
