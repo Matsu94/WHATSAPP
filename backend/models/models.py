@@ -40,3 +40,11 @@ class Group(BaseModel):
     Description: Optional[str] = None
     Creator_ID: int  #No se si serán str para el uname o los users tendrán id, jose nos va a dar la bd, igual en principio el creador es admin
     Members: list[int] = []  # Lista de miembros del grupo
+
+    #Modelo para actualizar el nombre de un grupo
+class NameUpdate(BaseModel):
+    name: str
+
+    #Modelo para actualizar la descripción de un grupo
+class DescriptionUpdate(BaseModel):
+    description: str

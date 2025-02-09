@@ -38,6 +38,9 @@ class Matias(object):
 
         if not group_messages:
             group_messages = []
+            
+        if not direct_messages:
+            direct_messages = []
         # Combine both results
         all_messages = direct_messages + group_messages
 
@@ -211,32 +214,27 @@ class Matias(object):
         sql = getMembers
         self.cursor.execute(sql, (group_id,))
         return self.cursor.fetchall()
-
-    # def getAdmins(self, group_id):
-    #     sql = getAdmins
-    #     self.cursor.execute(sql, (group_id,))
-    #     return self.cursor.fetchall()
-    # Query to add a user to a group (3g)
-    # Se hace INSERT en group_members, no UPDATE.
-    # POR AHORA TODOS TIENEN LA OPCION DE INTENTAR METER A ALGUIEN EN EL GRP Y SI NO SON ADMIN TIRA ERROR 
-    # PERO EVENTUALMENTE NO TENDRIAMOS QUE MOSTRAR LA OPCIÓN EN FRONT-END A LOS QUE NO SEAN ADMIN
-    # Y PODRIAMOS QUITAR LA COMPROBACIÓN DE PERMISOS
+    
+    def groupinfo(self, group_id):
+        sql = groupInfo
+        self.cursor.execute(sql, (group_id,))
+        return self.cursor.fetchone()
+    
     def addUserToGroup(self, group_id, member_id, admin_id): 
         # Comprobamos si el user es admin
-        sql = esAdmin
-        self.cursor.execute(sql, (group_id, admin_id))
-        result = self.cursor.fetchone()
-        if not result['is_admin']: 
-            return "User has no permissions"
-        else:
-            # Comprobamos si ya existe ese user en ese group
-            sql = memberExistsInGrouop
-            self.cursor.execute(sql, (group_id, member_id))
-            result = self.cursor.fetchone()
-
-            if result:
-                return "User already in group"
-            else:
+        # sql = esAdmin
+        # self.cursor.execute(sql, (group_id, admin_id))
+        # result = self.cursor.fetchone()
+        # if not result['is_admin']: 
+        #     return "User has no permissions"
+        # else:
+        #     # Comprobamos si ya existe ese user en ese group
+        #     sql = memberExistsInGrouop
+        #     self.cursor.execute(sql, (group_id, member_id))
+        #     result = self.cursor.fetchone()
+        #    if result:
+        #         return "User already in group"
+        #     else:
                 # Insertamos el registro
                 sql = insertGroupMember
                 self.cursor.execute(sql, (group_id, member_id))
@@ -246,12 +244,12 @@ class Matias(object):
     # Query to delete a user from a group (3g)
     def deleteUserFromGroup(self, group_id, member_id, admin_id):
         # Comprobamos si el user es admin
-        sql = esAdmin
-        self.cursor.execute(sql, (group_id, admin_id))
-        result = self.cursor.fetchone()
-        if not result['is_admin']: 
-            return "User has no permissions"
-        else:
+        #    sql = esAdmin
+        # self.cursor.execute(sql, (group_id, admin_id))
+        # result = self.cursor.fetchone()
+        # if not result['is_admin']: 
+        #     return "User has no permissions"
+        # else:
              # # Comprobamos si el usuario está en el grupo
             # sql = memberExistsInGrouop
             # self.cursor.execute(sql, (group_id, member_id,))
@@ -269,27 +267,27 @@ class Matias(object):
     # En la nueva tabla se guarda el 'creator_id' como "dueño" del grupo.
     # Si necesitaras un sistema multi-admin, deberías actualizar group_members (is_admin).
     def addAdmin(self, group_id, member_id, admin_id):
-        sql = esAdmin
-        self.cursor.execute(sql, (group_id, admin_id))
-        result = self.cursor.fetchone()
-        if not result['is_admin']: 
-            return "User has no permissions"
-        else:
+                # sql = esAdmin
+        # self.cursor.execute(sql, (group_id, admin_id))
+        # result = self.cursor.fetchone()
+        # if not result['is_admin']: 
+        #     return "User has no permissions"
+        # else:
             sql = addAdmin
             self.cursor.execute(sql, (group_id, member_id))
             return self.cursor.rowcount
 
     # Query to change group name (4g)
-    def changeName(self, group_id, new_name, admin_id):
-        sql = esAdmin
-        self.cursor.execute(sql, (group_id, admin_id))
-        result = self.cursor.fetchone()
-        if not result['is_admin']: 
-            return "User has no permissions"
-        else:
-            sql = changeGroupName
-            self.cursor.execute(sql, (new_name, group_id))
+    def updateName(self, group_id, new_name):
+            sql = updateGroupName
+            self.cursor.execute(sql, (new_name.name, group_id))
             return self.cursor.rowcount
+
+    # Query to change group description
+    def updateDescription(self, group_id, new_description): 
+        sql = updateGroupDescription
+        self.cursor.execute(sql, (new_description.description, group_id))
+        return self.cursor.rowcount
     
     # Query to leave a group (5g)
     def leaveGroup(self, group_id, admin_id):
@@ -323,10 +321,4 @@ class Matias(object):
     def deleteGroup(self, group_id):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
         sql = deleteGroup
         self.cursor.execute(sql, (group_id,))
-        return self.cursor.rowcount
-
-    # Query to change group description
-    def changeDescription(self, group_id, new_description):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
-        sql = changeGroupDescription
-        self.cursor.execute(sql, (new_description, group_id))
         return self.cursor.rowcount

@@ -14,13 +14,23 @@
     style="font-family: var(--font-body);">
     <div
         class="flex flex-col items-center justify-center w-full max-w-xl lg:max-w-3xl bg-[var(--color-other)] p-4 md:p-6 lg:p-8 shadow-lg rounded-lg">
-        <h2 id="groupName" class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles">Group
-            Name</h2>
+        <h2 id="groupName" class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles"></h2>
+        <div class="flex flex-col md:flex-row md:space-x-4 w-full">
+            <!-- Users List -->
+            <div class="w-full md:w-1/2">
+                <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Miembros:</label>
+                <div id="groupMembers" class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
+                    <!-- Members will be inserted here dynamically -->
+                </div>
+            </div>
 
-        <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Miembros:</label>
-        <div class="grid grid-cols-1 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg"
-            id="groupMembers">
-            <!-- Members will be inserted here dynamically -->
+            <!-- Group Description -->
+            <div class="w-full md:w-1/2">
+                <label id="descipcionTitle" class="block text-sm font-medium text-[var(--color-text)] mb-2">Descripción:</label>
+                <div id="groupDescription" class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
+                    <!-- Description here -->
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-col md:flex-row md:justify-between space-y-3 md:space-y-0 md:space-x-4 w-full mt-4">
@@ -33,6 +43,7 @@
                 class="px-4 py-2 bg-red-500 text-white rounded hover:bg-opacity-90 text-sm font-titles">
                 Leave Group
             </button>
+            
         </div>
 
         <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>

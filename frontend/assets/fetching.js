@@ -181,6 +181,78 @@ export async function createGroup(groupObj) {
     }
 }
 
+
+//CARGAR INFO GRUPO
+export async function fetchGroupInfo(group_id) {
+    try {
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/group_info/${group_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.getGroupInfoError}, ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+// CAMBIAR NOMBRE GRUPO
+export async function updateGroupName(group_id, name) {
+    try {
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/update_name/${group_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            },
+            body: JSON.stringify({ name })
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.updateGroupError}, ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+// CAMBIAR DESCRIPCION GRUPO
+export async function updateGroupDescription(group_id, description) {
+    try {
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+
+        const response = await fetch(`${URL}/update_description/${group_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            },
+            body: JSON.stringify({ description })
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.updateGroupError}, ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
 //CARGAR USUARIOS PARA GRUPO
 export async function fetchUsersForGroup() {
     try {
@@ -223,7 +295,7 @@ export async function fetchUsersFromGroup(group_id) {
         throw error; // Relanzamos el error para manejarlo fuera
     }
 }
-export async function fetchRemoveUserFromGroup(group_id, userId) {
+export async function removeUserFromGroup(group_id, userId) {
     try {
         const token = localStorage.getItem('token'); // Si requieres autenticación
 
@@ -244,7 +316,7 @@ export async function fetchRemoveUserFromGroup(group_id, userId) {
     }
 }
 
-export async function fetchPromoteUserToAdmin(group_id, userId) {
+export async function updateUserToAdmin(group_id, userId)  {
     try {
         const token = localStorage.getItem('token'); // Si requieres autenticación
 
@@ -266,7 +338,7 @@ export async function fetchPromoteUserToAdmin(group_id, userId) {
     }
 }
 
-export async function fetchLeaveGroup(group_id) {
+export async function leaveGroup(group_id) {
     try {
         const token = localStorage.getItem('token'); // Si requieres autenticación
 
