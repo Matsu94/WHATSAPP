@@ -12,11 +12,9 @@ export function openChangeBackgroundGrid() {
         .done((html) => {
             $(chatWindow).html(html);
 
-            if (window.innerWidth < 768) {
                 userListDiv.classList.add("hidden");
                 chatList.classList.add("hidden");
                 chatWindow.classList.remove("hidden");
-            }
             // Add event listeners for SVG selection
             $(".bg-option").on("click", function (e) {
                 e.preventDefault();
