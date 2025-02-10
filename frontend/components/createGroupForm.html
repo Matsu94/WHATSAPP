@@ -13,21 +13,21 @@
     <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles">Crear Nuevo Grupo</h2>
     <form id="createGroupForm" class="w-full space-y-6">
       <div>
-        <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">
+        <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
           Nombre del Grupo
         </label>
         <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-base)] overflow-hidden bg-[var(--color-base)]">
-          <input type="text" id="groupNameInput" placeholder="Escribe el nombre del grupo"
+          <input type="text" id="groupNameInput" placeholder="Escribe el nombre del grupo" autocomplete="off" list="none"
                  class="flex-1 outline-none bg-transparent text-gray-600 text-sm" required />
         </div>
       </div>
       
       <div class="mt-4">
-        <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2">
+        <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
           Descripción del Grupo
         </label>
         <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-base)] overflow-hidden bg-[var(--color-base)]">
-          <textarea id="groupDescriptionInput" placeholder="Agrega una breve descripción del grupo"
+          <textarea id="groupDescriptionInput" placeholder="Agrega una breve descripción del grupo" autocomplete="off" list="none"
                     rows="4" class="flex-1 outline-none bg-transparent text-gray-600 text-sm resize-none"></textarea>
         </div>
       </div>
