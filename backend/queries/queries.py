@@ -120,6 +120,7 @@ updateMessageStatus = """
 UPDATE messages
 SET status = %s
 WHERE message_id = %s
+AND receiver_id = %s
 """
 
 getMessagesChat = """
@@ -226,15 +227,13 @@ INNER JOIN users u ON gm.user_id = u.user_id
 WHERE gm.group_id = %s
 """
 
-# getAdmins = """
-# SELECT u.user_id
-# FROM group_members gm
-# INNER JOIN users u ON gm.user_id = u.user_id
-# WHERE gm.group_id = %s
-# AND gm.is_admin = TRUE
-# """
+groupInfo = """
+SELECT *
+FROM groups
+WHERE group_id = %s
+"""
 
-insertGroupMember = """
+insertGroupMembers = """
 INSERT INTO group_members (group_id, user_id)
 VALUES (%s, %s)
 """
@@ -252,11 +251,6 @@ WHERE group_id = %s
 AND user_id = %s
 """
 
-changeGroupName = """
-UPDATE groups
-SET name = %s
-WHERE group_id = %s
-"""
 
 checkOtherGroupAdmin = """
 SELECT is_admin
@@ -284,11 +278,6 @@ DELETE FROM groups
 WHERE group_id = %s
 """
 
-changeGroupDescription = """
-UPDATE groups
-SET description = %s
-WHERE group_id = %s
-"""
 
 checkOtherGroupAdmin = """
 SELECT is_admin
@@ -302,6 +291,18 @@ SELECT user_id
 FROM group_members
 WHERE group_id = %s
 AND user_id != %s
+"""
+
+updateGroupName = """
+UPDATE groups
+SET name = %s
+WHERE group_id = %s
+"""
+
+updateGroupDescription = """
+UPDATE groups
+SET description = %s
+WHERE group_id = %s
 """
 
 missingGroups = """

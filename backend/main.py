@@ -1,7 +1,7 @@
 from fastapi import Body, FastAPI, Depends, HTTPException, status
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
-from models.models import Message, Group, User, Token
+from models.models import *
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -118,7 +118,7 @@ def delete_message(message_id: int, db: Matias = Depends(get_db)):
 # L’administrador del grup pot afegir altres administradors. (3g)
 # Els usuaris que no son administradors (els administradors també) han de poder abandonar el grup. (5g)
 
-# Endpoint to list user groups (1g)
+# Endpoint to list user groups (1g) ESTE CREO NO ESTÁ HACIENDO NADA AHORA MISMO
 @app.get("/groups")
 def get_groups(user_id: int, db: Matias = Depends(get_db)):
     return db.getGroups(user_id)
@@ -132,16 +132,17 @@ def create_group(group: Group, db: Matias = Depends(get_db)):
 def get_members(group_id: int, db: Matias = Depends(get_db)):
     return db.getMembers(group_id)
 
-# Endpoint to get admins of a group
-# @app.get("/get_admins/{group_id}")
-# def get_admins(group_id: int, db: Matias = Depends(get_db)):
-#     return db.getAdmins(group_id)
+@app.get("/group_info/{group_id}")
+def group_info(group_id: int, db: Matias = Depends(get_db)):
+    return db.groupinfo(group_id)
 
 # Endpoint to add a user to a group (3g)
-@app.put("/add_user/{group_id}/{member_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
-def add_user_to_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
-    admin_id = admin['user_id']
-    return db.addUserToGroup(group_id, member_id, admin_id)
+@app.put("/add_users/{group_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
+def add_users_to_group(group_id: int, newMembers: NewMembers, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    res = 0
+    for member_id in newMembers.Members:
+        res += db.addUsersToGroup(group_id, member_id)
+    return {"message": "Usuarios añadidos correctamente.", "result": res}
 
 # Endpoint to delete a user from a group (3g)
 @app.delete("/remove_user/{group_id}/{member_id}")
@@ -156,9 +157,14 @@ def add_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin
     return db.addAdmin(group_id, member_id, admin_id)
 
 # Endpoint to change group name (4g)
-def change_name(group_id: int, name: str, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
-    admin_id = admin['user_id']
-    return db.changeName(group_id, name, admin_id)
+@app.put("/update_name/{group_id}")
+def update_name(group_id: int, name: NameUpdate, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    return db.updateName(group_id, name)
+
+# Endpoint to change group description
+@app.put("/update_description/{group_id}")  
+def update_description(group_id: int, description: DescriptionUpdate, db: Matias = Depends(get_db)):
+    return db.updateDescription(group_id, description)
 
 # Endpoint to leave a group (5g)
 @app.delete("/leave_group/{group_id}") # ESTE POR LIMPIEZA EN LA BD TENDRÍA QUE HACER QUE BORRE TODA LA INFO DEL GRUPO, GROUP_MEMBERS, MENSAJES Y STATUS
@@ -171,10 +177,6 @@ def leave_group(group_id: int, db: Matias = Depends(get_db), admin: str = Depend
 def delete_group(group_id: int, db: Matias = Depends(get_db)):
     return db.deleteGroup(group_id)
 
-# Endpoint to change group description
-@app.put("/change_description/{group_id}/{description}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
-def change_description(group_id: int, description: str, db: Matias = Depends(get_db)):
-    return db.changeDescription(group_id, description)
 
 # Endpoint to generate a token
 @app.post("/token", response_model=Token)

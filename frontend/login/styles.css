@@ -28,17 +28,18 @@
     --color-border: #4f4f4f;  /* Bordes en modo oscuro */
   }
 
-  :root[data-theme="highcontrast"] {
-    --color-user: #444D55;    /* Ejemplo contenedor más oscuro */
-    --color-other: #5B5466;
-    --color-dark: #272532;    /* Botones en modo oscuro */
-    --color-headers: #A8FFD3; /* Para focus ring en modo oscuro */
-    --color-base: #1A1C1D;    /* Fondo de la página en modo oscuro */
+  :root[data-theme="highContrast"] {
+    --color-user: #a5a5a5;    /* Ejemplo contenedor más oscuro */
+    --color-other: #c0a87d;
+    --color-dark: #121212;    /* Botones en modo oscuro */
+    --color-headers: #97c774; /* Para focus ring en modo oscuro */
+    --color-base: #ffffff;    /* Fondo de la página en modo oscuro */
     
     /* Texto y bordes en modo oscuro */
-    --color-text: #ffffff;    /* Texto principal en modo oscuro */
-    --color-border: #555555;  /* Bordes en modo oscuro */
+    --color-text: #121212;    /* Texto principal en modo oscuro */
+    --color-border: #a5a5a5;  /* Bordes en modo oscuro */
   }
+
 
   :root {
     --font-titles: 'Poppins', sans-serif; /* Para títulos y botones */
