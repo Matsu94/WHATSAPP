@@ -1,7 +1,7 @@
 import { fetchUsersFromGroup, removeUserFromGroup, updateUserToAdmin, leaveGroup, fetchGroupInfo, updateGroupDescription, updateGroupName, fetchUsersForGroup, addUsersToGroup } from "../assets/fetching.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { currentUserId } from "../constants/const.js";
-import { loadingGroupForm, getUsersForGroupsError } from "../errors/errors.js";
+import * as errors from "../errors/errors.js";
 
 
 export async function openGroupOptions(group_id) {
@@ -49,8 +49,8 @@ export async function openGroupOptions(group_id) {
             const editGroupContainer = document.createElement("div");
             editGroupContainer.className = "mt-4 flex justify-center";
             editGroupContainer.innerHTML = `
-            <button id="editGroupBtn" class="px-4 py-2 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm font-titles">
-                Edit Group
+            <button id="editGroupBtn" class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
+                Editar Grupo
             </button>
         `;
             const displaySection = document.getElementById("groupHeaderDisplay");
@@ -115,8 +115,6 @@ export async function openGroupOptions(group_id) {
         if (isViewerAdmin) {
             const addUsersBtn = document.getElementById("addUsersBtn");
             addUsersBtn.classList.remove("hidden");
-            addUsersBtn.innerHTML = `
-            <button id="addUsersBtn" class="s-5">🚽</button>`
             addUsersBtn.addEventListener("click", () => {
                 // Add event listener for the add users button
                 addUsersBtn.classList.add("hidden");
@@ -146,7 +144,7 @@ export async function openGroupOptions(group_id) {
                             </div>
                         `).join('');
                     })
-                    .catch(error => console.error("Error fetching users:", error));
+                    .catch(error => console.error(`${errors.getUsersError}`, error));
                 const cancelAddUsersBtn = document.getElementById("cancelAddUsers");
                 cancelAddUsersBtn.classList.remove("hidden");
                 cancelAddUsersBtn.addEventListener("click", () => {
@@ -173,8 +171,8 @@ export async function openGroupOptions(group_id) {
         }
 
     } catch (error) {
-        console.error("Error loading group options:", error);
-        chatWindow.innerHTML = `<p class="text-red-500">Error loading group options.</p>`;
+        console.error(`${errors.loadingGroupOptionsError}`, error);
+        chatWindow.innerHTML = `<p class="text-red-500">${errors.loadingGroupOptionsError}</p>`;
     }
 }
 
@@ -212,7 +210,7 @@ function enterEditMode(group) {
         // Obtener el ID del grupo desde el data attribute del contenedor visual
         const groupId = document.getElementById("groupName").dataset.groupId;
         if (!groupId) {
-            console.error("No se encontró el ID del grupo.");
+            console.error(`${errors.groupIdError}`);
             return;
         }
         try {
@@ -229,9 +227,9 @@ function enterEditMode(group) {
             editSection.classList.add("hidden");
             displaySection.classList.remove("hidden");
         } catch (error) {
-            console.error("Error saving group changes:", error);
+            console.error(`${errors.saveGroupChangesError}`, error);
             const errorDiv = document.getElementById("createGroupError");
-            errorDiv.textContent = "Error saving changes. Please try again.";
+            errorDiv.textContent = `${errors.saveGroupChangesError}`;
             errorDiv.classList.remove("hidden");
         }
     });

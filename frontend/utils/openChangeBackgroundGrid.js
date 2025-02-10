@@ -1,4 +1,5 @@
 import { closeChatWindow } from "./closeChatWindow.js";
+import { backgroundSelectionError } from "../errors/errors.js";
 //JQUERY para la parte de Petrus
 export function openChangeBackgroundGrid() {
     const chatWindow = document.getElementById("chatWindow");
@@ -38,6 +39,6 @@ export function openChangeBackgroundGrid() {
             });
         })
         .fail((error) => {
-            console.error("Error loading background selection:", error);
+            console.error(`${backgroundSelectionError}`, error);
         });
 }
