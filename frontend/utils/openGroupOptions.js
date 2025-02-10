@@ -56,6 +56,7 @@ export async function openGroupOptions(group_id) {
             const displaySection = document.getElementById("groupHeaderDisplay");
             displaySection.appendChild(editGroupContainer);
             document.getElementById("editGroupBtn").addEventListener("click", () => {
+                document.getElementById("addUsersBtn").classList.add("hidden");
                 enterEditMode(group);
             });
         }
@@ -195,12 +196,14 @@ function enterEditMode(group) {
 
     // Configurar el botón "Cancel"
     document.getElementById("cancelEditGroupBtn").addEventListener("click", () => {
+        document.getElementById("addUsersBtn").classList.remove("hidden");
         editSection.classList.add("hidden");
         displaySection.classList.remove("hidden");
     });
 
     // Configurar el botón "Save Changes"
     document.getElementById("saveGroupBtn").addEventListener("click", async () => {
+        
         const newName = document.getElementById("editGroupName").value.trim();
         const newDescription = document.getElementById("editGroupDescription").value.trim();
         if (!newName) {
@@ -226,6 +229,7 @@ function enterEditMode(group) {
             // Vuelve a mostrar la vista visual y oculta el formulario de edición
             editSection.classList.add("hidden");
             displaySection.classList.remove("hidden");
+            document.getElementById("addUsersBtn").classList.remove("hidden");
         } catch (error) {
             console.error(`${errors.saveGroupChangesError}`, error);
             const errorDiv = document.getElementById("createGroupError");
