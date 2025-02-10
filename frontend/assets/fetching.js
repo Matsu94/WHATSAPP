@@ -277,7 +277,7 @@ export async function fetchUsersForGroup() {
 //CARGAR USUARIOS DE GRUPO
 export async function fetchUsersFromGroup(group_id) {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/get_members/${group_id}`, {
             method: 'GET',
@@ -297,7 +297,7 @@ export async function fetchUsersFromGroup(group_id) {
 }
 export async function removeUserFromGroup(group_id, userId) {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/remove_user/${group_id}/${userId}`, {
             method: 'DELETE',
@@ -318,7 +318,7 @@ export async function removeUserFromGroup(group_id, userId) {
 
 export async function updateUserToAdmin(group_id, userId)  {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/add_admin/${group_id}/${userId}`, {
             method: 'PUT',
@@ -338,9 +338,29 @@ export async function updateUserToAdmin(group_id, userId)  {
     }
 }
 
+export async function addUsersToGroup(group_id, usersIds) {
+    try {
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const response = await fetch(`${URL}/add_users/${group_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+            },
+            body: JSON.stringify({ Members: usersIds }) // POR ALGUNA RAZON SIN EL "Members:" NO FUNCIONA
+        });
+        if (!response.ok) {
+            throw new Error(`${errors.promoteUserError}, ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function leaveGroup(group_id) {
     try {
-        const token = localStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/leave_group/${group_id}`, {
             method: 'DELETE',

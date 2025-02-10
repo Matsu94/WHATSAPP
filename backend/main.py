@@ -137,10 +137,12 @@ def group_info(group_id: int, db: Matias = Depends(get_db)):
     return db.groupinfo(group_id)
 
 # Endpoint to add a user to a group (3g)
-@app.put("/add_user/{group_id}/{member_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
-def add_user_to_group(group_id: int, member_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
-    admin_id = admin['user_id']
-    return db.addUserToGroup(group_id, member_id, admin_id)
+@app.put("/add_users/{group_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
+def add_users_to_group(group_id: int, newMembers: NewMembers, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
+    res = 0
+    for member_id in newMembers.Members:
+        res += db.addUsersToGroup(group_id, member_id)
+    return {"message": "Usuarios añadidos correctamente.", "result": res}
 
 # Endpoint to delete a user from a group (3g)
 @app.delete("/remove_user/{group_id}/{member_id}")
@@ -157,7 +159,6 @@ def add_admin(group_id: int, member_id: int, db: Matias = Depends(get_db), admin
 # Endpoint to change group name (4g)
 @app.put("/update_name/{group_id}")
 def update_name(group_id: int, name: NameUpdate, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
-    #admin_id = admin['user_id']
     return db.updateName(group_id, name)
 
 # Endpoint to change group description

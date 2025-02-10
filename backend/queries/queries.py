@@ -233,7 +233,7 @@ FROM groups
 WHERE group_id = %s
 """
 
-insertGroupMember = """
+insertGroupMembers = """
 INSERT INTO group_members (group_id, user_id)
 VALUES (%s, %s)
 """

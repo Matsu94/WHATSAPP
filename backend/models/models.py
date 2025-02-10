@@ -48,3 +48,6 @@ class NameUpdate(BaseModel):
     #Modelo para actualizar la descripción de un grupo
 class DescriptionUpdate(BaseModel):
     description: str
+class NewMembers(BaseModel):
+    Members: list[int] = []  # Lista de miembros del grupo
+    

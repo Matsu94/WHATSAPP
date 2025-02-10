@@ -1,21 +1,9 @@
-import {
-    fetchUsersFromGroup,
-    removeUserFromGroup,
-    updateUserToAdmin,
-    leaveGroup,
-    fetchGroupInfo,
-    updateGroupDescription,
-    updateGroupName
-} from "../assets/fetching.js";
+import { fetchUsersFromGroup, removeUserFromGroup, updateUserToAdmin, leaveGroup, fetchGroupInfo, updateGroupDescription, updateGroupName, fetchUsersForGroup, addUsersToGroup } from "../assets/fetching.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { currentUserId } from "../constants/const.js";
 import { loadingGroupForm, getUsersForGroupsError } from "../errors/errors.js";
 
-/**
- * Renderiza la interfaz de opciones del grupo.
- * Carga la información del grupo y la lista de miembros, configura la vista visual y los botones.
- * @param {number} group_id 
- */
+
 export async function openGroupOptions(group_id) {
     const chatWindow = document.getElementById("chatWindow");
     if (!chatWindow) return;
@@ -124,6 +112,65 @@ export async function openGroupOptions(group_id) {
                 location.reload();
             });
         }
+        if (isViewerAdmin) {
+            const addUsersBtn = document.getElementById("addUsersBtn");
+            addUsersBtn.classList.remove("hidden");
+            addUsersBtn.innerHTML = `
+            <button id="addUsersBtn" class="s-5">🚽</button>`
+            addUsersBtn.addEventListener("click", () => {
+                // Add event listener for the add users button
+                addUsersBtn.classList.add("hidden");
+                const addUsersForm = document.getElementById("addUsersForm");
+                membersContainer.classList.add("hidden");
+                groupDescriptionContainer.classList.add("hidden");
+                document.getElementById("membersTitle").classList.add("hidden");
+                closeGroupOptionsBtn.classList.add("hidden");
+                leaveGroupBtn.classList.add("hidden");
+                addUsersForm.classList.remove("hidden");
+                fetchUsersForGroup()
+                    .then(potentialUsers => {
+                        // Create a Set of user IDs already in the group for fast lookup
+                        const groupUserIds = new Set(users.map(user => user.user_id));
+                        // Filter out users who are already in the group
+                        const availableMembers = potentialUsers.filter(puser => !groupUserIds.has(puser.user_id));
+                        // Insert the users into the form
+                        const availableMembersContainer = document.getElementById("availableMembers");
+                        availableMembersContainer.innerHTML = availableMembers.map(user => `
+                            <div class="flex items-center space-x-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="user-${user.user_id}" 
+                                    value="${user.user_id}" 
+                                    class="form-checkbox text-[var(--color-primary)] focus:ring-[var(--color-primary)] rounded">
+                                <label for="user-${user.user_id}" class="text-[var(--color-text)]">${user.username}</label>
+                            </div>
+                        `).join('');
+                    })
+                    .catch(error => console.error("Error fetching users:", error));
+                const cancelAddUsersBtn = document.getElementById("cancelAddUsers");
+                cancelAddUsersBtn.classList.remove("hidden");
+                cancelAddUsersBtn.addEventListener("click", () => {
+                    addUsersForm.classList.add("hidden");
+                    membersContainer.classList.remove("hidden");
+                    groupDescriptionContainer.classList.remove("hidden");
+                    document.getElementById("membersTitle").classList.remove("hidden");
+                    cancelAddUsersBtn.classList.add("hidden");
+                    submitAddUsersBtn.classList.add("hidden");
+                    addUsersBtn.classList.remove("hidden");
+                    closeGroupOptionsBtn.classList.remove("hidden");
+                    leaveGroupBtn.classList.remove("hidden");
+                });
+                const submitAddUsersBtn = document.getElementById("submitAddUsers");
+                submitAddUsersBtn.classList.remove("hidden");
+                submitAddUsersBtn.addEventListener("click", async () => {
+                    const selectedUsers = Array.from(document.querySelectorAll("#availableMembers input:checked"))
+                        .map(input => input.value);
+                    await addUsersToGroup(group_id, selectedUsers);
+                    addUsersForm.classList.add("hidden");
+                    location.reload();
+                });
+            });
+        }
 
     } catch (error) {
         console.error("Error loading group options:", error);
@@ -131,12 +178,6 @@ export async function openGroupOptions(group_id) {
     }
 }
 
-/**
- * Entra en modo edición: oculta la vista visual y muestra el formulario de edición
- * para modificar el nombre y la descripción del grupo.
- * Los cambios se guardan solo al pulsar "Save Changes".
- * @param {Object} group - Objeto con las propiedades del grupo (group_id o id, name, description).
- */
 function enterEditMode(group) {
     const displaySection = document.getElementById("groupHeaderDisplay");
     const editSection = document.getElementById("groupHeaderEdit");

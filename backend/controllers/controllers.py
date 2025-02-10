@@ -220,7 +220,7 @@ class Matias(object):
         self.cursor.execute(sql, (group_id,))
         return self.cursor.fetchone()
     
-    def addUserToGroup(self, group_id, member_id, admin_id): 
+    def addUsersToGroup(self, group_id, member_id): 
         # Comprobamos si el user es admin
         # sql = esAdmin
         # self.cursor.execute(sql, (group_id, admin_id))
@@ -236,7 +236,7 @@ class Matias(object):
         #         return "User already in group"
         #     else:
                 # Insertamos el registro
-                sql = insertGroupMember
+                sql = insertGroupMembers
                 self.cursor.execute(sql, (group_id, member_id))
                 return self.cursor.rowcount
 
