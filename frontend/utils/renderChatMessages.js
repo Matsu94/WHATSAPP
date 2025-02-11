@@ -1,6 +1,8 @@
 import { viewGroupMessageStatus } from "./viewGroupMessageStatus.js";
 
-export function renderChatMessages(messages) {
+export function renderChatMessages(messages, options = {}) {
+  // Si options.prepend es true, no limpia el contenedor
+  const { prepend = false } = options;
   const container = document.getElementById("messagesContainer");
   const savedBackground = sessionStorage.getItem("chatBackground");
   if (savedBackground) {
@@ -13,17 +15,32 @@ export function renderChatMessages(messages) {
   }
   if (!container) return;
 
-  container.innerHTML = "";
+  // Solo limpiamos el contenedor si NO se trata de un prepend
+  if (!prepend) {
+    container.innerHTML = "";
+  }
 
-  // --- Ordenar de más antiguo a más nuevo según msg.date ---
+  // Ordenar de más antiguo a más nuevo según msg.date
   messages.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  // Variable para recordar el último día que se mostró en un encabezado
+  // Creamos un fragment para insertar los nuevos mensajes
+  const fragment = document.createDocumentFragment();
+
+  // Variable para recordar el último día ya renderizado
+  // (Nota: para el prepend puede que quieras evaluar si los encabezados de fechas se duplican)
   let lastRenderedDate = "";
+  // Si no se limpia el contenedor, intentamos obtener la última fecha renderizada.
+  // Esto es opcional y depende de cómo quieras manejar los encabezados de fecha en mensajes antiguos.
+  if (prepend && container.firstChild) {
+    // Por ejemplo, podrías obtener el texto del primer header si existe:
+    const firstHeader = container.querySelector("div.text-center.text-xs.text-gray-500");
+    if (firstHeader) {
+      lastRenderedDate = firstHeader.innerText;
+    }
+  }
   const now = new Date();
 
   messages.forEach((msg) => {
-    // Determinar si el mensaje es mío, según username o ID
     const currentUsername = sessionStorage.getItem('username') || "";
     let isMine = "";
     if (!msg.is_group) {
@@ -72,19 +89,18 @@ export function renderChatMessages(messages) {
     }
 
     const msgDateObj = new Date(msg.date);
-    // Formateamos la hora (por ejemplo, "14:30")
     let displayTime = msgDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // Si el mensaje no es de hoy Y aún no se ha renderizado el encabezado para ese día, lo insertamos
+    // Insertar un encabezado de fecha si corresponde y si aún no se ha renderizado para ese día
     if (msgDateObj.toDateString() !== now.toDateString() && msgDateObj.toDateString() !== lastRenderedDate) {
       const dayHeader = document.createElement('div');
       dayHeader.className = "text-center text-xs text-gray-500 my-2";
-      dayHeader.innerText = msgDateObj.toLocaleDateString(); // Puedes ajustar el formato si lo deseas
-      container.appendChild(dayHeader);
+      dayHeader.innerText = msgDateObj.toLocaleDateString();
+      fragment.appendChild(dayHeader);
       lastRenderedDate = msgDateObj.toDateString();
     }
 
-    // Renderizamos el mensaje: contenido y, en la misma línea, hora y estado
+    // Renderizamos el contenido del mensaje
     msgBubble.innerHTML = `
       <div class="font-titles font-bold mb-1">${senderDisplay}</div>
       <div class="flex items-center justify-between">
@@ -96,9 +112,15 @@ export function renderChatMessages(messages) {
     `;
 
     msgWrapper.appendChild(msgBubble);
-    container.appendChild(msgWrapper);
+    fragment.appendChild(msgWrapper);
   });
-
-  // Al final, desplazamos el scroll al fondo para ver el último mensaje
-  container.scrollTop = container.scrollHeight;
+  
+  if (prepend) {
+    // Si es un prepend, insertamos el fragment al inicio sin limpiar el contenedor
+    container.insertBefore(fragment, container.firstChild);
+  } else {
+    // En un render "normal" agregamos al final y luego desplazamos hacia el final
+    container.appendChild(fragment);
+    container.scrollTop = container.scrollHeight;
+  }
 }
