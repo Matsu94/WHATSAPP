@@ -5,6 +5,7 @@ import { openChatError } from "../errors/errors.js";
 import { fetchChats } from "../assets/fetching.js";
 import { renderUserList } from "./renderUserList.js";
 import { openGroupOptions } from "./openGroupOptions.js";
+import { initScrollPagination } from "./scrolling.js";
 
 
 //Abrir chat en la sección derecha
@@ -36,7 +37,7 @@ export async function openChat(senderId, isGroup, senderName) {
 
       // Cargar y mostrar los mensajes
       loadMessages(senderId, isGroup);
-
+      initScrollPagination(senderId, isGroup);
       // Agregar eventos a los elementos
       const sendBtn = document.getElementById("sendMessageBtn");
       const input = document.getElementById("newMessageInput");

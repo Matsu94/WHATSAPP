@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="localhost",
-            #host="192.168.193.133",
-            #port=3306,
-            user="root",
-            #user="matiasianbastero",
-            #password="49864854A",
-            db="matias",
-            #db="damahe",
+            #host="localhost",
+            host="192.168.193.133",
+            port=3306,
+            #user="root",
+            user="matiasianbastero",
+            password="49864854A",
+            #db="matias",
+            db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -130,13 +130,13 @@ class Matias(object):
         return self.cursor.rowcount  # Return the total number of rows updated
 
     # Query to get all messages (o mensajes de un remitente a un destinatario) (2m)
-    def getMessagesChat(self, limit, offset, sender_id, receiver_id, isGroup):
+    def getMessagesChat(self, offset, sender_id, receiver_id, isGroup):
         if isGroup:
             sql = getMessagesChatGroup
-            self.cursor.execute(sql, (sender_id, isGroup, limit, offset))
+            self.cursor.execute(sql, (sender_id, isGroup, offset))
         else:
             sql = getMessagesChat
-            self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
+            self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, offset))
         return self.cursor.fetchall()
     
     def groupMessageStatus(self, message_id):
