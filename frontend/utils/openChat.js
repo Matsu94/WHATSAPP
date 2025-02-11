@@ -9,6 +9,7 @@ import { initScrollPagination } from "./scrolling.js";
 import { searchChats } from "./searchUsers.js";
 
 
+
 //Abrir chat en la sección derecha
 export async function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
