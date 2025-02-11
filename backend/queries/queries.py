@@ -167,6 +167,13 @@ LIMIT %s
 OFFSET %s
 """
 
+groupMessageStatus = """
+SELECT status, username
+FROM group_message_status
+INNER JOIN users USING (user_id)
+WHERE message_id = %s
+"""
+
 changeContent = """
 UPDATE messages
 SET content = %s

@@ -15,7 +15,6 @@ export function renderChatMessages(messages) {
 
   // --- Ordenar de más antiguo a más nuevo según msg.date ---
   messages.sort((a, b) => new Date(a.date) - new Date(b.date));
-  console.log(messages);
 
   // Variable para recordar el último día que se mostró en un encabezado
   let lastRenderedDate = "";
