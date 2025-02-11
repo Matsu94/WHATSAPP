@@ -26,7 +26,7 @@ export function renderUserList(chats) {
 
     // Last message or description
     const lastMessageEl = document.createElement('div');
-    lastMessageEl.className = "text-sm text-[var(--color-text)] truncate";
+    lastMessageEl.className = "text-sm text-[var(--color-text)] truncate overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[120px]";
     lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes.";
 
     infoDiv.appendChild(nameEl);

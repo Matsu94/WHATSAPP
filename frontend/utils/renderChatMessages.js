@@ -43,10 +43,13 @@ export function renderChatMessages(messages) {
       "min-w-[10rem]",
       "shadow-sm",
       "break-words",
+      "overflow-hidden",
+      "word-break",
+      "break-all",
       "text-[var(--color-text)]",
       isMine ? "bg-[var(--color-other)]" : "bg-[var(--color-user)]"
-    );
-
+    );    
+    
     // Definir el nombre a mostrar
     let senderDisplay = "";
     if (!msg.is_group) {
@@ -86,6 +89,8 @@ export function renderChatMessages(messages) {
       <div class="font-titles font-bold mb-1">${senderDisplay}</div>
       <div class="flex items-center justify-between">
         <span>${msg.content}</span>
+      </div>
+      <div class="flex items-center justify-end">
         <span class="text-xs text-[var(--color-text)] font-dates font-light">${displayTime}  ${status}</span>
       </div>
     `;
