@@ -1,8 +1,6 @@
 import { openChat } from './openChat.js';
 
 export async function showUsers(users){
-
-    console.log("showUsers", users);
   const chatListEl = document.getElementById('chatList');
   if (!chatListEl) return;
 
