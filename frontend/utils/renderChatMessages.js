@@ -65,7 +65,7 @@ export function renderChatMessages(messages) {
     } else if (msg.status === 2 && isMine) {
       status = "✓✓";
     } else if (msg.status === 3 && isMine) {
-      status = "✓✓✓";
+      status = '<span style="color: #b400b4;">✓✓✓</span>';
     }
 
     const msgDateObj = new Date(msg.date);

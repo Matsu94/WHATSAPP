@@ -6,7 +6,7 @@ export async function viewGroupMessageStatus(msg) {
     showPopup(statuses, msg.isMine);
 }
 
-function showPopup(data, isMine) {
+function showPopup(data) {
     // Remove existing popup if any
     let existingPopup = document.getElementById("messageStatusPopup");
     if (existingPopup) {
@@ -19,13 +19,13 @@ function showPopup(data, isMine) {
 
     // Create the actual message box (borderless, centered at the top)
     const popupContent = document.createElement("div");
-    popupContent.className = "bg-white p-5 rounded-lg shadow-lg max-w-md w-11/12 text-center";
+    popupContent.className = "bg-[var(--color-base)] p-5 rounded-lg shadow-lg max-w-md w-11/12 text-center";
 
     // Function to convert status to ticks
     function getStatusSymbol(status) {
         if (status === 1) return "✓";
         if (status === 2) return "✓✓";
-        if (status === 3) return "✓✓✓";
+        if (status === 3) return '<span style="color: #b400b4;">✓✓✓</span>';
         return status; // Fallback in case of unexpected values
     }
 
