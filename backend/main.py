@@ -22,11 +22,9 @@ def get_db():
     finally:
         db.desconecta()
 
-@app.get("/") # ESTE LO CAMBIAMOS A log_in [[EN REALIDAD ES /TOKEN ABAJO DEL TODO]]
+@app.get("/")
 def read_root():
     return {"message": "Welcome to the home page!"}
-
-# /llistaamics: és tot el grup de la clase, tots els usuaris de la taula usuarisclase. (1a)
 
 # Endpoint to list all users (1a)
 @app.get("/usersWithoutChat")
@@ -34,33 +32,11 @@ def read_users_noChat(db: Matias = Depends(get_db), user: str = Depends(get_curr
     user_id = user['user_id']
     return db.getUsersNoChat(user_id)
 
-
-@app.get("/usersForGroup")
-def read_users_noChat(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
-    user_id = user['user_id']
-    return db.getusersForGroup(user_id)
-
-# /missatgesAmics: permet enviar missatges a un amic (1m) o rebre els missatges d’aquest amic. (2m)
-# Inicialment rebrà els 10 missatges més recents, tant els que hem enviat com els que hem rebut, cronològicament. (2m)
-# Després el sistema ha de permetre anar rebent els missatges més antics de 10 en 10. (FRONTEND)
-# Els missatges enviats ha d’indicar l’estat del missatge (enviat, rebut, llegit) (FRONTEND)
-# /check : ha de modificar l'estat d’un missatge a rebut o llegit. (3m)
-# /missatgesgrup: El mateix que a missatgesAmics, però amb grups . (1-2m)
-# Els missatges rebuts s’ha d’indicar de quin usuari són. (FRONTEND)
-# Els missatges a grup tenen estat (enviat, rebut, llegit). Enviat és únic per qui envia el missatge, 
-# pero rebut i llegit poden ser diferents pels membres del grup. (3m)
-
 @app.get("/chats") # ESTE SERÍA EL PRIMER ENDPOINT DSPS DE LOGIN
 def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     user_id = user['user_id']
     return db.getChats(user_id)
-
-@app.get("/get_missing_groups")
-def get_missing_groups(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
-    user_id = user['user_id']
-    return db.getMissingGroups(user_id)
     
-
 # Endpoint to send a message (1m)
 @app.post("/sendMessage") 
 def send_message(message: Message, db: Matias = Depends(get_db)):
@@ -91,38 +67,26 @@ def receive_messages(
 def change_state(
     state_id: int,  # ID del estado que se quiere cambiar
     messages: list[dict] = Body(...),  # Lista de IDs de mensajes recibida en el cuerpo de la solicitud
-    db: Matias = Depends(get_db), # Dependencia de la base de datos
-    receiver: str = Depends(get_current_user) # Dependencia del usuario actual
+    db: Matias = Depends(get_db), 
+    receiver: str = Depends(get_current_user)
 ):
     receiver_id = receiver['user_id']
-    result = 0  # Initialize result to 0
+    result = 0
     for message in messages:
-        result += db.changeMessageState(message, state_id, receiver_id)  # Pass message_id directly
+        result += db.changeMessageState(message, state_id, receiver_id)
     return {"message": "Estado actualizado correctamente.", "result": result}
 
-# Endpoint to get message status of group messages
-@app.get("/group_message_status/{message_id}")
-def group_message_status(message_id: int, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
-    return db.groupMessageStatus(message_id)
-
-
-# Endpoint to change the content of a message [ACÁ TENDRÍAMOS QUE PONER UN LIMITE DE TIEMPO O ASÍ]
-@app.put("/change_content/{message_id}/{content}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
+# Endpoint to change the content of a message
+@app.put("/change_content/{message_id}/{content}")
 def change_content(message_id: int, content: str, db: Matias = Depends(get_db)):
     return db.changeContent(message_id, content)
 
-# Endpoint to delete a message # ESTE DEJA DE SER POSIBLE CUANDO EL ESTADO AMBIA A LEIDO (4) 
-@app.delete("/delete_message/{message_id}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
+# Endpoint to delete a message 
+@app.delete("/delete_message/{message_id}")
 def delete_message(message_id: int, db: Matias = Depends(get_db)):
     return db.deleteMessage(message_id)
 
-
-#Acá todo lo de crear grupos y maybe administrar usuarios
-
-# /grups: ha de permetre visualitzar els meus grups (1g) i afegir un grup nou (2g). 
-# L’usuari que crei el grup en serà l’administrador(2g). Podrà modificar també els usuaris que formen part (3g) i canviar el nom.(4g) 
-# L’administrador del grup pot afegir altres administradors. (3g)
-# Els usuaris que no son administradors (els administradors també) han de poder abandonar el grup. (5g)
+#==================GROUPS==================
 
 # Endpoint to list user groups (1g) ESTE CREO NO ESTÁ HACIENDO NADA AHORA MISMO
 @app.get("/groups")
@@ -183,6 +147,20 @@ def leave_group(group_id: int, db: Matias = Depends(get_db), admin: str = Depend
 def delete_group(group_id: int, db: Matias = Depends(get_db)):
     return db.deleteGroup(group_id)
 
+# Endpoint to get message status of group messages
+@app.get("/group_message_status/{message_id}")
+def group_message_status(message_id: int, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
+    return db.groupMessageStatus(message_id)
+
+@app.get("/get_missing_groups")
+def get_missing_groups(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
+    user_id = user['user_id']
+    return db.getMissingGroups(user_id)
+
+@app.get("/usersForGroup")
+def read_users_noChat(db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
+    user_id = user['user_id']
+    return db.getusersForGroup(user_id)
 
 # Endpoint to generate a token
 @app.post("/token", response_model=Token)

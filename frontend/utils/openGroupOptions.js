@@ -30,7 +30,6 @@ export async function openGroupOptions(group_id) {
         // Configurar la vista visual: asignar nombre y descripción
         const groupNameContainer = document.getElementById("groupName");
         if (groupNameContainer) {
-            // Usa group.group_id o group.id según corresponda y asígnalo en un data attribute
             const groupId = group.group_id || group.id;
             groupNameContainer.dataset.groupId = groupId;
             groupNameContainer.innerHTML = `
@@ -44,7 +43,7 @@ export async function openGroupOptions(group_id) {
         `;
         }
 
-        // Si el usuario es administrador, agregar un botón "Edit Group" (en la parte inferior del header visual)
+        // Si el usuario es administrador, agregar un botón "Edit Group"
         if (isViewerAdmin) {
             const editGroupContainer = document.createElement("div");
             editGroupContainer.className = "mt-4 flex justify-center";
@@ -146,6 +145,7 @@ export async function openGroupOptions(group_id) {
                         `).join('');
                     })
                     .catch(error => console.error(`${errors.getUsersError}`, error));
+                    
                 const cancelAddUsersBtn = document.getElementById("cancelAddUsers");
                 cancelAddUsersBtn.classList.remove("hidden");
                 cancelAddUsersBtn.addEventListener("click", () => {

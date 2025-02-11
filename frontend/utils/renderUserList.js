@@ -9,7 +9,7 @@ export function renderUserList(chats) {
   chatListEl.innerHTML = '';
 
   chats.forEach(chat => {
-    const isGroupWithoutMessages = !!chat.creator_id; // Groups without messages have `creator_id`
+    const isGroupWithoutMessages = !!chat.creator_id;
     
     // Create chat item container
     const chatItem = document.createElement('div');
@@ -27,7 +27,7 @@ export function renderUserList(chats) {
     // Last message or description
     const lastMessageEl = document.createElement('div');
     lastMessageEl.className = "text-sm text-[var(--color-text)] truncate";
-    lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes."; // TECNICAMENTE NO HAY CHATS VACIOS EN PREVIEW
+    lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes.";
 
     infoDiv.appendChild(nameEl);
     infoDiv.appendChild(lastMessageEl);
@@ -39,7 +39,7 @@ export function renderUserList(chats) {
       const date = new Date(chat.date ?? chat.created_at);
       timestampEl.innerText = formatDate(date);
     } else {
-      timestampEl.innerText = ""; // TECNICAMENTE TODO TIENE FECHA
+      timestampEl.innerText = "";
     }
 
     chatItem.appendChild(infoDiv);

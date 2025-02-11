@@ -14,14 +14,10 @@ class Token(BaseModel):
     user_id: int 
     
 # Modelo de mensaje
-# ERAN 5 PROPIEDADES, NO RECUERDO LAS ULTIMAS 2
 class Message(BaseModel):
-    Message_ID: Optional[int] = None # ESTA NO SE SI ES NECESARIO
+    Message_ID: Optional[int] = None
     Content: str
     Date: Optional[datetime] = None # Fecha de envío
-    # EL ESTADO DE LOS MSJS LO PODEMOS PONER EN PLAN BOOLEANDO/ENUM DEL 0 AL 4, SIN ENVIAR, ENVIADO, RECIBIDO Y LEIDO 
-    # SI TENEMOS "SIN ENVIAR" TENDRÍAMOS QUE TENER UN ALMACENAMIENTO LOCAL O LA OPCION ES QUE NO HAYA SIN ENVIAR Y 
-    # EL MSJ DESAPAREZCA SI EL QUE LO ENVIA NO TIENE CONX
     Status: int = 1  # Foreign key, required
     Sender: str # Foreign key, required
     Receiver: str # Foreign key, required
@@ -38,7 +34,7 @@ class Group(BaseModel):
     Group_ID: Optional[int] = None
     Name: str
     Description: Optional[str] = None
-    Creator_ID: int  #No se si serán str para el uname o los users tendrán id, jose nos va a dar la bd, igual en principio el creador es admin
+    Creator_ID: int 
     Members: list[int] = []  # Lista de miembros del grupo
 
     #Modelo para actualizar el nombre de un grupo

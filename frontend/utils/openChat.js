@@ -28,9 +28,9 @@ export async function openChat(senderId, isGroup, senderName) {
       }
 
       if (isGroup && groupOptions) {
-        groupOptions.classList.remove("hidden"); // Make the <a> tag visible
+        groupOptions.classList.remove("hidden");
         groupOptions.addEventListener("click", () => {
-          openGroupOptions(senderId); // Call the function to open group settings
+          openGroupOptions(senderId);
         });
       }
 

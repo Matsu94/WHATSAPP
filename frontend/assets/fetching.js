@@ -105,9 +105,6 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         // Parse the JSON response (this contains all the messages)
         const messages = await response.json();
 
-        // Extract message IDs from the messages array
-        //const messageIds = messages.map(message => message.message_id);
-
         // Send the IDs to the change_state endpoint
         const changeStateResponse = await fetch(`${URL}/change_state/${3}`, {
             method: 'PUT',
@@ -132,14 +129,11 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
 // mandar mensajes
 export async function postMessage(messageObj) {
     try {
-        // Si requieres token, obténlo:
-        // const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/sendMessage`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(messageObj)
         });
@@ -147,8 +141,7 @@ export async function postMessage(messageObj) {
         if (!response.ok) {
             throw new Error(`${errors.sendMessagesError}, ${response.status}`);
         }
-
-        // Tu backend ahora devuelve un JSON con el ID del mensaje insertado, p. ej. { "message_id": 12 }
+        // El backend responde con el id del mensaje
         const data = await response.json();
         return data; // p. ej. { "message_id": 12 }
     } catch (error) {
@@ -164,7 +157,6 @@ export async function fetchGroupMessageStatus(messageId) {
         const response = await fetch(`${URL}/group_message_status/${messageId}`, {
             method: 'GET',
             headers: {
-                //'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
         });
@@ -183,13 +175,11 @@ export async function fetchGroupMessageStatus(messageId) {
 // crear grupo
 export async function createGroup(groupObj) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/create_group`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
             },
             body: JSON.stringify(groupObj)
         });
@@ -216,7 +206,7 @@ export async function fetchGroupInfo(group_id) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -233,13 +223,13 @@ export async function fetchGroupInfo(group_id) {
 // CAMBIAR NOMBRE GRUPO
 export async function updateGroupName(group_id, name) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/update_name/${group_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ name })
         });
@@ -257,13 +247,13 @@ export async function updateGroupName(group_id, name) {
 // CAMBIAR DESCRIPCION GRUPO
 export async function updateGroupDescription(group_id, description) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/update_description/${group_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ description })
         });
@@ -281,13 +271,13 @@ export async function updateGroupDescription(group_id, description) {
 //CARGAR USUARIOS PARA GRUPO
 export async function fetchUsersForGroup() {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/usersForGroup`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -302,13 +292,13 @@ export async function fetchUsersForGroup() {
 //CARGAR USUARIOS DE GRUPO
 export async function fetchUsersFromGroup(group_id) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/get_members/${group_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -322,13 +312,13 @@ export async function fetchUsersFromGroup(group_id) {
 }
 export async function removeUserFromGroup(group_id, userId) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/remove_user/${group_id}/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -343,13 +333,13 @@ export async function removeUserFromGroup(group_id, userId) {
 
 export async function updateUserToAdmin(group_id, userId)  {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token'); 
 
         const response = await fetch(`${URL}/add_admin/${group_id}/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -365,14 +355,14 @@ export async function updateUserToAdmin(group_id, userId)  {
 
 export async function addUsersToGroup(group_id, usersIds) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
         const response = await fetch(`${URL}/add_users/${group_id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ Members: usersIds }) // POR ALGUNA RAZON SIN EL "Members:" NO FUNCIONA
+            body: JSON.stringify({ Members: usersIds })
         });
         if (!response.ok) {
             throw new Error(`${errors.promoteUserError}, ${response.status}`);
@@ -385,13 +375,13 @@ export async function addUsersToGroup(group_id, usersIds) {
 
 export async function leaveGroup(group_id) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+        const token = sessionStorage.getItem('token');
 
         const response = await fetch(`${URL}/leave_group/${group_id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
 

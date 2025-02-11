@@ -15,7 +15,7 @@ export function openCreateGroupForm() {
     // Obtener la lista completa de usuarios para seleccionar miembros
     fetchUsersForGroup()
       .then(users => {
-        const availableMembers = users.filter(user => user.user_id !== currentUserId); // ESTO YA ESTA EN LA QUERY PERO POR SI LAS DUDAS
+        const availableMembers = users.filter(user => user.user_id !== currentUserId);
   
         // Cargar el contenido de createGroupForm.html
         fetch("/WHATSAPP/frontend/components/createGroupForm.html")

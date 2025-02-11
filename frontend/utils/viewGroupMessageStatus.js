@@ -17,19 +17,19 @@ function showPopup(data) {
     // Create the popup container (semi-transparent background)
     const popup = document.createElement("div");
     popup.id = "messageStatusPopup";
-    popup.classList.add("popup-overlay");
+    popup.className = "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-5";
 
-    // Create the actual message box (borderless, centered)
+    // Create the actual message box (borderless, centered at the top)
     const popupContent = document.createElement("div");
-    popupContent.classList.add("popup-content");
+    popupContent.className = "bg-white p-5 rounded-lg shadow-lg max-w-md w-11/12 text-center";
 
     // Populate with status data
     popupContent.innerHTML = `
-        <h3 class="popup-title">Message Status</h3>
-        <ul class="popup-list">
+        <h3 class="text-lg font-semibold mb-3">Message Status</h3>
+        <ul class="text-left space-y-2">
             ${data.map(user => `<li><strong>${user.username}:</strong> ${user.status}</li>`).join("")}
         </ul>
-        <button id="closePopup" class="popup-close">Close</button>
+        <button id="closePopup" class="mt-4 px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">Close</button>
     `;
 
     popup.appendChild(popupContent);
