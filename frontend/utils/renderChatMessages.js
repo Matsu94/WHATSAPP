@@ -1,3 +1,5 @@
+import { viewGroupMessageStatus } from "./viewGroupMessageStatus.js";
+
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
   const savedBackground = sessionStorage.getItem("chatBackground");
@@ -51,6 +53,9 @@ export function renderChatMessages(messages) {
       senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
     } else {
       senderDisplay = isMine ? "Yo" : (msg.user_name || `User ${msg.user_name}`);
+      msgBubble.addEventListener("dblclick", () => {
+        viewGroupMessageStatus(msg);
+      });
     }
 
     // Determinar el estado del mensaje (solo para mis mensajes)

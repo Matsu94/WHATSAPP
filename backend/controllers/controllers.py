@@ -161,10 +161,10 @@ class Matias(object):
             self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
         return self.cursor.fetchall()
     
-    def groupMessageStatus(self, group_id, message_id):
+    def groupMessageStatus(self, message_id):
         sql = groupMessageStatus
-        self.cursor.execute(sql, (group_id, message_id))
-        return self.cursor.fetchone()
+        self.cursor.execute(sql, (message_id))
+        return self.cursor.fetchall()
 
     # Query to change the content of a message
     def changeContent(self, message_id, new_content):  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
