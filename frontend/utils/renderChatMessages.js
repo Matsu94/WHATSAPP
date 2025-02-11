@@ -1,3 +1,5 @@
+import { viewGroupMessageStatus } from "./viewGroupMessageStatus.js";
+
 export function renderChatMessages(messages) {
   const container = document.getElementById("messagesContainer");
   const savedBackground = sessionStorage.getItem("chatBackground");
@@ -15,7 +17,6 @@ export function renderChatMessages(messages) {
 
   // --- Ordenar de más antiguo a más nuevo según msg.date ---
   messages.sort((a, b) => new Date(a.date) - new Date(b.date));
-  console.log(messages);
 
   // Variable para recordar el último día que se mostró en un encabezado
   let lastRenderedDate = "";
@@ -52,6 +53,9 @@ export function renderChatMessages(messages) {
       senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
     } else {
       senderDisplay = isMine ? "Yo" : (msg.user_name || `User ${msg.user_name}`);
+      msgBubble.addEventListener("dblclick", () => {
+        viewGroupMessageStatus(msg);
+      });
     }
 
     // Determinar el estado del mensaje (solo para mis mensajes)

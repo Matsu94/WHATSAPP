@@ -100,6 +100,12 @@ def change_state(
         result += db.changeMessageState(message, state_id, receiver_id)  # Pass message_id directly
     return {"message": "Estado actualizado correctamente.", "result": result}
 
+# Endpoint to get message status of group messages
+@app.get("/group_message_status/{message_id}")
+def group_message_status(message_id: int, db: Matias = Depends(get_db), receiver: str = Depends(get_current_user)):
+    return db.groupMessageStatus(message_id)
+
+
 # Endpoint to change the content of a message [ACÁ TENDRÍAMOS QUE PONER UN LIMITE DE TIEMPO O ASÍ]
 @app.put("/change_content/{message_id}/{content}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
 def change_content(message_id: int, content: str, db: Matias = Depends(get_db)):

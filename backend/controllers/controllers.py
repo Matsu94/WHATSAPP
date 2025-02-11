@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            #host="localhost",
-            host="192.168.193.133",
-            port=3306,
-            #user="root",
-            user="matiasianbastero",
-            password="49864854A",
-            #db="matias",
-            db="damahe",
+            host="localhost",
+            #host="192.168.193.133",
+            #port=3306,
+            user="root",
+            #user="matiasianbastero",
+            #password="49864854A",
+            db="matias",
+            #db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -110,8 +110,12 @@ class Matias(object):
             self.cursor.execute(sql, (message.Receiver,))
             res2 = self.cursor.fetchall()
             for user in res2:
-                sql = changeStatusGroupMessage
-                self.cursor.execute(sql, (last_id, user['user_id'], 1))
+                if user['user_id'] == message.Sender:
+                    sql = changeStatusGroupMessage
+                    self.cursor.execute(sql, (last_id, user['user_id'], 3))
+                else:
+                    sql = changeStatusGroupMessage
+                    self.cursor.execute(sql, (last_id, user['user_id'], 1))
     
         # Devuelve el último ID insertado
         return last_id
@@ -155,6 +159,11 @@ class Matias(object):
         else:
             sql = getMessagesChat
             self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, limit, offset))
+        return self.cursor.fetchall()
+    
+    def groupMessageStatus(self, message_id):
+        sql = groupMessageStatus
+        self.cursor.execute(sql, (message_id))
         return self.cursor.fetchall()
 
     # Query to change the content of a message

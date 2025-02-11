@@ -155,6 +155,31 @@ export async function postMessage(messageObj) {
         throw error;
     }
 }
+
+// estados mensaje grupo
+export async function fetchGroupMessageStatus(messageId) {
+    try {
+        const token = sessionStorage.getItem('token');
+
+        const response = await fetch(`${URL}/group_message_status/${messageId}`, {
+            method: 'GET',
+            headers: {
+                //'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.errorFetchingMessageStatus}, ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 // crear grupo
 export async function createGroup(groupObj) {
     try {
