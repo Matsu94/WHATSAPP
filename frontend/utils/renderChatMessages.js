@@ -53,7 +53,7 @@ export function renderChatMessages(messages) {
       senderDisplay = isMine ? "Yo" : (msg.sender_name || `User ${msg.sender_id}`);
     } else {
       senderDisplay = isMine ? "Yo" : (msg.user_name || `User ${msg.user_name}`);
-      msgBubble.addEventListener("dblclick", () => {
+      msgBubble.addEventListener("click", () => {
         viewGroupMessageStatus(msg);
       });
     }
