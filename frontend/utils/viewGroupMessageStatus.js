@@ -3,7 +3,6 @@ import { fetchGroupMessageStatus } from "../assets/fetching.js";
 export async function viewGroupMessageStatus(msg) {
     const messageId = msg.message_id;
     const statuses = await fetchGroupMessageStatus(messageId);
-    console.log("STATUS", statuses);
     showPopup(statuses, msg.isMine);
 }
 
