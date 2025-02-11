@@ -53,13 +53,12 @@ def check_messages(db: Matias = Depends(get_db), receiver: str = Depends(get_cur
 def receive_messages(
     sender_id: str,
     isGroup: bool,
-    limit: int = 10,
     offset: int = 0,
     db: Matias = Depends(get_db),
     receiver: str = Depends(get_current_user)
 ):
     receiver_id = receiver['user_id']
-    messages = db.getMessagesChat(limit=limit, offset=offset, sender_id=sender_id, receiver_id=receiver_id, isGroup=isGroup)
+    messages = db.getMessagesChat(offset=offset, sender_id=sender_id, receiver_id=receiver_id, isGroup=isGroup)
     return messages
 
 # Endpoint to change the state of a message (3m)

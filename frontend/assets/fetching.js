@@ -82,7 +82,7 @@ export async function fetchChats() {
 }
 
 //Para cargar los mensajes
-export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
+export async function fetchMessages(senderId, isGroup, offset = 0) {
     try {
         const isGroupParam = isGroup ? 'true' : 'false';
 
@@ -90,7 +90,7 @@ export async function fetchMessages(senderId, isGroup, limit = 10, offset = 0) {
         const token = sessionStorage.getItem('token');
 
         // Fetch messages from the backend
-        const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?limit=${limit}&offset=${offset}`, {
+        const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?offset=${offset}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
