@@ -2,7 +2,6 @@ $(document).ready(function () {
   // Comprobar si hay un tema guardado en localStorage
   const savedTheme = localStorage.getItem("theme") || "light";
   $("html").attr("data-theme", savedTheme);
-  console.log("Tema guardado inicialmente:", savedTheme);
 
   // Sincronizar el checkbox según el tema guardado
   if (savedTheme === "dark") {
@@ -16,11 +15,9 @@ $(document).ready(function () {
     if ($(this).is(":checked")) {
       $("html").attr("data-theme", "dark");
       localStorage.setItem("theme", "dark");
-      console.log("Tema cambiado a dark vía checkbox");
     } else {
       $("html").attr("data-theme", "light");
       localStorage.setItem("theme", "light");
-      console.log("Tema cambiado a light vía checkbox");
     }
   });
 
@@ -34,12 +31,10 @@ $(document).ready(function () {
       passwordInput.attr("type", "text");
       eyeOpen.addClass("hidden");
       eyeSlash.removeClass("hidden");
-      console.log("Mostrar contraseña");
     } else {
       passwordInput.attr("type", "password");
       eyeOpen.removeClass("hidden");
       eyeSlash.addClass("hidden");
-      console.log("Ocultar contraseña");
     }
   });
 
@@ -48,7 +43,6 @@ $(document).ready(function () {
     $("html").attr("data-theme", "light");
     localStorage.setItem("theme", "light");
     $("#themeCheckbox").prop("checked", false);
-    console.log("Botón Standard: tema light guardado");
   });
 
   // Botón "Modo de alto contraste": Asignar data-theme "highContrast"
@@ -56,7 +50,6 @@ $(document).ready(function () {
     $("html").attr("data-theme", "highContrast");
     localStorage.setItem("theme", "highContrast");
     $("#themeCheckbox").prop("checked", false);
-    console.log("Botón Alto Contraste: tema highContrast guardado");
   });
 
   // Botón "Modo oscuro"
@@ -64,6 +57,5 @@ $(document).ready(function () {
     $("html").attr("data-theme", "dark");
     localStorage.setItem("theme", "dark");
     $("#themeCheckbox").prop("checked", true);
-    console.log("Botón Oscuro: tema dark guardado");
   });
 });
