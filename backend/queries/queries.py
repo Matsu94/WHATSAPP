@@ -139,7 +139,7 @@ WHERE
         AND m.is_group = %s
 ORDER BY 
         m.date DESC
-LIMIT %s
+LIMIT 10
 OFFSET %s
 """
 
@@ -163,7 +163,7 @@ WHERE
         AND m.is_group = %s
 ORDER BY 
         m.date DESC
-LIMIT %s
+LIMIT 10
 OFFSET %s
 """
 
