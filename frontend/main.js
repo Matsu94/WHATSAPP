@@ -1,5 +1,5 @@
 import { renderUserList } from "./utils/renderUserList.js";
-import { searchUsers } from "./utils/searchUsers.js";
+import { searchUsers, searchChats } from "./utils/searchUsers.js";
 import { openCreateGroupForm } from "./utils/openCreateGroupForm.js";
 import { getUsersError } from "./errors/errors.js";
 import { fetchChats, fetchUsers } from "./assets/fetching.js";
@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const searchInput = document.getElementById("searchInput");
       if (searchInput) {
         searchInput.addEventListener("input", (e) => {
-          const filtered = searchUsers(chats, e.target.value);
+          const filtered = searchChats(chats, e.target.value);
           renderUserList(filtered);
         });
       }
@@ -40,6 +40,12 @@ window.addEventListener("DOMContentLoaded", () => {
         createNewChat.addEventListener("click", async () => { // <-- Agregar "async" aquí
           try {
             const users = await fetchUsers();
+            if (searchInput) {
+              searchInput.addEventListener("input", (e) => {
+                const usersFiltered = searchUsers(users, e.target.value);
+                showUsers(usersFiltered);
+              });
+            }
             showUsers(users);
           } catch (error) {
             console.error("Error fetching users:", error);
