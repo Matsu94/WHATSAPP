@@ -6,6 +6,8 @@ import { fetchChats } from "../assets/fetching.js";
 import { renderUserList } from "./renderUserList.js";
 import { openGroupOptions } from "./openGroupOptions.js";
 import { initScrollPagination } from "./scrolling.js";
+import { searchChats } from "./searchUsers.js";
+
 
 
 //Abrir chat en la sección derecha
@@ -14,13 +16,20 @@ export async function openChat(senderId, isGroup, senderName) {
   if (!chatWindow) return;
   const chats = await fetchChats();
   renderUserList(chats);
+  
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const filtered = searchChats(chats, e.target.value);
+      renderUserList(filtered);
+    });
+  }
 
   // Cargar el contenido de openChat.html
   fetch("/WHATSAPP/frontend/components/openChat.html")
     .then((response) => response.text())
     .then((html) => {
       chatWindow.innerHTML = html;
-
 
       const chatHeader = document.getElementById("chatHeader");
       const groupOptions = document.getElementById("groupOptions");

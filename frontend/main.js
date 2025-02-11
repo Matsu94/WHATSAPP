@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const createNewChat = document.getElementById("createNewChat");
       if (createNewChat) {
-        createNewChat.addEventListener("click", async () => { // <-- Agregar "async" aquí
+        createNewChat.addEventListener("click", async () => { 
           try {
             const users = await fetchUsers();
             if (searchInput) {

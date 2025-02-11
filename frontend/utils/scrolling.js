@@ -42,6 +42,6 @@ async function loadOlderMessages(senderId, isGroup) {
         const newScrollHeight = messagesContainer.scrollHeight;
         messagesContainer.scrollTop = newScrollHeight - previousScrollHeight;
     } catch (error) {
-        console.error("Error cargando mensajes antiguos:", error);
+        console.error("Error cargando mensajes antiguos:", error);
     }
 }
