@@ -1,3 +1,13 @@
+import { loadMessages } from "./loadMessages.js";
+import { sendMessage } from "./sendMessage.js";
+import { closeChatWindow } from "./closeChatWindow.js"; // Import the function
+import { openChatError } from "../errors/errors.js";
+import { fetchChats } from "../assets/fetching.js";
+import { renderUserList } from "./renderUserList.js";
+import { openGroupOptions } from "./openGroupOptions.js";
+import { initScrollPagination, resetPagination } from "./scrolling.js";
+import { searchChats } from "./searchUsers.js";
+
 let socket = null;
 
 export async function openChat(senderId, isGroup, senderName) {
@@ -64,7 +74,7 @@ export async function openChat(senderId, isGroup, senderName) {
                     const chats = await fetchChats();
                     renderUserList(chats);
                 } else if (e.key === "Escape") {
-                    closeChatWindow();
+                    closeChatWindow(); // Use the imported function
                 }
             });
 
@@ -77,7 +87,7 @@ export async function openChat(senderId, isGroup, senderName) {
 
                 if (closeBtn) {
                     closeBtn.addEventListener("click", () => {
-                        closeChatWindow();
+                        closeChatWindow(); // Use the imported function
                         chatList.classList.remove("hidden");
                         chatWindow.classList.add("hidden");
                         userListDiv.classList.remove("hidden");
@@ -95,7 +105,7 @@ export async function openChat(senderId, isGroup, senderName) {
 }
 
 // Close WebSocket connection when chat window is closed
-export function closeChatWindow() {
+export function closeWebSocket() {
     if (socket) {
         socket.close();
         socket = null;
