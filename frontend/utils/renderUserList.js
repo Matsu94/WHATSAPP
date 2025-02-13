@@ -34,7 +34,7 @@ export function renderUserList(chats) {
 
     // Timestamp handling
     const timestampEl = document.createElement('div');
-    timestampEl.className = "mini-font-size text-[var(--color-text)]";
+    timestampEl.className = "base-font-size text-[var(--color-text)]";
     if (chat.date || chat.created_at) {
       const date = new Date(chat.date ?? chat.created_at);
       timestampEl.innerText = formatDate(date);
