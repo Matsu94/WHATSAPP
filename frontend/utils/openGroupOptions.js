@@ -33,13 +33,13 @@ export async function openGroupOptions(group_id) {
             const groupId = group.group_id || group.id;
             groupNameContainer.dataset.groupId = groupId;
             groupNameContainer.innerHTML = `
-            <span id="groupNameText" class="text-2xl font-bold">${group.name}</span>
+            <span id="groupNameText" class="title-font font-bold">${group.name}</span>
         `;
         }
         const groupDescriptionContainer = document.getElementById("groupDescription");
         if (groupDescriptionContainer) {
             groupDescriptionContainer.innerHTML = `
-            <span id="groupDescText" class="text-lg">${group.description}</span>
+            <span id="groupDescText" class="title-font">${group.description}</span>
         `;
         }
 
@@ -48,7 +48,7 @@ export async function openGroupOptions(group_id) {
             const editGroupContainer = document.createElement("div");
             editGroupContainer.className = "mt-4 flex justify-center";
             editGroupContainer.innerHTML = `
-            <button id="editGroupBtn" class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
+            <button id="editGroupBtn" class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
                 Editar Grupo
             </button>
         `;
@@ -221,10 +221,10 @@ function enterEditMode(group) {
             await updateGroupDescription(groupId, newDescription);
             // Actualiza la vista visual con los nuevos datos
             document.getElementById("groupName").innerHTML = `
-          <span id="groupNameText" class="text-2xl font-bold">${newName}</span>
+          <span id="groupNameText" class="title-font font-bold">${newName}</span>
         `;
             document.getElementById("groupDescription").innerHTML = `
-          <span id="groupDescText" class="text-lg">${newDescription}</span>
+          <span id="groupDescText" class="title-font">${newDescription}</span>
         `;
             // Vuelve a mostrar la vista visual y oculta el formulario de edición
             editSection.classList.add("hidden");

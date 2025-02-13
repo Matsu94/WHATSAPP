@@ -22,7 +22,7 @@
       <!-- Cabecera con "Chats" y botón "desplegable" -->
       <div class="h-[65px] p-4 flex items-center justify-between bg-[var(--color-user)] relative shadow-sm">
         <!-- Botón de menú -->
-        <button id="menuBtn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú" class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 text-sm transition duration-200 font-titles">
+        <button id="menuBtn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú" class="px-3 py-1 bg-[var(--color-dark)] text-white rounded hover:bg-opacity-90 base-font-size transition duration-200 font-titles">
           <svg class="w-4 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
@@ -32,29 +32,29 @@
         <div id="dropdownMenu" class="hidden absolute left-1 top-10 mt-2 bg-[var(--color-base)] border border-[var(--color-border)] rounded shadow-lg w-40 z-20">
           <ul class="flex flex-col p-2">
             <li>
-              <button id="logOut" class="px-3 py-1 text-sm hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
+              <button id="logOut" class="px-3 py-1 base-font-size hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
                 Cerrar sesión
               </button>
             </li>
             <li>
-              <button id="createGroupBtn" class="px-3 py-1 text-sm hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
+              <button id="createGroupBtn" class="px-3 py-1 base-font-size hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
                 Crear grupo
               </button>
             </li>
             <li>
-              <button id="changeBackgroundBtn" class="px-3 py-1 text-sm hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
+              <button id="changeBackgroundBtn" class="px-3 py-1 base-font-size hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
                 Preferencias
               </button>
             </li>
             <li>
-              <button id="createNewChat" class="px-3 py-1 text-sm hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
+              <button id="createNewChat" class="px-3 py-1 base-font-size hover:bg-[var(--color-other)] w-full text-left transition duration-200 font-titles">
                 Nuevo chat
               </button>
             </li>
           </ul>
         </div>
 
-        <h2 class="text-2xl font-bold text-[var(--color-headers)] font-titles">Chats</h2>
+        <h2 class="title-font font-bold text-[var(--color-headers)] font-titles">Chats</h2>
 
         <!-- Toggle Modo Claro/Oscuro, sin ninguna modificación -->
         <div class="flex items-center justify-center">
@@ -87,7 +87,7 @@
       <div class="w-full bg-[var(--color-chats)]">  <!-- Este div tendrá el color que quieras -->
         <div class="flex px-4 py-3 rounded-md border-2 bg-[var(--color-base)] border-[var(--color-chats)] overflow-hidden w-full font-[sans-serif]">
           <input type="text" id="searchInput" autocomplete="off" list="none" placeholder="Busca una conversación..."
-                 class="flex-1 outline-none bg-transparent text-[var(--color-text)] text-sm" />
+                 class="flex-1 outline-none bg-transparent text-[var(--color-text)] mini-font-size" />
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px" class="fill-gray-600">
             <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
             </path>
@@ -103,7 +103,7 @@
 
     <!-- Sección derecha: ventana de conversación (oculto en <480px) -->
     <div id="chatWindow" class="hidden md:flex w-full h-full items-center justify-center p-0">
-      <p class="text-xl text-center">
+      <p class="title-font text-center">
         Pulsa en una conversación para ver los mensajes
       </p>
     </div>

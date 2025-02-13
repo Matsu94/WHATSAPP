@@ -12,27 +12,27 @@
 <body class="bg-[var(--color-chats)] min-h-screen flex items-center justify-center overflow-auto" style="font-family: var(--font-body);">
   <div class="bg-[var(--color-base)] p-8 rounded-lg shadow-md w-full max-w-screen-xl max-h-[90vh] overflow-y-auto">
     <!-- Título Modo de Visualización -->
-    <h2 class="font-bold text-center mb-6 text-[var(--title-font)]">Modo de visualización</h2>
+    <h2 class="font-bold text-center mb-6 title-font">Modo de visualización</h2>
     <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
-      <button id="btnStandard" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+      <button id="btnStandard" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
         Standard
       </button>
-      <button id="btnHighContrast" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+      <button id="btnHighContrast" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
         Modo de alto contraste
       </button>
-      <button id="btnDark" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+      <button id="btnDark" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
         Modo oscuro
       </button>
     </div>
     <!-- Contenedor principal -->
     <div class="flex flex-col items-center gap-6 p-8 bg-[var(--color-base)]">
       <!-- Título -->
-      <h2 class="font-bold text-center text-[var(--title-font)]">Ajustar Tamaño de Fuente</h2>
+      <h2 class="font-bold text-center title-font">Ajustar Tamaño de Fuente</h2>
       
       <!-- Slider y etiquetas, organizados en columna -->
       <div class="flex flex-col items-center gap-4">
         <input id="fontSizeRange" type="range" min="0" max="100" value="33" step="33" class="slider-range" />
-        <div class="flex w-full justify-between px-2 text-[var(--mini-font-size)] text-gray-700">
+        <div class="flex w-full justify-between px-2 mini-font-size text-gray-700">
           <span>Pequeño</span>
           <span>Normal</span>
           <span>Grande</span>
@@ -41,26 +41,26 @@
       </div>
       
       <!-- Texto de ejemplo que cambiará de tamaño -->
-      <p id="sampleText" class="text-[var(--base-font-size)]">Este es un texto de ejemplo</p>
+      <p id="sampleText" class="base-font-size">Este es un texto de ejemplo</p>
       
       <!-- Botones para aplicar o resetear el cambio -->
       <div class="flex space-x-4">
-        <button id="applyBtn" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+        <button id="applyBtn" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
           Aplicar
         </button>
-        <button id="resetBtn" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+        <button id="resetBtn" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-base)] border-2 border-[var(--color-other)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
           Reset
         </button>
       </div>
     </div>
     <!-- Título Seleccionar Fondo -->
-    <h2 class="font-bold text-center mb-6 text-[var(--title-font)]">Cambiar Fondo del Chat</h2>
-
+    <h2 class="font-bold text-center mb-6 title-font">Cambiar Fondo del Chat</h2>
+    
     <!-- Grilla de Fondos -->
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
       <!-- Opción para "Sin fondo" -->
       <div class="bg-option" data-bg="">
-        <div class="w-full h-40 sm:h-48 flex items-center justify-center bg-[var(--color-base)] rounded-lg border-2 border-gray-300 text-[var(--base-font-size)]">
+        <div class="w-full h-40 sm:h-48 flex items-center justify-center bg-[var(--color-base)] rounded-lg border-2 border-gray-300 base-font-size">
           Sin fondo
         </div>
       </div>
@@ -89,9 +89,8 @@
         <img src="img/svg8.svg" alt="Background 8" class="w-full h-40 sm:h-48 object-cover rounded-lg shadow-md border-2 border-gray-300" />
       </div>
     </div>
-
     <!-- Botón Cancelar -->
-    <button id="cancelChangeBackgroundBtn" class="mt-6 w-full flex items-center justify-center px-4 py-2 text-[var(--base-font-size)] text-gray-500 bg-[var(--color-border)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
+    <button id="cancelChangeBackgroundBtn" class="mt-6 w-full flex items-center justify-center px-4 py-2 base-font-size text-gray-500 bg-[var(--color-border)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-user)] hover:text-[var(--color-dark)] hover:border-[var(--color-dark)] focus:outline-none">
       Cancelar
     </button>
   </div>

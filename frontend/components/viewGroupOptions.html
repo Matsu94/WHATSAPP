@@ -19,10 +19,10 @@
         <div id="groupHeaderDisplay" class="w-full mb-6">
             <!-- Se asigna el ID del grupo en un data attribute -->
             <h2 id="groupName" data-group-id="123"
-                class="text-2xl font-bold text-center text-[var(--color-headers)] font-titles">
+                class="title-font font-bold text-center text-[var(--color-headers)] font-titles">
                 Group Name
             </h2>
-            <p id="groupDescription" class="text-lg text-center text-[var(--color-text)] mt-2">
+            <p id="groupDescription" class="base-font-size text-center text-[var(--color-text)] mt-2">
                 Group description goes here.
             </p>
             <!-- Botón para activar la edición (solo visible para administradores) -->
@@ -60,7 +60,7 @@
             <!-- Lista de Miembros -->
             <div class="w-full md:w-full">
                 <label id="membersTitle"
-                    class="block text-sm font-medium text-[var(--color-text)] mb-2">Miembros:</label>
+                    class="block mini-font-size font-medium text-[var(--color-text)] mb-2">Miembros:</label>
                 <div id="groupMembers"
                     class="border border-[var(--color-border)] p-3 rounded-lg max-h-40 overflow-y-auto">
                     <!-- Los miembros se insertarán aquí dinámicamente -->
@@ -68,7 +68,7 @@
             </div>
         </div>
         <div id="addUsersForm" class="hidden mt-4 w-full">
-            <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona usuarios a
+            <label class="block mini-font-size font-medium text-[var(--color-text)] mb-2">Selecciona usuarios a
                 agregar:</label>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg"
                 id="availableMembers">
@@ -77,27 +77,27 @@
         </div>
         <div class="flex flex-col md:flex-row md:justify-between space-y-3 md:space-y-0 md:space-x-4 mt-8">
             <button type="submit" id="submitAddUsers"
-                class="hidden items-center justify-center px-4 py-2 text-base font-medium leading-6 text-[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)]  focus:outline-none font-titles">
+                class="hidden items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text-[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)]  focus:outline-none font-titles">
                 Agregar Usuarios
             </button>
             <button type="button" id="cancelAddUsers"
-                class="hidden items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
+                class="hidden items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
                 Cancelar
             </button>
         </div>
         <div class="flex flex-col md:flex-row md:justify-between space-y-3 md:space-y-0 md:space-x-4 w-full mt-4">
             <button type="button" id="closeGroupOptionsBtn"
-                class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
+                class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
                 Cerrar
             </button>
             <!-- Botón para abandonar el grupo -->
             <button type="button" id="leaveGroupBtn"
-                class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
+                class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">
                 Salir del grupo
             </button>
         </div>
 
-        <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
+        <div id="createGroupError" class="text-red-500 mini-font-size mt-2 hidden"></div>
     </div>
     <script src="../js/viewGroupOptions.js"></script>
 

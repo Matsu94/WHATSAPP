@@ -26,7 +26,7 @@ export function renderUserList(chats) {
 
     // Last message or description
     const lastMessageEl = document.createElement('div');
-    lastMessageEl.className = "text-sm text-[var(--color-text)] truncate overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[120px]";
+    lastMessageEl.className = "mini-font-size text-[var(--color-text)] truncate overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[120px]";
     lastMessageEl.innerText = chat.content ?? chat.description ?? "No hay mensajes.";
 
     infoDiv.appendChild(nameEl);
@@ -34,7 +34,7 @@ export function renderUserList(chats) {
 
     // Timestamp handling
     const timestampEl = document.createElement('div');
-    timestampEl.className = "text-xs text-[var(--color-text)]";
+    timestampEl.className = "mini-font-size text-[var(--color-text)]";
     if (chat.date || chat.created_at) {
       const date = new Date(chat.date ?? chat.created_at);
       timestampEl.innerText = formatDate(date);

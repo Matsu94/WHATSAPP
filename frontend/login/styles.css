@@ -39,9 +39,9 @@
   }
 
   :root {
-    --title-font: 2rem;
-    --base-font-size: 1.650rem;
-    --mini-font-size: 1.125rem;
+    --title-font: 1.5rem;
+    --base-font-size: 1.1rem;
+    --mini-font-size: 0.8rem;
   }
   :root {
     --font-titles: 'Poppins', sans-serif; /* Para títulos y botones */
@@ -72,7 +72,7 @@
 
 
  /* Estilos personalizados para el slider range */
-input[type="range"].slider-range {
+ input[type="range"].slider-range {
   -webkit-appearance: none;
   width: 20rem; /* Más grande: 20rem en lugar de 16rem */
   height: 1rem; /* Incrementado a 1rem */
@@ -120,6 +120,15 @@ input[type="range"].slider-range::-moz-range-thumb {
     box-shadow: 0px 0px rgb(82, 82, 82);
   }
   
+  .title-font{
+    font-size: var(--title-font);
+  }
+  .base-font-size{
+    font-size: var(--base-font-size);
+  }
+  .mini-font-size{
+    font-size: var(--mini-font-size);
+  }
 
   /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
   .theme-switch {
