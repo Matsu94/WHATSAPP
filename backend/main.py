@@ -1,3 +1,4 @@
+import json
 from fastapi import Body, FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
@@ -33,17 +34,22 @@ class ConnectionManager:
         if user_id not in self.active_connections:
             self.active_connections[user_id] = []
         self.active_connections[user_id].append(websocket)
+        print(f"User {user_id} connected. Active connections: {self.active_connections}")
 
     def disconnect(self, websocket: WebSocket, user_id: str):
         if user_id in self.active_connections:
             self.active_connections[user_id].remove(websocket)
             if not self.active_connections[user_id]:
                 del self.active_connections[user_id]
+        print(f"User {user_id} disconnected. Active connections: {self.active_connections}")
 
     async def send_personal_message(self, message: str, user_id: str):
         if user_id in self.active_connections:
             for connection in self.active_connections[user_id]:
                 await connection.send_text(message)
+            print(f"Message sent to user {user_id}: {message}")
+        else:
+            print(f"User {user_id} is not connected.")
 
 manager = ConnectionManager()
 
@@ -73,8 +79,16 @@ def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user
 @app.post("/sendMessage")
 async def send_message(message: Message, db: Matias = Depends(get_db)):
     message_id = db.sendMessage(message)
-    # Notify the receiver
-    await manager.send_personal_message("new_message", message.Receiver)
+    # Notify the receiver with more details
+    await manager.send_personal_message(
+        json.dumps({
+            "type": "new_message",
+            "sender_id": message.Sender,
+            "receiver_id": message.Receiver,
+            "is_group": message.isGroup
+        }),
+        message.Receiver
+    )
     return {"message_id": message_id}
 
 # Endpoint to check the number of messages the user has received and not read (3m)

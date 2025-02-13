@@ -53,10 +53,20 @@ export async function openChat(senderId, isGroup, senderName) {
             socket = new WebSocket(`ws://127.0.0.1:8000/ws/${currentUserId}`);
 
             socket.onmessage = (event) => {
-                if (event.data === "new_message") {
-                    loadMessages(senderId, isGroup);
-                }
-            };
+              console.log("WebSocket message received:", event.data); // Log the raw message
+              const data = JSON.parse(event.data); // Parse the WebSocket message
+              if (data.type === "new_message") {
+                  console.log("New message detected:", data); // Log the parsed message
+                  // Check if the message is for the current chat
+                  if (
+                      (data.is_group && data.receiver_id === senderId) || // Group chat
+                      (!data.is_group && (data.sender_id === senderId || data.receiver_id === senderId)) // Direct chat
+                  ) {
+                      console.log("Reloading messages for current chat...");
+                      loadMessages(senderId, isGroup); // Reload messages for the current chat
+                  }
+              }
+          };
 
             // Agregar eventos a los elementos
             const sendBtn = document.getElementById("sendMessageBtn");

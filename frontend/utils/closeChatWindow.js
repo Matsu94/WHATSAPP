@@ -1,3 +1,5 @@
+import { closeWebSocket } from "./openChat.js"; // Import the WebSocket cleanup function
+
 // Cerrar chat
 export function closeChatWindow() {
   const chatWindow = document.getElementById("chatWindow");
@@ -7,4 +9,5 @@ export function closeChatWindow() {
       Pulsa en una conversación para ver los mensajes
     </p>
   `;
+  closeWebSocket(); // Close the WebSocket connection
 }
