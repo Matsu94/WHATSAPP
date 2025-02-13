@@ -72,7 +72,7 @@
 
 
  /* Estilos personalizados para el slider range */
- input[type="range"].slider-range {
+input[type="range"].slider-range {
   -webkit-appearance: none;
   width: 20rem; /* Más grande: 20rem en lugar de 16rem */
   height: 1rem; /* Incrementado a 1rem */
