@@ -13,6 +13,7 @@
     /* Variables para texto y bordes en modo claro */
     --color-text: #000000;   /* Texto principal en modo claro */
     --color-border: #d9d3d8; /* Bordes en modo claro */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
 
   /* ========== MODO OSCURO (dark) ========== */
@@ -26,21 +27,25 @@
     /* Texto y bordes en modo oscuro */
     --color-text: #ffffff;    /*o Texto principal en modo oscuro */
     --color-border: #4f4f4f;  /* Bordes en modo oscuro */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
-
   :root[data-theme="highContrast"] {
-    --color-user: #a5a5a5;    /* Ejemplo contenedor más oscuro */
-    --color-other: #c0a87d;
-    --color-dark: #121212;    /* Botones en modo oscuro */
-    --color-headers: #97c774; /* Para focus ring en modo oscuro */
-    --color-base: #ffffff;    /* Fondo de la página en modo oscuro */
-    
-    /* Texto y bordes en modo oscuro */
-    --color-text: #121212;    /* Texto principal en modo oscuro */
-    --color-border: #a5a5a5;  /* Bordes en modo oscuro */
+    --color-user: #4DAF7C;   /* Verde vibrante, pero sin ser fluorescente */
+    --color-other: #D381C3;  /* Lila intenso, pero suave a la vista */
+    --color-dark: #003366;   /* Azul oscuro para botones/detalles */
+    --color-headers: #000000; /* Negro puro para encabezados */
+    --color-base: #FFFFFF;    /* Fondo blanco puro */
+    --color-chats: #F2F2F2;   /* Fondo gris claro para diferenciar chats */
+    --color-text: #000000;    /* Texto negro puro */
+    --color-border: #9a9898;  /* Bordes oscuros */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
 
-
+  :root {
+    --title-font: 1.5rem;
+    --base-font-size: 1.1rem;
+    --mini-font-size: 0.8rem;
+  }
   :root {
     --font-titles: 'Poppins', sans-serif; /* Para títulos y botones */
     --font-body: 'Lato', serif;          /* Para cuerpo de texto */
@@ -69,8 +74,42 @@
 }
 
 
-
-
+ /* Estilos personalizados para el slider range */
+ input[type="range"].slider-range {
+  -webkit-appearance: none;
+  width: 20rem; /* Más grande: 20rem en lugar de 16rem */
+  height: 1rem; /* Incrementado a 1rem */
+  background: transparent;
+  border-radius: 0.5rem; /* rounded-lg */
+}
+/* Track para WebKit */
+input[type="range"].slider-range::-webkit-slider-runnable-track {
+  background: var(--color-user);
+  height: 1rem;
+  border-radius: 0.5rem;
+}
+/* Track para Firefox */
+input[type="range"].slider-range::-moz-range-track {
+  background: var(--color-user);
+  height: 1rem;
+  border-radius: 0.5rem;
+}
+/* Thumb para WebKit */
+input[type="range"].slider-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 1.5rem; /* Más grande */
+  width: 1.5rem;  /* Más grande */
+  border-radius: 50%;
+  background: var(--color-dark);
+  margin-top: -0.25rem; /* Para centrar el thumb en el track */
+}
+/* Thumb para Firefox */
+input[type="range"].slider-range::-moz-range-thumb {
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+  background: var(--color-user);
+}
 
   /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
 
@@ -84,6 +123,15 @@
     box-shadow: 0px 0px rgb(82, 82, 82);
   }
   
+  .title-font{
+    font-size: var(--title-font);
+  }
+  .base-font-size{
+    font-size: var(--base-font-size);
+  }
+  .mini-font-size{
+    font-size: var(--mini-font-size);
+  }
 
   /* ========== ESTILOS DEL TOGGLE UIVERSE (by Galahhad) ========== */
   .theme-switch {

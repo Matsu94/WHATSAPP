@@ -2,7 +2,7 @@ import { loadMessages } from "./loadMessages.js";
 import { sendMessage } from "./sendMessage.js";
 import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
-import { fetchChats } from "../assets/fetching.js";
+import { fetchChats, fetchMessages } from "../assets/fetching.js";
 import { renderUserList } from "./renderUserList.js";
 import { openGroupOptions } from "./openGroupOptions.js";
 import { initScrollPagination, resetPagination } from "./scrolling.js";
@@ -14,9 +14,13 @@ import { searchChats } from "./searchUsers.js";
 export async function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
   if (!chatWindow) return;
+
+  // Load messages first before updating chat list
+  await fetchMessages(senderId, isGroup, 0);
+
   const chats = await fetchChats();
   renderUserList(chats);
-  
+
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
@@ -48,7 +52,7 @@ export async function openChat(senderId, isGroup, senderName) {
       loadMessages(senderId, isGroup);
       resetPagination();
       initScrollPagination(senderId, isGroup);
-      
+
       // Agregar eventos a los elementos
       const sendBtn = document.getElementById("sendMessageBtn");
       const input = document.getElementById("newMessageInput");

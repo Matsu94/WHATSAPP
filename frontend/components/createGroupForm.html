@@ -10,30 +10,30 @@
 </head>
 <body class="bg-[var(--color-background)] flex items-center justify-center min-h-screen" style="font-family: var(--font-body);">
   <div class="flex flex-col items-center justify-center h-full w-full max-w-xl lg:max-w-3xl bg-[var(--color-other)] p-4 md:p-6 lg:p-8 shadow-lg rounded-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center text-[var(--color-primary)] font-titles">Crear Nuevo Grupo</h2>
+    <h2 class="title-font font-bold mb-6 text-center text-[var(--color-primary)] font-titles">Crear Nuevo Grupo</h2>
     <form id="createGroupForm" class="w-full space-y-6">
       <div>
-        <label for="groupNameInput" class="block text-sm font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
+        <label for="groupNameInput" class="block base-font-size font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
           Nombre del Grupo
         </label>
         <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-base)] overflow-hidden bg-[var(--color-base)]">
           <input type="text" id="groupNameInput" placeholder="Escribe el nombre del grupo" autocomplete="off" list="none"
-                 class="flex-1 outline-none bg-transparent text-gray-600 text-sm" required />
+                 class="flex-1 outline-none bg-transparent text-gray-600 base-font-size" required />
         </div>
       </div>
       
       <div class="mt-4">
-        <label for="groupDescriptionInput" class="block text-sm font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
+        <label for="groupDescriptionInput" class="block base-font-size font-medium text-[var(--color-text)] mb-2" autocomplete="off" list="none">
           Descripción del Grupo
         </label>
         <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-base)] overflow-hidden bg-[var(--color-base)]">
           <textarea id="groupDescriptionInput" placeholder="Agrega una breve descripción del grupo" autocomplete="off" list="none"
-                    rows="4" class="flex-1 outline-none bg-transparent text-gray-600 text-sm resize-none"></textarea>
+                    rows="4" class="flex-1 outline-none bg-transparent text-gray-600 base-font-size resize-none"></textarea>
         </div>
       </div>
       
       <div>
-        <label class="block text-sm font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
+        <label class="block base-font-size font-medium text-[var(--color-text)] mb-2">Selecciona miembros:</label>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-40 overflow-y-auto border border-[var(--color-border)] p-3 rounded-lg" id="availableMembers">
           <!-- Aquí se insertarán los miembros disponibles -->
         </div>
@@ -42,19 +42,19 @@
           <button
             type="submit"
             id="submitCreateGroup"
-            class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)]  focus:outline-none font-titles"
+            class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text-[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)]  focus:outline-none font-titles"
           >
             Crear Grupo
           </button>
           <button
             type="button"
             id="cancelCreateGroupBtn"
-            class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles"
+            class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles"
           >
             Cancelar
           </button>
         </div>
-      <div id="createGroupError" class="text-red-500 text-sm mt-2 hidden"></div>
+      <div id="createGroupError" class="text-red-500 mini-font-size mt-2 hidden"></div>
     </form>
   </div>
 </body>

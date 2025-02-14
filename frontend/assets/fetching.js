@@ -81,6 +81,49 @@ export async function fetchChats() {
     }
 }
 
+export async function fetchUnreadMessages() {
+    try {
+
+        // Retrieve the token from sessionStorage
+        const token = sessionStorage.getItem('token');
+
+        // Fetch messages from the backend
+        const response = await fetch(`${URL}/check_messages`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`${errors.errorFetchingMessages}, ${response.status}`);
+        }
+
+        // Parse the JSON response (this contains all the messages)
+        const messages = await response.json();
+
+        // Send the IDs to the change_state endpoint
+        const changeStateResponse = await fetch(`${URL}/change_state/${2}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(messages) // Send the IDs as the body
+        });
+
+        if (!changeStateResponse.ok) {
+            throw new Error(`${errors.errorChangingMessageState} ${changeStateResponse.status}`);
+        }
+
+        return messages; // Return the messages for rendering in the frontend
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
 //Para cargar los mensajes
 export async function fetchMessages(senderId, isGroup, offset = 0) {
     try {

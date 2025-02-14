@@ -13,26 +13,23 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 24 24" class="stroke-[#b0d07e]">
           <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M11 6L5 12M5 12L11 18M5 12H19"></path>
         </svg>
-    
       </button>
-      <h2 id="chatHeader" class="text-lg font-bold text-[var(--color-headers)]"></h2>
+      <h2 id="chatHeader" class="title-font font-bold text-[var(--color-headers)]"></h2>
       <!-- El enlace empieza 80px desde la izquierda para dejar espacio al botón -->
       <a id="groupOptions" href="#" class="hidden absolute top-0 left-[80px] w-[calc(100%-80px)] h-full"></a>
-  </div>
+    </div>
   
-      
     <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-[var(--color-base)] flex flex-col">
       <!-- Los mensajes se cargarán dinámicamente -->
     </div>
 
     <div class="flex px-4 py-3 rounded-md border-2 border-[var(--color-chats)] overflow-hidden bg-[var(--color-border)]">
       <textarea type="text" id="newMessageInput" placeholder="Escribe un mensaje... " autocomplete="off" list="none"
-             class="flex-1 outline-none bg-transparent text-[var-(--color-dark)] text-sm resize-none" rows="1"></textarea>
-             <a href="#_" id="sendMessageBtn" class="flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-border)] border-2 border-[var(--color-headers)] rounded-full shadow-sm hover:bg-transparent hover:text-[var(--color-text)] hover:border-[var(--color-text)] focus:outline-none">
-              Enviar
-            </a>
+             class="flex-1 outline-none bg-transparent text-[var(--color-dark)] mini-font-size resize-none" rows="1"></textarea>
+      <a href="#_" id="sendMessageBtn" class="flex items-center justify-center px-4 py-2 base-font-size font-medium leading-6 text-gray-500 whitespace-no-wrap bg-[var(--color-border)] border-2 border-[var(--color-headers)] rounded-full shadow-sm hover:bg-transparent hover:text-[var(--color-text)] hover:border-[var(--color-text)] focus:outline-none">
+        Enviar
+      </a>
     </div>
-    
   </div>
 </body>
 </html>
