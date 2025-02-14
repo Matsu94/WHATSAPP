@@ -13,6 +13,7 @@
     /* Variables para texto y bordes en modo claro */
     --color-text: #000000;   /* Texto principal en modo claro */
     --color-border: #d9d3d8; /* Bordes en modo claro */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
 
   /* ========== MODO OSCURO (dark) ========== */
@@ -26,6 +27,7 @@
     /* Texto y bordes en modo oscuro */
     --color-text: #ffffff;    /*o Texto principal en modo oscuro */
     --color-border: #4f4f4f;  /* Bordes en modo oscuro */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
   :root[data-theme="highContrast"] {
     --color-user: #4DAF7C;   /* Verde vibrante, pero sin ser fluorescente */
@@ -36,6 +38,7 @@
     --color-chats: #F2F2F2;   /* Fondo gris claro para diferenciar chats */
     --color-text: #000000;    /* Texto negro puro */
     --color-border: #9a9898;  /* Bordes oscuros */
+    --color-alert: #dd0088;  /* Color de alerta */
   }
 
   :root {

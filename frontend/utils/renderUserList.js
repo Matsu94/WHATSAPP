@@ -1,20 +1,33 @@
 import { openChat } from "./openChat.js";
 import { formatDate } from './formatDate.js'; 
 import { currentUserId } from "../constants/const.js";
+import { fetchUnreadMessages } from "../assets/fetching.js";
 
-export function renderUserList(chats) {
+
+export async function renderUserList(chats) {
   const chatListEl = document.getElementById('chatList');
   if (!chatListEl) return;
 
   chatListEl.innerHTML = '';
+  let unreadMessages = [];
+  try {
+    unreadMessages = await fetchUnreadMessages();
+  } catch (error) {
+    console.error("Error fetching unread messages:", error);
+  }
+
+  // Convert unreadMessages into a lookup object: { chat_name: unread_count }
+  const unreadLookup = {};
+  unreadMessages.forEach(msg => {
+    unreadLookup[msg.chat_name] = msg.unread_messages;
+  });
 
   chats.forEach(chat => {
     const isGroupWithoutMessages = !!chat.creator_id;
     
     // Create chat item container
     const chatItem = document.createElement('div');
-    chatItem.className = "p-3 hover:bg-[var(--color-border)] cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center";
-
+    chatItem.className = "p-3 hover:bg-[var(--color-border)] cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center relative";
     // Create info div (name + last message)
     const infoDiv = document.createElement('div');
     infoDiv.className = "flex flex-col";
@@ -44,6 +57,14 @@ export function renderUserList(chats) {
 
     chatItem.appendChild(infoDiv);
     chatItem.appendChild(timestampEl);
+
+    const unreadCount = unreadLookup[chat.chat_name] || 0;
+    if (unreadCount > 0) {
+      const unreadBadge = document.createElement('div');
+      unreadBadge.className = "absolute right-2 top-1 bg-[var(--color-alert)] text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full";
+      unreadBadge.innerText = unreadCount;
+      chatItem.appendChild(unreadBadge);
+    }
 
     // Click event to open chat
     chatItem.addEventListener("click", () => {

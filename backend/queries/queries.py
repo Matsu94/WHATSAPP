@@ -76,31 +76,33 @@ VALUES (%s, %s, %s)
 
 checkMessagesUsers = """
 SELECT 
+        m.is_group,
         m.sender_id,
-        u.username AS sender_name,
-        COUNT(*) AS unread_messages
+        u.username AS chat_name,
+        m.message_id,  
+        COUNT(*) OVER(PARTITION BY m.sender_id) AS unread_messages
 FROM messages m
 INNER JOIN users u ON m.sender_id = u.user_id
-WHERE m.status = 1
+WHERE m.status != 3
         AND m.receiver_id = %s
         AND m.is_group = FALSE
-GROUP BY m.sender_id, u.username
-ORDER BY unread_messages DESC;
+ORDER BY unread_messages DESC, m.message_id;
 """
 
 checkMessagesGroups = """
 SELECT 
+        m.is_group,
         m.receiver_id AS group_id,
-        g.name AS group_name,
-        COUNT(*) AS unread_messages
+        g.name AS chat_name,
+        m.message_id,  
+        COUNT(*) OVER(PARTITION BY m.receiver_id) AS unread_messages
 FROM messages m
 INNER JOIN groups g ON m.receiver_id = g.group_id
 INNER JOIN group_message_status gms ON m.message_id = gms.message_id
-WHERE gms.status = 1
+WHERE gms.status != 3
         AND gms.user_id = %s
         AND m.is_group = TRUE
-GROUP BY m.receiver_id, g.name
-ORDER BY unread_messages DESC;
+ORDER BY unread_messages DESC, m.message_id;
 """
 
 checkMessageWithId = """
