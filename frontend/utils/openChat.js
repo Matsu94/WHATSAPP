@@ -63,10 +63,7 @@ export async function openChat(senderId, isGroup, senderName) {
                 if (data.type === "new_message") {
                     console.log("New message detected:", data); // Log the parsed message
                     // Check if the message is for the current chat
-                    if (
-                        (data.is_group && data.receiver_id === senderId) || // Group chat
-                        (!data.is_group && (data.sender_id === senderId || data.receiver_id === senderId)) // Direct chat
-                    ) {
+                    if (data.receiver_id === currentUserId) {
                         console.log("Reloading messages for current chat...");
                         loadMessages(senderId, isGroup); // Reload messages for the current chat
                     }
