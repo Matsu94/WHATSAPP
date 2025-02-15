@@ -1,6 +1,6 @@
 import { loadMessages } from "./loadMessages.js";
 import { sendMessage } from "./sendMessage.js";
-import { closeChatWindow } from "./closeChatWindow.js"; // Import the function
+import { closeChatWindow } from "./closeChatWindow.js";
 import { openChatError } from "../errors/errors.js";
 import { fetchChats } from "../assets/fetching.js";
 import { renderUserList } from "./renderUserList.js";
@@ -50,23 +50,32 @@ export async function openChat(senderId, isGroup, senderName) {
 
             // Establecer conexión WebSocket
             const currentUserId = sessionStorage.getItem('user_id');
+            console.log(`Opening WebSocket connection for user ${currentUserId}`); // Log the user ID
             socket = new WebSocket(`ws://127.0.0.1:8000/ws/${currentUserId}`);
 
+            socket.onopen = () => {
+                console.log(`WebSocket connection opened for user ${currentUserId}`); // Log when the connection is opened
+            };
+
             socket.onmessage = (event) => {
-              console.log("WebSocket message received:", event.data); // Log the raw message
-              const data = JSON.parse(event.data); // Parse the WebSocket message
-              if (data.type === "new_message") {
-                  console.log("New message detected:", data); // Log the parsed message
-                  // Check if the message is for the current chat
-                  if (
-                      (data.is_group && data.receiver_id === senderId) || // Group chat
-                      (!data.is_group && (data.sender_id === senderId || data.receiver_id === senderId)) // Direct chat
-                  ) {
-                      console.log("Reloading messages for current chat...");
-                      loadMessages(senderId, isGroup); // Reload messages for the current chat
-                  }
-              }
-          };
+                console.log("WebSocket message received:", event.data); // Log the raw message
+                const data = JSON.parse(event.data); // Parse the WebSocket message
+                if (data.type === "new_message") {
+                    console.log("New message detected:", data); // Log the parsed message
+                    // Check if the message is for the current chat
+                    if (
+                        (data.is_group && data.receiver_id === senderId) || // Group chat
+                        (!data.is_group && (data.sender_id === senderId || data.receiver_id === senderId)) // Direct chat
+                    ) {
+                        console.log("Reloading messages for current chat...");
+                        loadMessages(senderId, isGroup); // Reload messages for the current chat
+                    }
+                }
+            };
+
+            socket.onclose = () => {
+                console.log(`WebSocket connection closed for user ${currentUserId}`); // Log when the connection is closed
+            };
 
             // Agregar eventos a los elementos
             const sendBtn = document.getElementById("sendMessageBtn");
@@ -84,7 +93,7 @@ export async function openChat(senderId, isGroup, senderName) {
                     const chats = await fetchChats();
                     renderUserList(chats);
                 } else if (e.key === "Escape") {
-                    closeChatWindow(); // Use the imported function
+                    closeChatWindow();
                 }
             });
 
@@ -97,7 +106,7 @@ export async function openChat(senderId, isGroup, senderName) {
 
                 if (closeBtn) {
                     closeBtn.addEventListener("click", () => {
-                        closeChatWindow(); // Use the imported function
+                        closeChatWindow();
                         chatList.classList.remove("hidden");
                         chatWindow.classList.add("hidden");
                         userListDiv.classList.remove("hidden");
@@ -113,11 +122,11 @@ export async function openChat(senderId, isGroup, senderName) {
             console.error(`${openChatError}`, err);
         });
 }
-
-// Close WebSocket connection when chat window is closed
+// Add this at the end of the file
 export function closeWebSocket() {
     if (socket) {
         socket.close();
         socket = null;
+        console.log("WebSocket connection closed.");
     }
 }
