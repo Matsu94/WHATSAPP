@@ -1,4 +1,4 @@
-import { URL } from '../constants/const.js';
+import { URL, token } from '../constants/const.js';
 import * as errors from '../errors/errors.js';
 
 export async function fetchToken(username, password) {
@@ -30,13 +30,12 @@ export async function fetchToken(username, password) {
 //CARGAR USUARIOS PARA EL LISTADO
 export async function fetchUsers() {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
 
         const response = await fetch(`${URL}/usersWithoutChat`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Descomenta si tu endpoint requiere token
+                'Authorization': `Bearer ${token}`
             }
         });
         if (!response.ok) {
@@ -51,7 +50,7 @@ export async function fetchUsers() {
 
 export async function fetchChats() {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+ // Si requieres autenticación
 
         const response = await fetch(`${URL}/chats`, {
             method: 'GET',
@@ -83,9 +82,6 @@ export async function fetchChats() {
 
 export async function fetchUnreadMessages() {
     try {
-
-        // Retrieve the token from sessionStorage
-        const token = sessionStorage.getItem('token');
 
         // Fetch messages from the backend
         const response = await fetch(`${URL}/check_messages`, {
@@ -129,9 +125,6 @@ export async function fetchMessages(senderId, isGroup, offset = 0) {
     try {
         const isGroupParam = isGroup ? 'true' : 'false';
 
-        // Retrieve the token from sessionStorage
-        const token = sessionStorage.getItem('token');
-
         // Fetch messages from the backend
         const response = await fetch(`${URL}/receive_messages/${senderId}/${isGroupParam}?offset=${offset}`, {
             method: 'GET',
@@ -172,11 +165,11 @@ export async function fetchMessages(senderId, isGroup, offset = 0) {
 // mandar mensajes
 export async function postMessage(messageObj) {
     try {
-
         const response = await fetch(`${URL}/sendMessage`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(messageObj)
         });
@@ -195,7 +188,7 @@ export async function postMessage(messageObj) {
 // estados mensaje grupo
 export async function fetchGroupMessageStatus(messageId) {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/group_message_status/${messageId}`, {
             method: 'GET',
@@ -223,6 +216,7 @@ export async function createGroup(groupObj) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(groupObj)
         });
@@ -243,7 +237,7 @@ export async function createGroup(groupObj) {
 //CARGAR INFO GRUPO
 export async function fetchGroupInfo(group_id) {
     try {
-        const token = sessionStorage.getItem('token'); // Si requieres autenticación
+ // Si requieres autenticación
 
         const response = await fetch(`${URL}/group_info/${group_id}`, {
             method: 'GET',
@@ -266,7 +260,7 @@ export async function fetchGroupInfo(group_id) {
 // CAMBIAR NOMBRE GRUPO
 export async function updateGroupName(group_id, name) {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/update_name/${group_id}`, {
             method: 'PUT',
@@ -290,7 +284,7 @@ export async function updateGroupName(group_id, name) {
 // CAMBIAR DESCRIPCION GRUPO
 export async function updateGroupDescription(group_id, description) {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/update_description/${group_id}`, {
             method: 'PUT',
@@ -314,7 +308,7 @@ export async function updateGroupDescription(group_id, description) {
 //CARGAR USUARIOS PARA GRUPO
 export async function fetchUsersForGroup() {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/usersForGroup`, {
             method: 'GET',
@@ -335,7 +329,7 @@ export async function fetchUsersForGroup() {
 //CARGAR USUARIOS DE GRUPO
 export async function fetchUsersFromGroup(group_id) {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/get_members/${group_id}`, {
             method: 'GET',
@@ -355,7 +349,7 @@ export async function fetchUsersFromGroup(group_id) {
 }
 export async function removeUserFromGroup(group_id, userId) {
     try {
-        const token = sessionStorage.getItem('token');
+
 
         const response = await fetch(`${URL}/remove_user/${group_id}/${userId}`, {
             method: 'DELETE',
@@ -376,7 +370,7 @@ export async function removeUserFromGroup(group_id, userId) {
 
 export async function updateUserToAdmin(group_id, userId)  {
     try {
-        const token = sessionStorage.getItem('token'); 
+ 
 
         const response = await fetch(`${URL}/add_admin/${group_id}/${userId}`, {
             method: 'PUT',
@@ -398,7 +392,7 @@ export async function updateUserToAdmin(group_id, userId)  {
 
 export async function addUsersToGroup(group_id, usersIds) {
     try {
-        const token = sessionStorage.getItem('token');
+
         const response = await fetch(`${URL}/add_users/${group_id}`, {
             method: 'PUT',
             headers: {
@@ -418,8 +412,7 @@ export async function addUsersToGroup(group_id, usersIds) {
 
 export async function leaveGroup(group_id) {
     try {
-        const token = sessionStorage.getItem('token');
-
+        
         const response = await fetch(`${URL}/leave_group/${group_id}`, {
             method: 'DELETE',
             headers: {

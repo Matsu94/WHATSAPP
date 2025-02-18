@@ -5,11 +5,15 @@ import { getUsersError } from "./errors/errors.js";
 import { fetchChats, fetchUsers } from "./assets/fetching.js";
 import { openChangeBackgroundGrid } from "./utils/openChangeBackgroundGrid.js";
 import { showUsers } from "./utils/showAllUsers.js";
+import { token } from "./constants/const.js";
 
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
   async function init() {
     try {
+      if (!token) {
+        window.location.href = `/WHATSAPP/frontend/login/login.html`;
+      }
       const chats = await fetchChats();
       renderUserList(chats);
 

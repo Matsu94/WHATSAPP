@@ -77,10 +77,10 @@ def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user
     
 # Endpoint to send a message (1m)
 @app.post("/sendMessage")
-async def send_message(message: Message, db: Matias = Depends(get_db)):
+def send_message(message: Message, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     message_id = db.sendMessage(message)
     # Notify the receiver with more details
-    await manager.send_personal_message(
+    manager.send_personal_message(
         json.dumps({
             "type": "new_message",
             "sender_id": message.Sender,
@@ -124,38 +124,28 @@ def change_state(
         result += db.changeMessageState(message, state_id, receiver_id)
     return {"message": "Estado actualizado correctamente.", "result": result}
 
-# Endpoint to change the content of a message
-@app.put("/change_content/{message_id}/{content}")
-def change_content(message_id: int, content: str, db: Matias = Depends(get_db)):
-    return db.changeContent(message_id, content)
-
-# Endpoint to delete a message 
-@app.delete("/delete_message/{message_id}")
-def delete_message(message_id: int, db: Matias = Depends(get_db)):
-    return db.deleteMessage(message_id)
-
 #==================GROUPS==================
 
 # Endpoint to list user groups (1g) ESTE CREO NO ESTÁ HACIENDO NADA AHORA MISMO
 @app.get("/groups")
-def get_groups(user_id: int, db: Matias = Depends(get_db)):
+def get_groups(user_id: int, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     return db.getGroups(user_id)
 
 # Endpoint to create a group (2g)
 @app.post("/create_group")
-def create_group(group: Group, db: Matias = Depends(get_db)):
+def create_group(group: Group, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     return db.createGroup(group)
 # Endpoint to get members of a group
 @app.get("/get_members/{group_id}")
-def get_members(group_id: int, db: Matias = Depends(get_db)):
+def get_members(group_id: int, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     return db.getMembers(group_id)
 
 @app.get("/group_info/{group_id}")
-def group_info(group_id: int, db: Matias = Depends(get_db)):
+def group_info(group_id: int, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     return db.groupinfo(group_id)
 
 # Endpoint to add a user to a group (3g)
-@app.put("/add_users/{group_id}") # OLVIDAMOS PREGUNTARLE A JOSE SI ESTOS ENDPOINTS IBAN ASÍ CON VARIABLES T.T
+@app.put("/add_users/{group_id}")
 def add_users_to_group(group_id: int, newMembers: NewMembers, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
     res = 0
     for member_id in newMembers.Members:
@@ -185,15 +175,10 @@ def update_description(group_id: int, description: DescriptionUpdate, db: Matias
     return db.updateDescription(group_id, description)
 
 # Endpoint to leave a group (5g)
-@app.delete("/leave_group/{group_id}") # ESTE POR LIMPIEZA EN LA BD TENDRÍA QUE HACER QUE BORRE TODA LA INFO DEL GRUPO, GROUP_MEMBERS, MENSAJES Y STATUS
+@app.delete("/leave_group/{group_id}")
 def leave_group(group_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
     admin_id = admin['user_id']
     return db.leaveGroup(group_id, admin_id)
-
-# Endpoint to delete a group
-@app.delete("/delete_group/{group_id}")  # EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA EXTRA
-def delete_group(group_id: int, db: Matias = Depends(get_db)):
-    return db.deleteGroup(group_id)
 
 # Endpoint to get message status of group messages
 @app.get("/group_message_status/{message_id}")

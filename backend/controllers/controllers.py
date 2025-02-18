@@ -134,7 +134,7 @@ class Matias(object):
     def getMessagesChat(self, offset, sender_id, receiver_id, isGroup):
         if isGroup:
             sql = getMessagesChatGroup
-            self.cursor.execute(sql, (sender_id, isGroup, offset))
+            self.cursor.execute(sql, (receiver_id, sender_id, isGroup, offset))
         else:
             sql = getMessagesChat
             self.cursor.execute(sql, (sender_id, receiver_id, receiver_id, sender_id, isGroup, offset))
@@ -188,6 +188,7 @@ class Matias(object):
             sql = insertGroupMemnber
             self.cursor.execute(sql, (group_id, member))
         return group_id
+    
     def getMembers(self, group_id):
         sql = getMembers
         self.cursor.execute(sql, (group_id,))
@@ -198,6 +199,7 @@ class Matias(object):
         self.cursor.execute(sql, (group_id,))
         return self.cursor.fetchone()
     
+    # Query to add a user to a group (3g)
     def addUsersToGroup(self, group_id, member_id): 
                 sql = insertGroupMembers
                 self.cursor.execute(sql, (group_id, member_id))
@@ -247,6 +249,10 @@ class Matias(object):
             if other_users == 0:
                 sql = leaveGroup
                 self.cursor.execute(sql, (group_id, admin_id))
+                sql = deleteGroupStatuses
+                self.cursor.execute(sql, (group_id))
+                sql = deleteGroupMessages
+                self.cursor.execute(sql, (group_id))
                 sql = deleteGroup
                 self.cursor.execute(sql, (group_id,))
                 return self.cursor.lastrowid  
@@ -255,9 +261,3 @@ class Matias(object):
             else:
                 sql = leaveGroup
                 self.cursor.execute(sql, (group_id, admin_id))
-
-    # Query to delete a group
-    def deleteGroup(self, group_id):
-        sql = deleteGroup
-        self.cursor.execute(sql, (group_id,))
-        return self.cursor.rowcount

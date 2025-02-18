@@ -161,7 +161,8 @@ LEFT JOIN
 ON
         m.sender_id = u.user_id
 WHERE
-        m.receiver_id = %s
+        m.message_id IN (select message_id from group_message_status where user_id = %s)
+        AND m.receiver_id = %s
         AND m.is_group = %s
 ORDER BY 
         m.date DESC
@@ -280,6 +281,17 @@ leaveGroup = """
 DELETE FROM group_members
 WHERE group_id = %s
 AND user_id = %s
+"""
+
+deleteGroupStatuses = """
+DELETE FROM group_message_status
+WHERE message_id IN (SELECT message_id FROM messages WHERE receiver_id = %s and is_group = TRUE)
+"""
+
+deleteGroupMessages = """
+DELETE FROM messages
+WHERE receiver_id = %s
+and is_group = TRUE
 """
 
 deleteGroup = """
