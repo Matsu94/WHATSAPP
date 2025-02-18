@@ -31,11 +31,11 @@ function showPopup(data) {
 
     // Populate with status data
     popupContent.innerHTML = `
-        <h3 class="text-lg font-semibold mb-3">Message Status</h3>
+        <h3 class="title-font font-semibold mb-3">Message Status</h3>
         <ul class="text-left space-y-2">
             ${data.map(user => `<li><strong>${user.username}:</strong> ${getStatusSymbol(user.status)}</li>`).join("")}
         </ul>
-        <button id="closePopup" class="mt-4 px-4 py-2 text-base font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">Close</button>
+        <button id="closePopup" class="mt-4 px-4 py-2 base-font-size font-medium leading-6 text--[var(--color-text)] whitespace-no-wrap bg-[var(--color-user)] border-2 border-[var(--color-dark)] rounded-full shadow-sm hover:bg-[var(--color-dark)]  hover:text-[var(--color-base)]  hover:border-[var(--color-base)] focus:outline-none font-titles">Close</button>
     `;
 
     popup.appendChild(popupContent);

@@ -33,7 +33,7 @@ export function renderChatMessages(messages, options = {}) {
   // Esto es opcional y depende de cómo quieras manejar los encabezados de fecha en mensajes antiguos.
   if (prepend && container.firstChild) {
     // Por ejemplo, podrías obtener el texto del primer header si existe:
-    const firstHeader = container.querySelector("div.text-center.text-xs.text-gray-500");
+    const firstHeader = container.querySelector("div.text-center.mini-font-size.text-gray-500");
     if (firstHeader) {
       lastRenderedDate = firstHeader.innerText;
     }
@@ -56,6 +56,7 @@ export function renderChatMessages(messages, options = {}) {
     msgBubble.classList.add(
       "p-2",
       "rounded",
+      "base-font-size",
       "max-w-xs",
       "min-w-[10rem]",
       "shadow-sm",
@@ -94,7 +95,7 @@ export function renderChatMessages(messages, options = {}) {
     // Insertar un encabezado de fecha si corresponde y si aún no se ha renderizado para ese día
     if (msgDateObj.toDateString() !== now.toDateString() && msgDateObj.toDateString() !== lastRenderedDate) {
       const dayHeader = document.createElement('div');
-      dayHeader.className = "text-center text-xs text-gray-500 my-2";
+      dayHeader.className = "text-center mini-font-size text-gray-500 my-2";
       dayHeader.innerText = msgDateObj.toLocaleDateString();
       fragment.appendChild(dayHeader);
       lastRenderedDate = msgDateObj.toDateString();
@@ -107,7 +108,7 @@ export function renderChatMessages(messages, options = {}) {
         <span>${msg.content}</span>
       </div>
       <div class="flex items-center justify-end">
-        <span class="text-xs text-[var(--color-text)] font-dates font-light">${displayTime}  ${status}</span>
+        <span class="mini-font-size text-[var(--color-text)] font-dates font-light">${displayTime}  ${status}</span>
       </div>
     `;
 

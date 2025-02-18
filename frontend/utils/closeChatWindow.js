@@ -2,6 +2,7 @@ import { closeWebSocket } from "./openChat.js"; // Import the WebSocket cleanup 
 
 // Cerrar chat
 export function closeChatWindow() {
+
   const chatWindow = document.getElementById("chatWindow");
   if (!chatWindow) return;
   chatWindow.innerHTML = `
@@ -11,3 +12,4 @@ export function closeChatWindow() {
   `;
   closeWebSocket(); // Close the WebSocket connection
 }
+

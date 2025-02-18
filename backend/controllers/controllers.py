@@ -114,10 +114,11 @@ class Matias(object):
         self.cursor.execute(sql, (receiver_id,))
         result2 = self.cursor.fetchall()
         if not result2:
-            return result1
-        else:
-            result = result1 + result2
-            return result
+            result2 = []
+        if not result1:
+            result1 = []
+        result = result1 + result2
+        return result
 
     # Query to change the state (status) of a message (3m)
     def changeMessageState(self, message, new_status, receiver_id):
