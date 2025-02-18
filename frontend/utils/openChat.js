@@ -8,9 +8,8 @@ import { openGroupOptions } from "./openGroupOptions.js";
 import { initScrollPagination, resetPagination } from "./scrolling.js";
 import { searchChats } from "./searchUsers.js";
 
+let socket = null;
 
-
-//Abrir chat en la sección derecha
 export async function openChat(senderId, isGroup, senderName) {
   const chatWindow = document.getElementById("chatWindow");
   if (!chatWindow) return;

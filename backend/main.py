@@ -1,9 +1,11 @@
-from fastapi import Body, FastAPI, Depends, HTTPException, status
+import json
+from fastapi import Body, FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
 from models.models import *
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 app.add_middleware(
@@ -22,9 +24,45 @@ def get_db():
     finally:
         db.desconecta()
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the home page!"}
+# Add WebSocket manager to handle connections
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections = {}
+
+    async def connect(self, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = []
+        self.active_connections[user_id].append(websocket)
+        print(f"User {user_id} connected. Active connections: {self.active_connections}")
+
+    def disconnect(self, websocket: WebSocket, user_id: str):
+        if user_id in self.active_connections:
+            self.active_connections[user_id].remove(websocket)
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+        print(f"User {user_id} disconnected. Active connections: {self.active_connections}")
+
+    async def send_personal_message(self, message: str, user_id: str):
+        if user_id in self.active_connections:
+            for connection in self.active_connections[user_id]:
+                await connection.send_text(message)
+            print(f"Message sent to user {user_id}: {message}")
+        else:
+            print(f"User {user_id} is not connected.")
+
+manager = ConnectionManager()
+
+# WebSocket endpoint
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # You can handle incoming messages here if needed
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, user_id)
 
 # Endpoint to list all users (1a)
 @app.get("/usersWithoutChat")
@@ -38,9 +76,20 @@ def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user
     return db.getChats(user_id)
     
 # Endpoint to send a message (1m)
-@app.post("/sendMessage") 
-def send_message(message: Message, db: Matias = Depends(get_db)):
-    return db.sendMessage(message)
+@app.post("/sendMessage")
+async def send_message(message: Message, db: Matias = Depends(get_db)):
+    message_id = db.sendMessage(message)
+    # Notify the receiver with more details
+    await manager.send_personal_message(
+        json.dumps({
+            "type": "new_message",
+            "sender_id": message.Sender,
+            "receiver_id": message.Receiver,
+            "is_group": message.isGroup
+        }),
+        message.Receiver
+    )
+    return {"message_id": message_id}
 
 # Endpoint to check the number of messages the user has received and not read (3m)
 @app.get("/check_messages") 
