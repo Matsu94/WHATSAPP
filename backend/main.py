@@ -89,7 +89,7 @@ async def send_message(message: Message, db: Matias = Depends(get_db), user: str
         "message_id": message_id,
         "sender_name": username,
         "content": message.Content,
-        "date": message.Date,
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "status": message.Status,
         "sender_id": message.Sender,
         "receiver_id": message.Receiver,

@@ -63,8 +63,7 @@ export async function openChat(senderId, isGroup, senderName) {
                 const data = JSON.parse(event.data);  // Parse the JSON array
                 if (Array.isArray(data)) {
                     renderChatMessages(data, { append: true });
-                    /* Si queremos que no se muestre el msj en alertas habría que hacer fetch(`${URL}/change_state/${3}`
-                       Pero es full matada y queda feo*/
+                    /* Si queremos que no se muestre el msj en alertas habría que hacer fetch(`${URL}/change_state/${3}`*/
                 } else {
                     console.error("Invalid message format:", data);
                 }
