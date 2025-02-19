@@ -8,7 +8,6 @@ import { openGroupOptions } from "./openGroupOptions.js";
 import { initScrollPagination, resetPagination } from "./scrolling.js";
 import { searchChats } from "./searchUsers.js";
 import { renderChatMessages } from "./renderChatMessages.js";
-import { unreadMessagesAlert } from "./unreadMessagesAlert.js";
 
 let socket = null;
 
