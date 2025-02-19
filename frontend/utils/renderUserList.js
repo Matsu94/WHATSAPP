@@ -1,33 +1,21 @@
 import { openChat } from "./openChat.js";
 import { formatDate } from './formatDate.js'; 
 import { currentUserId } from "../constants/const.js";
-import { fetchUnreadMessages } from "../assets/fetching.js";
 
 
-export async function renderUserList(chats) {
+export function renderUserList(chats, unreadLookup = {}) {
   const chatListEl = document.getElementById('chatList');
   if (!chatListEl) return;
 
   chatListEl.innerHTML = '';
-  let unreadMessages = [];
-  try {
-    unreadMessages = await fetchUnreadMessages();
-  } catch (error) {
-    console.error("Error fetching unread messages:", error);
-  }
-
-  // Convert unreadMessages into a lookup object: { chat_name: unread_count }
-  const unreadLookup = {};
-  unreadMessages.forEach(msg => {
-    unreadLookup[msg.chat_name] = msg.unread_messages;
-  });
 
   chats.forEach(chat => {
     const isGroupWithoutMessages = !!chat.creator_id;
-    
+
     // Create chat item container
     const chatItem = document.createElement('div');
     chatItem.className = "p-3 hover:bg-[var(--color-border)] cursor-pointer border-b border-[var(--color-chats)] flex justify-between items-center relative";
+    
     // Create info div (name + last message)
     const infoDiv = document.createElement('div');
     infoDiv.className = "flex flex-col";
@@ -58,6 +46,7 @@ export async function renderUserList(chats) {
     chatItem.appendChild(infoDiv);
     chatItem.appendChild(timestampEl);
 
+    // Add unread message alert badge
     const unreadCount = unreadLookup[chat.chat_name] || 0;
     if (unreadCount > 0) {
       const unreadBadge = document.createElement('div');
@@ -75,7 +64,6 @@ export async function renderUserList(chats) {
         openChat(targetId, chat.is_group, chat.chat_name);
       }
 
-      // Ocultar lista de chats y mostrar ventana de conversación en móviles
       if (window.innerWidth < 768) {
         document.getElementById("userListDiv").classList.add("hidden");
         document.getElementById("chatList").classList.add("hidden");

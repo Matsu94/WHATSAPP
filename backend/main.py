@@ -1,4 +1,3 @@
-import json
 from fastapi import Body, FastAPI, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from controllers.jwt_auth_users import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
 from controllers.controllers import Matias
@@ -6,6 +5,8 @@ from models.models import *
 from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from typing import Dict, Set
+import json
 
 app = FastAPI()
 app.add_middleware(
@@ -23,6 +24,7 @@ def get_db():
         yield db
     finally:
         db.desconecta()
+
 
 # Add WebSocket manager to handle connections
 class ConnectionManager:
@@ -43,10 +45,12 @@ class ConnectionManager:
                 del self.active_connections[user_id]
         print(f"User {user_id} disconnected. Active connections: {self.active_connections}")
 
-    async def send_personal_message(self, message: str, user_id: str):
+    async def send_personal_message(self, message: dict, user_id: str):
         if user_id in self.active_connections:
+            message_array = [message]  # Wrap the message in an array
             for connection in self.active_connections[user_id]:
-                await connection.send_text(message)
+                # await connection.send_text(message)
+                await connection.send_text(json.dumps(message_array))  # Send as JSON array
             print(f"Message sent to user {user_id}: {message}")
         else:
             print(f"User {user_id} is not connected.")
@@ -77,18 +81,31 @@ def get_chats(db: Matias = Depends(get_db), user: str = Depends(get_current_user
     
 # Endpoint to send a message (1m)
 @app.post("/sendMessage")
-def send_message(message: Message, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
+async def send_message(message: Message, db: Matias = Depends(get_db), user: str = Depends(get_current_user)):
     message_id = db.sendMessage(message)
-    # Notify the receiver with more details
-    manager.send_personal_message(
-        json.dumps({
-            "type": "new_message",
-            "sender_id": message.Sender,
-            "receiver_id": message.Receiver,
-            "is_group": message.isGroup
-        }),
-        message.Receiver
-    )
+    username = user['username']
+    # Convert the message to a dictionary
+    message_dict = {
+        "message_id": message_id,
+        "sender_name": username,
+        "content": message.Content,
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "status": message.Status,
+        "sender_id": message.Sender,
+        "receiver_id": message.Receiver,
+        "is_group": message.isGroup,
+    }
+
+    # Check if it's a group message
+    if message.isGroup:
+        room_id = f"Group_{message.Receiver}"  # Ensure group WebSockets are prefixed
+    else:
+        room_id = message.Receiver
+    
+    # await manager.send_personal_message(
+    #     json.dumps({"type": "new_message",}), room_id)
+
+    await manager.send_personal_message(message_dict, room_id)
     return {"message_id": message_id}
 
 # Endpoint to check the number of messages the user has received and not read (3m)
