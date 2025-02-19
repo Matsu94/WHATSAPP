@@ -2,26 +2,59 @@ import { renderUserList } from "./utils/renderUserList.js";
 import { searchUsers, searchChats } from "./utils/searchUsers.js";
 import { openCreateGroupForm } from "./utils/openCreateGroupForm.js";
 import { getUsersError } from "./errors/errors.js";
-import { fetchChats, fetchUsers } from "./assets/fetching.js";
+import { fetchChats, fetchUsers, fetchUnreadMessages } from "./assets/fetching.js";
 import { openChangeBackgroundGrid } from "./utils/openChangeBackgroundGrid.js";
 import { showUsers } from "./utils/showAllUsers.js";
 import { token } from "./constants/const.js";
 
 // Inicialización
 window.addEventListener("DOMContentLoaded", () => {
+
   async function init() {
     try {
       if (!token) {
         window.location.href = `/WHATSAPP/frontend/login/login.html`;
       }
+
       const chats = await fetchChats();
       renderUserList(chats);
+
+      let isSearching = false; // Track whether a search is happening
+
+      async function updateUserList() {
+        if (isSearching) return; // Skip updating if a search is active
+        try {
+          const chats = await fetchChats();
+          const unreadMessages = await fetchUnreadMessages();
+    
+          // Convert unreadMessages into a lookup object
+          const unreadLookup = {};
+          unreadMessages.forEach(msg => {
+            unreadLookup[msg.chat_name] = msg.unread_messages;
+          });
+    
+          renderUserList(chats, unreadLookup);
+        } catch (error) {
+          console.error("Error updating user list:", error);
+        }
+      }
+
+      // Start periodic updates
+      const intervalId = setInterval(updateUserList, 15000);
 
       const searchInput = document.getElementById("searchInput");
       if (searchInput) {
         searchInput.addEventListener("input", (e) => {
-          const filtered = searchChats(chats, e.target.value);
+          const query = e.target.value.trim();
+          isSearching = query.length > 0; // Set isSearching to true if there's a search term
+
+          const filtered = searchChats(chats, query);
           renderUserList(filtered);
+
+          // If search is cleared, trigger an immediate refresh
+          if (!isSearching) {
+            updateUserList();
+          }
         });
       }
 
@@ -41,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const createNewChat = document.getElementById("createNewChat");
       if (createNewChat) {
-        createNewChat.addEventListener("click", async () => { 
+        createNewChat.addEventListener("click", async () => {
           try {
             const users = await fetchUsers();
             if (searchInput) {
@@ -58,14 +91,14 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       // Menú desplegable
-      const menuBtn = document.getElementById('menuBtn');
-      const dropdownMenu = document.getElementById('dropdownMenu');
+      const menuBtn = document.getElementById("menuBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
 
-      menuBtn.addEventListener('click', () => {
-          dropdownMenu.classList.toggle('hidden');
+      menuBtn.addEventListener("click", () => {
+        dropdownMenu.classList.toggle("hidden");
       });
-      dropdownMenu.addEventListener('mouseleave', () => {
-          dropdownMenu.classList.add('hidden');
+      dropdownMenu.addEventListener("mouseleave", () => {
+        dropdownMenu.classList.add("hidden");
       });
 
       // Implementación versión móvil
@@ -73,7 +106,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const chatContainer = document.getElementById("chatContainer");
       const userListDiv = document.getElementById("userListDiv");
 
-      document.querySelectorAll(".chat-item").forEach(chatItem => {
+      document.querySelectorAll(".chat-item").forEach((chatItem) => {
         chatItem.addEventListener("click", () => {
           userListDiv.classList.add("hidden");
           chatList.classList.add("hidden");
@@ -81,16 +114,16 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      const openCreateGroup = document.getElementById("createGroupBtn")
-        openCreateGroup.addEventListener("click", () => {
-          userListDiv.classList.add("hidden");
-          chatList.classList.add("hidden");
-        });
+      const openCreateGroup = document.getElementById("createGroupBtn");
+      openCreateGroup.addEventListener("click", () => {
+        userListDiv.classList.add("hidden");
+        chatList.classList.add("hidden");
+      });
 
-        changeBackgroundBtn.addEventListener("click", () => {
-          userListDiv.classList.add("hidden");
-          chatList.classList.add("hidden");
-        });
+      changeBackgroundBtn.addEventListener("click", () => {
+        userListDiv.classList.add("hidden");
+        chatList.classList.add("hidden");
+      });
 
     } catch (error) {
       console.error(getUsersError, error);

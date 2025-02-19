@@ -8,6 +8,7 @@ import { openGroupOptions } from "./openGroupOptions.js";
 import { initScrollPagination, resetPagination } from "./scrolling.js";
 import { searchChats } from "./searchUsers.js";
 import { renderChatMessages } from "./renderChatMessages.js";
+import { unreadMessagesAlert } from "./unreadMessagesAlert.js";
 
 let socket = null;
 
@@ -63,6 +64,8 @@ export async function openChat(senderId, isGroup, senderName) {
                 const data = JSON.parse(event.data);  // Parse the JSON array
                 if (Array.isArray(data)) {
                     renderChatMessages(data, { append: true });
+                    /* Si queremos que no se muestre el msj en alertas habría que hacer fetch(`${URL}/change_state/${3}`
+                       Pero es full matada y queda feo*/
                 } else {
                     console.error("Invalid message format:", data);
                 }
