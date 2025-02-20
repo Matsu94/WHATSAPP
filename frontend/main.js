@@ -83,6 +83,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const createNewChat = document.getElementById("createNewChat");
       if (createNewChat) {
         createNewChat.addEventListener("click", async () => {
+          isSearching = true;
           try {
             const users = await fetchUsers();
             if (searchInput) {

@@ -1,0 +1,2 @@
+Para ver opciones de grupo click en el nombre del grupo y para ver estado de mensaje click en mensaje.
+Para probar ws abrir 2 users diferentes en el buscador, el envio de mensajes no tiene refresh de posición de página para poder hacer scroll sin perder el punto por un mensaje nuevo.
