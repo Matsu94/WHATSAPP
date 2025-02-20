@@ -18,14 +18,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const chats = await fetchChats();
       
+      let isSearching = false; // Track whether a search is happening
+
       if (chats.length === 0) {
+        isSearching = true;
         const users = await fetchUsers();
         showUsers(users);
       } else {
         renderUserList(chats);
       }
 
-      let isSearching = false; // Track whether a search is happening
 
       async function updateUserList() {
         if (isSearching) return; // Skip updating if a search is active
