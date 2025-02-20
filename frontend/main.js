@@ -17,7 +17,13 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       const chats = await fetchChats();
-      renderUserList(chats);
+      
+      if (chats.length === 0) {
+        const users = await fetchUsers();
+        showUsers(users);
+      } else {
+        renderUserList(chats);
+      }
 
       let isSearching = false; // Track whether a search is happening
 
