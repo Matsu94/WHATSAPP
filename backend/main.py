@@ -11,7 +11,7 @@ import json
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],  # Aquí especifica los orígenes permitidos
+    allow_origins=["*"],  # Aquí especifica los orígenes permitidos
     allow_credentials=True,
     allow_methods=["*"],  # Métodos permitidos (GET, POST, etc.)
     allow_headers=["*"],  # Headers permitidos
@@ -88,6 +88,7 @@ async def send_message(message: Message, db: Matias = Depends(get_db), user: str
     message_dict = {
         "message_id": message_id,
         "sender_name": username,
+        "user_name": username,
         "content": message.Content,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "status": message.Status,
