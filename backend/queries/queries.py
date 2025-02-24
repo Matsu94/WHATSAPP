@@ -305,6 +305,7 @@ SELECT is_admin
 FROM group_members
 WHERE group_id = %s
 AND user_id != %s
+AND is_admin = TRUE
 """            
 
 checkOtherGroupMembers = """

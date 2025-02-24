@@ -412,7 +412,6 @@ export async function addUsersToGroup(group_id, usersIds) {
 
 export async function leaveGroup(group_id) {
     try {
-        
         const response = await fetch(`${URL}/leave_group/${group_id}`, {
             method: 'DELETE',
             headers: {
@@ -421,12 +420,15 @@ export async function leaveGroup(group_id) {
             }
         });
 
+        const data = await response.json();
+        
         if (!response.ok) {
-            throw new Error(`${errors.leaveGroupError}, ${response.status}`);
+            throw new Error(data.detail);  // Error means they can't leave
         }
 
-        return await response.json();
+        return { ok: true, data };  // Successful case
+
     } catch (error) {
-        throw error;
+        return { ok: false, data: error.message };  // Return error details
     }
 }

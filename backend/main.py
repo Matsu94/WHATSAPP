@@ -193,10 +193,18 @@ def update_description(group_id: int, description: DescriptionUpdate, db: Matias
     return db.updateDescription(group_id, description)
 
 # Endpoint to leave a group (5g)
+from fastapi import HTTPException
+
 @app.delete("/leave_group/{group_id}")
 def leave_group(group_id: int, db: Matias = Depends(get_db), admin: str = Depends(get_current_user)):
     admin_id = admin['user_id']
-    return db.leaveGroup(group_id, admin_id)
+    result = db.leaveGroup(group_id, admin_id)
+
+    if result is None:
+        raise HTTPException(status_code=400, detail="You're the only admin left, promote another user before leaving.")
+    
+    return {"message": "Left group successfully"}
+
 
 # Endpoint to get message status of group messages
 @app.get("/group_message_status/{message_id}")

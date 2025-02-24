@@ -108,10 +108,16 @@ export async function openGroupOptions(group_id) {
         const leaveGroupBtn = document.getElementById("leaveGroupBtn");
         if (leaveGroupBtn) {
             leaveGroupBtn.addEventListener("click", async () => {
-                await leaveGroup(group_id);
-                location.reload();
+                const response = await leaveGroup(group_id);
+        
+                if (response.ok) {
+                    location.reload();  // Reload only if successful
+                } else {
+                    alert(response.data);  // Show specific error message
+                }
             });
-        }
+        }        
+
         if (isViewerAdmin) {
             const addUsersBtn = document.getElementById("addUsersBtn");
             addUsersBtn.classList.remove("hidden");

@@ -4,14 +4,14 @@ from queries.queries import *
 class Matias(object):
     def conecta(self):
         self.db = pymysql.connect(
-            host="localhost",
-            #host="192.168.193.133",
-            #port=3306,
-            user="root",
-            #user="matiasianbastero",
-            #password="49864854A",
-            db="matias",
-            #db="damahe",
+            #host="localhost",
+            host="192.168.193.133",
+            port=3306,
+            #user="root",
+            user="matiasianbastero",
+            password="49864854A",
+            #db="matias",
+            db="damahe",
             charset="utf8mb4",
             autocommit=True,
             cursorclass=pymysql.cursors.DictCursor
@@ -235,29 +235,37 @@ class Matias(object):
         sql = esAdmin
         self.cursor.execute(sql, (group_id, admin_id))
         result = self.cursor.fetchone()
-        if result['is_admin'] == False:
+        print(result, admin_id)
+
+        if result and result['is_admin'] == False:
             sql = leaveGroup
             self.cursor.execute(sql, (group_id, admin_id))
             return self.cursor.rowcount
         else:
+            # Check if there are other admins
             sql = checkOtherGroupAdmin 
             self.cursor.execute(sql, (group_id, admin_id))
-            other_admins = self.cursor.rowcount
+            other_admins = len(self.cursor.fetchall())  
+
+            # Check if there are other users
             sql = checkOtherGroupMembers 
             self.cursor.execute(sql, (group_id, admin_id))
-            other_users = self.cursor.rowcount
+            other_users = len(self.cursor.fetchall())
+            print(other_admins, other_users)
             if other_users == 0:
+                # If no other users, delete the group
                 sql = leaveGroup
                 self.cursor.execute(sql, (group_id, admin_id))
                 sql = deleteGroupStatuses
-                self.cursor.execute(sql, (group_id))
+                self.cursor.execute(sql, (group_id,))
                 sql = deleteGroupMessages
-                self.cursor.execute(sql, (group_id))
+                self.cursor.execute(sql, (group_id,))
                 sql = deleteGroup
                 self.cursor.execute(sql, (group_id,))
                 return self.cursor.lastrowid  
             elif other_admins == 0 and other_users > 0:
-                return "You are the only admin"
+                return
             else:
                 sql = leaveGroup
                 self.cursor.execute(sql, (group_id, admin_id))
+
