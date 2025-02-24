@@ -1,6 +1,6 @@
 $(document).ready(function () {
-  // Comprobar si hay un tema guardado en localStorage
-  const savedTheme = localStorage.getItem("theme") || "light";
+  // Comprobar si hay un tema guardado en sessionStorage
+  const savedTheme = sessionStorage.getItem("theme") || "light";
   $("html").attr("data-theme", savedTheme);
 
   // Sincronizar el checkbox según el tema guardado
@@ -14,10 +14,10 @@ $(document).ready(function () {
   $(document).on("change", "#themeCheckbox", function () {
     if ($(this).is(":checked")) {
       $("html").attr("data-theme", "dark");
-      localStorage.setItem("theme", "dark");
+      sessionStorage.setItem("theme", "dark");
     } else {
       $("html").attr("data-theme", "light");
-      localStorage.setItem("theme", "light");
+      sessionStorage.setItem("theme", "light");
     }
   });
 
@@ -41,21 +41,21 @@ $(document).ready(function () {
   // Botón "Standard": Modo claro
   $(document).on("click", "#btnStandard", function () {
     $("html").attr("data-theme", "light");
-    localStorage.setItem("theme", "light");
+    sessionStorage.setItem("theme", "light");
     $("#themeCheckbox").prop("checked", false);
   });
 
   // Botón "Modo de alto contraste": Asignar data-theme "highContrast"
   $(document).on("click", "#btnHighContrast", function () {
     $("html").attr("data-theme", "highContrast");
-    localStorage.setItem("theme", "highContrast");
+    sessionStorage.setItem("theme", "highContrast");
     $("#themeCheckbox").prop("checked", false);
   });
 
   // Botón "Modo oscuro"
   $(document).on("click", "#btnDark", function () {
     $("html").attr("data-theme", "dark");
-    localStorage.setItem("theme", "dark");
+    sessionStorage.setItem("theme", "dark");
     $("#themeCheckbox").prop("checked", true);
   });
 });

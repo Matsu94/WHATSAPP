@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       // Start periodic updates
-      const intervalId = setInterval(updateUserList, 15000);
+      const intervalId = setInterval(updateUserList, 10000);
 
       const searchInput = document.getElementById("searchInput");
       if (searchInput) {

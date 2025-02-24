@@ -61,7 +61,6 @@ export async function openChat(senderId, isGroup, senderName) {
             
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);  // Parse the JSON array
-                console.log("Received message:", data[0].sender_id, "chat:", senderId);
                 if (data[0].sender_id == senderId && !isGroup) {
                     renderChatMessages(data, { append: true });
                     /* Si queremos que no se muestre el msj en alertas habría que hacer fetch(`${URL}/change_state/${3}`*/
